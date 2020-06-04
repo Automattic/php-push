@@ -1,0 +1,30 @@
+{
+    "name": "automattic/miniapns",
+    "description": "A minimal APNS server written in PHP",
+    "type": "library",
+    "autoload": {
+        "classmap": ["src/"]
+    },
+    "autoload-dev": {
+        "classmap": ["tests/helpers"],
+        "files": [
+            "tests/APNSTest.php",
+            "tests/helpers/TestHelpers.php"
+        ]
+    },
+    "require": {
+        "firebase/php-jwt": "^5.2",
+        "illuminate/database": "^7.14",
+        "vlucas/phpdotenv": "^4.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.1",
+        "phpunit/php-code-coverage": "^8.0",
+        "mockery/mockery": "^1.4",
+        "automattic/phpcs-neutron-ruleset": "^3.2"
+    },
+    "scripts": {
+        "lint": "./vendor/bin/phpcs",
+        "fix": "./vendor/bin/phpcbf"
+    }
+}
