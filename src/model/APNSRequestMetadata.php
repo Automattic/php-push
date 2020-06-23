@@ -3,21 +3,16 @@ declare( strict_types = 1 );
 
 class APNSRequestMetadata {
 
+	private $topic;
 	private $push_type = APNSPushType::ALERT;
-	private $expiration = 0;
+	private $expiration_timestamp = 0;
 	private $priority = APNSPriority::IMMEDIATE;
 	private $collapse_identifier = null;
-	private $topic;
-	private $uuid = null;
+	private $uuid;
 
 	function __construct( string $topic, string $uuid = null ) {
 		$this->topic = $topic;
-
-		if ( is_null( $uuid ) ) {
-			$uuid = $this->generate_uuid();
-		}
-
-		$this->uuid = $uuid;
+		$this->uuid = $uuid ?? $this->generate_uuid();
 	}
 
 	function getTopic() {
@@ -55,7 +50,7 @@ class APNSRequestMetadata {
 	 * @return int
 	 */
 	function getExpirationTimestamp() {
-		return $this->expiration;
+		return $this->expiration_timestamp;
 	}
 
 	/**
@@ -66,7 +61,7 @@ class APNSRequestMetadata {
 	 * @return Current_Class_Name
 	 */
 	function setExpirationTimestamp( int $timestamp ) {
-		$this->expiration = $timestamp;
+		$this->expiration_timestamp = $timestamp;
 		return $this;
 	}
 
@@ -142,5 +137,48 @@ class APNSRequestMetadata {
 			mt_rand( 0, 0xffff ),
 			mt_rand( 0, 0xffff )
 		);
+	}
+
+	public function toJSON(): string {
+		$object = [
+			'topic' => $this->topic,
+			'uuid' => $this->uuid,
+		];
+
+		if ( $this->push_type !== APNSPushType::ALERT ) {
+			$object['push_type'] = $this->push_type;
+		}
+
+		if ( $this->expiration_timestamp !== 0 ) {
+			$object['expiration_timestamp'] = $this->expiration_timestamp;
+		}
+
+		if ( $this->priority !== APNSPriority::IMMEDIATE ) {
+			$object['priority'] = $this->priority;
+		}
+
+		if ( ! is_null( $this->collapse_identifier ) ) {
+			$object['collapse_identifier'] = $this->collapse_identifier;
+		}
+
+		return json_encode( $object );
+	}
+
+	public static function fromJSON( $data ): self {
+		$object = json_decode( $data );
+
+		$topic = $object->topic;
+
+		if ( is_null( $topic ) ) {
+			throw new InvalidArgumentException( 'Unable to unserialize object – `topic` is not present' );
+		}
+
+		$uuid = $object->uuid;
+
+		if ( is_null( $uuid ) ) {
+			throw new InvalidArgumentException( 'Unable to unserialize object – `uuid` is not present' );
+		}
+
+		return new APNSRequestMetadata( $topic, $uuid );
 	}
 }
