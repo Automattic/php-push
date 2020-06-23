@@ -84,6 +84,10 @@ abstract class APNSTest extends TestCase {
 		return $factory;
 	}
 
+	function new_sandbox_configuration(): APNSConfiguration {
+		return APNSConfiguration::sandbox( $this->new_credentials() );
+	}
+
 	function new_credentials(): APNSCredentials {
 		return new APNSCredentials( $this->random_string( 10 ), $this->random_string( 10 ), '' );
 	}

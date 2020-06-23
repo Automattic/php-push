@@ -9,37 +9,40 @@ class APNSRequest {
 	// A copy of the request metadata
 	private $metadata;
 
-	// A copy of the configuration
-	private $configuration;
+	// The device token
+	private $token;
 
-	function __construct( $push, APNSRequestMetadata $metadata, APNSConfiguration $configuration ) {
-		$this->configuration = $configuration;
+	static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ) {
+		return new APNSRequest( $payload, $token, $metadata );
+	}
 
-		if ( is_string( $push ) ) {
-			$this->body = $push;
-			return;
-		}
+	static function fromPayload( APNSPayload $payload, $token, APNSRequestMetadata $metadata ) {
+		return new APNSRequest( json_encode( $payload ), $token, $metadata );
+	}
 
-		if ( is_object( $push ) && get_class( $push ) === APNSPayload::class ) {
-			$this->body = json_encode( $push );
-		}
-
+	protected function __construct( string $payload, string $token, APNSRequestMetadata $metadata ) {
+		$this->body = $payload;
+		$this->token = $token;
 		$this->metadata = $metadata;
 	}
 
-	function getBody() {
+	function getToken(): string {
+		return $this->token;
+	}
+
+	function getBody(): string {
 		return $this->body;
 	}
 
-	function getUrlForToken( string $token ): string {
-		return $this->configuration->get_endpoint() . $token;
+	function getUrlForConfiguration( APNSConfiguration $configuration ): string {
+		return $configuration->get_endpoint() . $this->token;
 	}
 
-	function getHeaders() {
+	function getHeadersForConfiguration( APNSConfiguration $configuration ) {
 
 		$headers = [
 			// Typical HTTP Headers
-			'authorization' => 'bearer ' . $this->configuration->getProviderToken(),
+			'authorization' => 'bearer ' . $configuration->getProviderToken(),
 			'content-type' => 'application/json',
 			'content-length' => strlen( $this->body ),
 
@@ -50,8 +53,8 @@ class APNSRequest {
 		];
 
 		// A developer-provided user agent is optional, and if it's not set, the transport mechanism can manually specify this
-		if ( ! is_null( $this->configuration->getUserAgent() ) ) {
-			$headers['user-agent'] = $this->configuration->getUserAgent();
+		if ( ! is_null( $configuration->getUserAgent() ) ) {
+			$headers['user-agent'] = $configuration->getUserAgent();
 		}
 
 		// Only include priority if it has been specifically set by the developer

@@ -4,25 +4,18 @@ require_once('vendor/autoload.php');
 
 echo '=== Push Notification Server ===' . PHP_EOL;
 
-$key_id = getenv('KEY_ID');
-$team_id = getenv('TEAM_ID');
-
-$auth = new APNSCredentials($key_id, $team_id, getenv('KEY'));
+$auth = new APNSCredentials(getenv('KEY_ID'), getenv('TEAM_ID'), getenv('KEY'));
 $configuration = APNSConfiguration::production($auth);
-$configuration->setUserAgent('wordpress.com development');
+$configuration->setUserAgent(getenv('USER_AGENT'));
 $client = new APNSClient( $configuration );
 
 echo "\t Connected.\n";
 
-$messages = [];
+$token = getenv('TOKEN');
+$payload = new APNSPayload( new APNSAlert("Title", "Message") );
+$metadata = new APNSRequestMetadata('org.wordpress');
+$request = APNSRequest::fromPayload($payload, $token, $metadata);
 
-while(true) {
-	$start = microtime(true);
-
-	$client->sendPushes($messages);
-
-	$time = microtime(true) - $start;
-	echo PHP_EOL . '=== Done in ' . $time . ' seconds === ' . PHP_EOL;
-}
+$client->sendRequests( [ $request ] );
 
 $client->close();
