@@ -109,4 +109,8 @@ abstract class APNSTest extends TestCase {
 
 		return $object;
 	}
+
+	function get_test_resource( $key ): string {
+		return file_get_contents( 'tests/resources/' . $key . '.txt' );
+	}
 }
