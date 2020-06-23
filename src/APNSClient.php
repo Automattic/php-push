@@ -9,6 +9,8 @@ class APNSClient {
 	private $provider_token;
 	private $port_number = 443;
 
+	private $debug = false;
+
 	public function __construct( APNSConfiguration $configuration ) {
 		$this->configuration = $configuration;
 
@@ -57,7 +59,7 @@ class APNSClient {
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 		curl_setopt( $ch, CURLOPT_POST, 1 );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request->getBody() );
-		curl_setopt( $ch, CURLOPT_VERBOSE, false );
+		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port_number );
 
 		curl_multi_add_handle( $this->curl_handle, $ch );
