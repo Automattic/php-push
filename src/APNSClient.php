@@ -32,13 +32,12 @@ class APNSClient {
 	}
 
 	public function sendRequests( array $requests ) {
-
 		foreach ( $requests as $request ) {
 			assert( get_class( $request ) === APNSRequest::class );
 			$this->enqueueRequest( $request );
 		}
 
-		$this->flushRequestQueue();
+		return $this->sendQueuedRequests();
 	}
 
 	public function close() {
@@ -50,14 +49,15 @@ class APNSClient {
 	}
 
 	private function enqueueRequest( APNSRequest $request ) {
-		$headers = $this->convertRequestHeaders( $request->getHeadersForConfiguration( $this->configuration ) );
+		$headers = $request->getHeadersForConfiguration( $this->configuration );
+		$headers = $this->convertRequestHeaders( $headers );
 
 		$ch = curl_init( $request->getUrlForConfiguration( $this->configuration ) );
+		curl_setopt( $ch, CURLOPT_HEADER, true );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		// We know the server supports HTTP2, so we can avoid the HTTP1.1 => 2 upgrade
-		curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE );
+		curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS );
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
-		curl_setopt( $ch, CURLOPT_POST, 1 );
+		curl_setopt( $ch, CURLOPT_POST, true );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request->getBody() );
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port_number );
@@ -65,10 +65,12 @@ class APNSClient {
 		curl_multi_add_handle( $this->curl_handle, $ch );
 	}
 
-	private function flushRequestQueue() {
+	private function sendQueuedRequests() {
+
+		$responses = [];
 
 		do {
-			$status = curl_multi_exec( $this->curl_handle, $active );
+			$status = curl_multi_exec( $this->curl_handle, $running_operation_count );
 
 			while ( true ) {
 
@@ -78,37 +80,38 @@ class APNSClient {
 					break;
 				}
 
-				if ( ! $info ) {
-					throw new Exception( "Couldn't send request" );
-				}
-
 				if ( $info['result'] !== CURLE_OK ) {
 					throw new Exception( 'Request failed: ' . $info['result'] );
 				}
 
 				if ( $info && ! is_null( $info['handle'] ) ) {
 					$handle = $info['handle'];
-					// $url = curl_getinfo( $handle, CURLINFO_EFFECTIVE_URL );
-					// $status_code = curl_getinfo( $handle, CURLINFO_HTTP_CODE );
-					// $bytes_uploaded = curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD );
-					// $body = curl_multi_getcontent( $handle );
-					echo '.';
-					// echo "\n\nResponse:\n";
-					// echo "URL:\t\t$url\n";
-					// echo "Status Code:\t$status_code \n";
-					// echo "Response Body:\t$body\n";
-					// echo "\n===\n";
-					// echo "\nStats:\n";
-					// echo "Bytes Sent:\t$bytes_uploaded\n";
+					$responses[] = $this->processResponse( $handle );
+
 					curl_multi_remove_handle( $this->curl_handle, $handle );
 					curl_close( $handle );
 				}
 			}
-		} while ( $active && $status === CURLM_OK );
+		} while ( $running_operation_count > 0 && $status === CURLM_OK );
 
 		if ( $status !== CURLM_OK ) {
 			throw new Exception( 'Unable to continue sending – ' . curl_multi_strerror( $status ) );
 		}
+
+		return $responses;
+	}
+
+	private function processResponse( $handle ): APNSResponse {
+		// Error Code and Details
+		$status_code = intval( curl_getinfo( $handle, CURLINFO_HTTP_CODE ) );
+		$response_text = curl_multi_getcontent( $handle );
+
+		// Interesting Request Metrics for stats
+		$transfer_time = curl_getinfo( $handle, CURLINFO_TOTAL_TIME_T );
+		$total_bytes = curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD_T );
+
+		$metrics = new APNSResponseMetrics( $total_bytes, $transfer_time );
+		return new APNSResponse( $status_code, $response_text, $metrics );
 	}
 
 	private function convertRequestHeaders( $_headers ) {

@@ -1,0 +1,4 @@
+HTTP/2 400 
+apns-id: 8FE746FE-1112-2966-3590-2DC3F038536B
+
+{"reason":"BadDeviceToken"}
