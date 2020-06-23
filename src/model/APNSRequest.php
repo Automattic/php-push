@@ -1,7 +1,7 @@
 <?php
 declare( strict_types = 1 );
 
-class APNSRequest {
+class APNSRequest implements JsonSerializable {
 
 	// A string representing the request payload
 	private $body;
@@ -12,11 +12,11 @@ class APNSRequest {
 	// The device token
 	private $token;
 
-	static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ) {
+	static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ): APNSRequest {
 		return new APNSRequest( $payload, $token, $metadata );
 	}
 
-	static function fromPayload( APNSPayload $payload, $token, APNSRequestMetadata $metadata ) {
+	static function fromPayload( APNSPayload $payload, $token, APNSRequestMetadata $metadata ): APNSRequest {
 		return new APNSRequest( json_encode( $payload ), $token, $metadata );
 	}
 
@@ -73,5 +73,13 @@ class APNSRequest {
 		}
 
 		return $headers;
+	}
+
+	function jsonSerialize() {
+		return [
+			'payload' => $this->body,
+			'metadata' => $this->metadata,
+			'token' => $this->token,
+		];
 	}
 }

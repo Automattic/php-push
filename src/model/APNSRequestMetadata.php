@@ -1,14 +1,14 @@
 <?php
 declare( strict_types = 1 );
 
-class APNSRequestMetadata {
+class APNSRequestMetadata implements JsonSerializable {
 
+	private $topic;
 	private $push_type = APNSPushType::ALERT;
-	private $expiration = 0;
+	private $expiration_timestamp = 0;
 	private $priority = APNSPriority::IMMEDIATE;
 	private $collapse_identifier = null;
-	private $topic;
-	private $uuid;
+	private $uuid = null;
 
 	function __construct( string $topic ) {
 		$this->topic = $topic;
@@ -49,7 +49,7 @@ class APNSRequestMetadata {
 	 * @return int
 	 */
 	function getExpirationTimestamp() {
-		return $this->expiration;
+		return $this->expiration_timestamp;
 	}
 
 	/**
@@ -60,7 +60,7 @@ class APNSRequestMetadata {
 	 * @return Current_Class_Name
 	 */
 	function setExpirationTimestamp( int $timestamp ) {
-		$this->expiration = $timestamp;
+		$this->expiration_timestamp = $timestamp;
 		return $this;
 	}
 
@@ -121,5 +121,43 @@ class APNSRequestMetadata {
 	function setUuid( string $uuid ) {
 		$this->uuid = $uuid;
 		return $this;
+	}
+
+	function jsonSerialize() {
+		$object = [
+			'topic' => $this->topic,
+		];
+
+		if ( $this->push_type !== APNSPushType::ALERT ) {
+			$object['push_type'] = $this->push_type;
+		}
+
+		if ( $this->expiration_timestamp !== 0 ) {
+			$object['expiration_timestamp'] = $this->expiration_timestamp;
+		}
+
+		if ( $this->priority !== APNSPriority::IMMEDIATE ) {
+			$object['priority'] = $this->priority;
+		}
+
+		if ( ! is_null( $this->collapse_identifier ) ) {
+			$object['collapse_identifier'] = $this->collapse_identifier;
+		}
+
+		if ( ! is_null( $this->uuid ) ) {
+			$object['uuid'] = $this->uuid;
+		}
+
+		return $object;
+	}
+
+	static function fromObject( object $object ): APNSRequestMetadata {
+		$metadata = new APNSRequestMetadata( $object->topic );
+
+		foreach ( $object as $key => $value ) {
+			$metadata->$key = $value;
+		}
+
+		return $metadata;
 	}
 }
