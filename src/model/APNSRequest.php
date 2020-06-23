@@ -34,6 +34,10 @@ class APNSRequest {
 		return $this->body;
 	}
 
+	function getUuid(): string {
+		return $this->metadata->getUuid();
+	}
+
 	function getUrlForConfiguration( APNSConfiguration $configuration ): string {
 		return $configuration->get_endpoint() . $this->token;
 	}
@@ -73,5 +77,25 @@ class APNSRequest {
 		}
 
 		return $headers;
+	}
+
+	public function toJSON(): string {
+		return json_encode(
+			[
+				'payload' => $this->body,
+				'metadata' => $this->metadata->toJSON(),
+				'token' => $this->token,
+			]
+		);
+	}
+
+	public static function fromJSON( $data ): self {
+		$object = json_decode( $data );
+
+		$payload = $object->payload;
+		$metadata = APNSRequestMetadata::fromJSON( $object->metadata );
+		$token = $object->token;
+
+		return new APNSRequest( $payload, $token, $metadata );
 	}
 }
