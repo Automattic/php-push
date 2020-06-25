@@ -9,11 +9,15 @@ global $capsule;
 while(true) {
 	$notifications = [];
 
-	for($i = 0; $i < random_int(2,15); $i++) {
+	$token = bin2hex(random_bytes(32));
+	saveToken($token);
+
+	for($i = 0; $i < 2; $i++) {
 		$message = bin2hex(random_bytes(random_int(2, 2048)));
 		$alert = new APNSAlert('Title', $message);
-		savePush(new APNSPush($alert, getenv('TOPIC')), getenv('TOKEN'));
-	}
+		$payload = new APNSPayload($alert);
 
-	sleep(1);
+		$request = APNSRequest::fromPayload($payload, $token, new APNSRequestMetadata(getenv('topic')));
+		savePush($request);
+	}
 }
