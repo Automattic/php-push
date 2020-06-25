@@ -10,6 +10,7 @@ class APNSClient {
 	private $port_number = 443;
 
 	private $debug = false;
+	private $disable_ssl_verification = false;
 
 	public function __construct( APNSConfiguration $configuration ) {
 		$this->configuration = $configuration;
@@ -48,6 +49,11 @@ class APNSClient {
 		$this->debug = $debug;
 	}
 
+	public function setDisableSSLVerification( bool $disable ): self {
+		$this->disable_ssl_verification = $disable;
+		return $this;
+	}
+
 	private function enqueueRequest( APNSRequest $request ) {
 		$headers = $request->getHeadersForConfiguration( $this->configuration );
 		$headers = $this->convertRequestHeaders( $headers );
@@ -61,6 +67,7 @@ class APNSClient {
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request->getBody() );
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port_number );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, ! $this->disable_ssl_verification );
 
 		curl_multi_add_handle( $this->curl_handle, $ch );
 	}
