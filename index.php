@@ -45,13 +45,13 @@ foreach ( $responses as $response ) {
 }
 
 echo '=== Requests to Delete ===' . PHP_EOL;
-foreach ( $notifications_to_delete as $id ) {
-	echo "\t$id" . PHP_EOL;
+foreach ( $notifications_to_delete as $uuid ) {
+	echo "\t$uuid" . PHP_EOL;
 }
 
 echo '=== Requests to Retry ===' . PHP_EOL;
-foreach ( $notifications_to_retry as $id ) {
-	echo "\t$id" . PHP_EOL;
+foreach ( $notifications_to_retry as $uuid ) {
+	echo "\t$uuid" . PHP_EOL;
 }
 
 echo '=== Tokens to Delete ===' . PHP_EOL;
