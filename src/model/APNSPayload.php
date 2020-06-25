@@ -6,8 +6,9 @@ class APNSPayload implements JsonSerializable {
 
 	private $custom = [];
 
-	function __construct( APNSAlert $alert ) {
-		$this->internal['alert'] = $alert;
+	function __construct( $alert, array $custom = [] ) {
+		$this->setAlert( $alert );
+		$this->custom = $custom;
 	}
 
 	function setAlert( $alert ) {
