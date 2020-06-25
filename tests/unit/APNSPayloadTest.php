@@ -2,10 +2,21 @@
 declare( strict_types = 1 );
 class APNSPayloadTest extends APNSTest {
 
-	public function testThatAlertSetterWorks() {
+	public function testThatAlertSetterWorksForAlertObjects() {
 		$alert = $this->new_alert();
 		$push = $this->new_payload()->setAlert( $alert );
 		$this->assertEquals( $this->encode( $alert ), $this->encode( $push )->aps->alert );
+	}
+
+	public function testThatAlertSetterWorksForStrings() {
+		$alert = $this->random_string();
+		$push = $this->new_payload()->setAlert( $alert );
+		$this->assertEquals( $alert, $this->encode( $push )->aps->alert );
+	}
+
+	public function testThatAlertSetterThrowsForInvalidValues() {
+		$this->expectException( InvalidArgumentException::class );
+		$this->new_payload()->setAlert( 0 );
 	}
 
 	public function testThatSoundIsNotPresentByDefault() {
