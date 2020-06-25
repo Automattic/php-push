@@ -10,9 +10,19 @@ class APNSPayload implements JsonSerializable {
 		$this->internal['alert'] = $alert;
 	}
 
-	function setAlert( APNSAlert $alert ) {
-		$this->internal['alert'] = $alert;
-		return $this;
+	function setAlert( $alert ) {
+
+		if ( is_string( $alert ) ) {
+			$this->internal['alert'] = $alert;
+			return $this;
+		}
+
+		if ( is_object( $alert ) && get_class( $alert ) === APNSAlert::class ) {
+			$this->internal['alert'] = $alert;
+			return $this;
+		}
+
+		throw new InvalidArgumentException( 'Invalid Alert – you must pass either a string or `APNSAlert` object.' );
 	}
 
 	function setBadgeCount( int $count ) {
