@@ -45,8 +45,9 @@ class APNSClient {
 		return curl_multi_close( $this->curl_handle );
 	}
 
-	public function setDebug( bool $debug ) {
+	public function setDebug( bool $debug ): self {
 		$this->debug = $debug;
+		return $this;
 	}
 
 	public function setDisableSSLVerification( bool $disable ): self {
