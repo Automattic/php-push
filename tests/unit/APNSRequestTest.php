@@ -108,9 +108,9 @@ class APNSRequestTest extends APNSTest {
 		$this->assertEquals( 5, $headers['apns-priority'] );
 	}
 
-	public function testThatGetHeadersDoesNotContainApnsIdByDefault() {
+	public function testThatGetHeadersAlwaysContainApnsIdByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayNotHasKey( 'apns-id', $this->getRequest()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayHasKey( 'apns-id', $this->getRequest()->getHeadersForConfiguration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsApnsIdIfSet() {

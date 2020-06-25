@@ -8,10 +8,16 @@ class APNSRequestMetadata {
 	private $priority = APNSPriority::IMMEDIATE;
 	private $collapse_identifier = null;
 	private $topic;
-	private $uuid;
+	private $uuid = null;
 
-	function __construct( string $topic ) {
+	function __construct( string $topic, string $uuid = null ) {
 		$this->topic = $topic;
+
+		if ( is_null( $uuid ) ) {
+			$uuid = $this->generate_uuid();
+		}
+
+		$this->uuid = $uuid;
 	}
 
 	function getTopic() {
@@ -114,12 +120,27 @@ class APNSRequestMetadata {
 		return $this;
 	}
 
-	function getUuid(): ?string {
+	function getUuid(): string {
 		return $this->uuid;
 	}
 
 	function setUuid( string $uuid ) {
 		$this->uuid = $uuid;
 		return $this;
+	}
+
+	// Copied from WordPress
+	private function generate_uuid(): string {
+		return sprintf(
+			'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0x0fff ) | 0x4000,
+			mt_rand( 0, 0x3fff ) | 0x8000,
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff )
+		);
 	}
 }
