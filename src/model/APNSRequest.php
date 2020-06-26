@@ -12,11 +12,11 @@ class APNSRequest {
 	// The device token
 	private $token;
 
-	static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ) {
+	static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ): self {
 		return new APNSRequest( $payload, $token, $metadata );
 	}
 
-	static function fromPayload( APNSPayload $payload, $token, APNSRequestMetadata $metadata ) {
+	static function fromPayload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata ): self {
 		return new APNSRequest( json_encode( $payload ), $token, $metadata );
 	}
 
@@ -42,7 +42,12 @@ class APNSRequest {
 		return $configuration->get_endpoint() . $this->token;
 	}
 
-	function getHeadersForConfiguration( APNSConfiguration $configuration ) {
+	/**
+	 * @return (int|mixed|null|string)[]
+	 *
+	 * @psalm-return array{authorization: string, content-type: string, content-length: int, apns-expiration: int, apns-push-type: string, apns-topic: mixed, user-agent?: null|string, apns-priority?: mixed, apns-id?: string, apns-collapse-id?: null|string}
+	 */
+	function getHeadersForConfiguration( APNSConfiguration $configuration ): array {
 
 		$headers = [
 			// Typical HTTP Headers
@@ -89,7 +94,7 @@ class APNSRequest {
 		);
 	}
 
-	public static function fromJSON( $data ): self {
+	public static function fromJSON( string $data ): self {
 		$object = json_decode( $data );
 
 		$payload = $object->payload;
