@@ -11,8 +11,8 @@ class APNSPayload implements JsonSerializable {
 	private $custom = [];
 
 	/**
-	 * Create an APNSPayload from the provided APNSAlert or string object, as well as any custom data 
-	 * 
+	 * Create an APNSPayload from the provided APNSAlert or string object, as well as any custom data
+	 *
 	 * @param string|APNSAlert $alert
 	 * @param array $custom
 	 */
@@ -23,7 +23,7 @@ class APNSPayload implements JsonSerializable {
 
 	/**
 	 * Set the alert field to the provided APNSAlert object or string.
-	 * 
+	 *
 	 * @param string|APNSAlert $alert
 	 */
 	function setAlert( $alert ): self {
@@ -48,7 +48,7 @@ class APNSPayload implements JsonSerializable {
 
 	/**
 	 * Set the alert field to the provided APNSSound object or string.
-	 * 
+	 *
 	 * @param string|APNSSound $sound
 	 */
 	function setSound( $sound ): self {

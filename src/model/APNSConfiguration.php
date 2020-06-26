@@ -26,7 +26,7 @@ class APNSConfiguration {
 
 	/**
 	 * How frequently to refresh the auth token. Specified in seconds.
-	 * 
+	 *
 	 * @var int
 	 */
 	private $token_refresh_interval = 1800;
