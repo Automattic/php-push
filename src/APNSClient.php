@@ -3,13 +3,22 @@ declare( strict_types = 1 );
 
 class APNSClient {
 
+	/** @var resource */
 	private $curl_handle;
 
+	/** @var APNSConfiguration */
 	private $configuration;
+
+	/** @var string */
 	private $provider_token;
+
+	/** @var int */
 	private $port_number = 443;
 
+	/** @var bool */
 	private $debug = false;
+
+	/** @var bool */
 	private $disable_ssl_verification = false;
 
 	public function __construct( APNSConfiguration $configuration ) {
@@ -24,15 +33,21 @@ class APNSClient {
 		$this->refreshToken();
 	}
 
-	public function setPortNumber( int $port ) {
+	public function setPortNumber( int $port ): void {
 		$this->port_number = $port;
 	}
 
-	public function refreshToken() {
+	// Can't be overridden, otherwise the subclass might not correctly refresh the token
+	public final function refreshToken(): void {
 		$this->provider_token = $this->configuration->getProviderToken();
 	}
 
-	public function sendRequests( array $requests ) {
+	/**
+	 * @return APNSResponse[]
+	 *
+	 * @psalm-return list<APNSResponse>
+	 */
+	public function sendRequests( array $requests ): array {
 		foreach ( $requests as $request ) {
 			assert( get_class( $request ) === APNSRequest::class );
 			$this->enqueueRequest( $request );
@@ -41,8 +56,8 @@ class APNSClient {
 		return $this->sendQueuedRequests();
 	}
 
-	public function close() {
-		return curl_multi_close( $this->curl_handle );
+	public function close(): void {
+		curl_multi_close( $this->curl_handle );
 	}
 
 	public function setDebug( bool $debug ): self {
@@ -55,7 +70,7 @@ class APNSClient {
 		return $this;
 	}
 
-	private function enqueueRequest( APNSRequest $request ) {
+	private function enqueueRequest( APNSRequest $request ): void {
 		$headers = $request->getHeadersForConfiguration( $this->configuration );
 		$headers = $this->convertRequestHeaders( $headers );
 
@@ -73,7 +88,12 @@ class APNSClient {
 		curl_multi_add_handle( $this->curl_handle, $ch );
 	}
 
-	private function sendQueuedRequests() {
+	/**
+	 * @return APNSResponse[]
+	 *
+	 * @psalm-return list<APNSResponse>
+	 */
+	private function sendQueuedRequests(): array {
 
 		$responses = [];
 
@@ -92,7 +112,7 @@ class APNSClient {
 					throw new Exception( 'Request failed: ' . $info['result'] );
 				}
 
-				if ( $info && ! is_null( $info['handle'] ) ) {
+				if ( ! is_null( $info['handle'] ) ) {
 					$handle = $info['handle'];
 					$responses[] = $this->processResponse( $handle );
 
@@ -109,6 +129,11 @@ class APNSClient {
 		return $responses;
 	}
 
+	/**
+	 * Parse a completed CURL handle into an APNSResponse object
+	 * 
+	 * @param resource $handle
+	 */
 	private function processResponse( $handle ): APNSResponse {
 		// Error Code and Details
 		$status_code = intval( curl_getinfo( $handle, CURLINFO_HTTP_CODE ) );
@@ -122,11 +147,15 @@ class APNSClient {
 		return new APNSResponse( $status_code, $response_text, $metrics );
 	}
 
-	private function convertRequestHeaders( $_headers ) {
-		$headers = [];
+	/**
+	 *
+	 * @param array $headers
+	 */
+	private function convertRequestHeaders( array $headers ): array {
+		$_headers = [];
 		foreach ( $_headers as $key => $value ) {
 			$headers[] = $key . ': ' . $value;
 		}
-		return $headers;
+		return $_headers;
 	}
 }

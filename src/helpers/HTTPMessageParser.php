@@ -3,12 +3,19 @@ declare( strict_types = 1 );
 
 class HTTPMessageParser {
 
+	/** @var string */
 	private $http_version;
+
+	/** @var int */
 	private $status_code;
+
+	/** @var array */
 	private $headers = [];
+
+	/** @var string */
 	private $body = '';
 
-	function __construct( $text ) {
+	function __construct( string $text ) {
 		$lines = explode( PHP_EOL, $text );
 		$line = trim( array_shift( $lines ) );
 

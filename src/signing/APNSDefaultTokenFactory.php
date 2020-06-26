@@ -11,7 +11,7 @@ class APNSDefaultTokenFactory implements APNSTokenFactory {
 		$this->credentials = $credentials;
 	}
 
-	public function get_token( $team_id, $key_id, $key_bytes ): string {
+	public function get_token( string $team_id, string $key_id, string $key_bytes ): string {
 		$payload = [
 			'iss' => $team_id,
 			'iat' => time(),

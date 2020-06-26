@@ -4,8 +4,13 @@ declare( strict_types = 1 );
 // Keys defined at https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2990112
 class APNSSound implements JsonSerializable {
 
-	private $is_critical = 0;
+	/** @var bool */
+	private $is_critical = false;
+
+	/** @var string */
 	private $name;
+
+	/** @var float */
 	private $volume;
 
 	function __construct( string $name, float $volume = 1.0, bool $is_critical = false ) {
@@ -15,11 +20,11 @@ class APNSSound implements JsonSerializable {
 	}
 
 	function getIsCritical(): bool {
-		return $this->is_critical === 1;
+		return $this->is_critical;
 	}
 
-	function setIsCritical( bool $is_critical ) {
-		$this->is_critical = $is_critical ? 1 : 0;
+	function setIsCritical( bool $is_critical ): self {
+		$this->is_critical = $is_critical;
 		return $this;
 	}
 
@@ -27,7 +32,7 @@ class APNSSound implements JsonSerializable {
 		return $this->name;
 	}
 
-	function setName( string $name ) {
+	function setName( string $name ): self {
 		$this->name = $name;
 		return $this;
 	}
@@ -36,7 +41,7 @@ class APNSSound implements JsonSerializable {
 		return $this->volume;
 	}
 
-	function setVolume( float $volume ) {
+	function setVolume( float $volume ): self {
 		if ( $volume < 0 || $volume > 1.0 ) {
 			throw new InvalidArgumentException( 'Invalid sound volume: ' . $volume . '. Valid volume levels are between 0.0 and 1.0' );
 		}
@@ -47,7 +52,7 @@ class APNSSound implements JsonSerializable {
 
 	function jsonSerialize() {
 		return [
-			'critical' => $this->is_critical,
+			'critical' => $this->is_critical ? 1 : 0,
 			'name' => $this->name,
 			'volume' => $this->volume,
 		];

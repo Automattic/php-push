@@ -3,11 +3,22 @@ declare( strict_types = 1 );
 
 class APNSRequestMetadata {
 
+	/** @var string */
 	private $topic;
+
+	/** @var string */
 	private $push_type = APNSPushType::ALERT;
+
+	/** @var int */
 	private $expiration_timestamp = 0;
+
+	/** @var int */
 	private $priority = APNSPriority::IMMEDIATE;
+
+	/** @var string | null */
 	private $collapse_identifier = null;
+
+	/** @var string */
 	private $uuid;
 
 	function __construct( string $topic, string $uuid = null ) {
@@ -15,11 +26,11 @@ class APNSRequestMetadata {
 		$this->uuid = $uuid ?? $this->generate_uuid();
 	}
 
-	function getTopic() {
+	function getTopic(): string {
 		return $this->topic;
 	}
 
-	function setTopic( string $topic ) {
+	function setTopic( string $topic ): self {
 
 		if ( empty( trim( $topic ) ) ) {
 			throw new InvalidArgumentException( 'The topic ' . $topic . ' must not be empty' );
@@ -33,7 +44,7 @@ class APNSRequestMetadata {
 		return $this->push_type;
 	}
 
-	function setPushType( string $type ) {
+	function setPushType( string $type ): self {
 		if ( ! APNSPushType::isValid( $type ) ) {
 			throw new InvalidArgumentException( 'Invalid Push Type: ' . $type );
 		}
@@ -49,7 +60,7 @@ class APNSRequestMetadata {
 	 *
 	 * @return int
 	 */
-	function getExpirationTimestamp() {
+	function getExpirationTimestamp(): int {
 		return $this->expiration_timestamp;
 	}
 
@@ -58,14 +69,14 @@ class APNSRequestMetadata {
 	 *
 	 * @param int $timestamp A UNIX timestamp expressed in seconds (UTC) identifying the date at which the notification is no longer valid and can be discarded.
 	 * If this value is nonzero, APNs stores the notification and tries to deliver it at least once, repeating the attempt as needed if it is unable to deliver the notification the first time. If the value is 0, APNs treats the notification as if it expires immediately and does not store the notification or attempt to redeliver it.
-	 * @return Current_Class_Name
+	 * @return APNSRequestMetadata
 	 */
-	function setExpirationTimestamp( int $timestamp ) {
+	function setExpirationTimestamp( int $timestamp ): self {
 		$this->expiration_timestamp = $timestamp;
 		return $this;
 	}
 
-	function getPriority() {
+	function getPriority(): int {
 		return $this->priority;
 	}
 
@@ -76,9 +87,9 @@ class APNSRequestMetadata {
 	 * Notifications with this priority must trigger an alert, sound, or badge on the target device.
 	 * It is an error to use this priority for content-available push notification.
 	 *
-	 * @return Current_Class_Name
+	 * @return APNSRequestMetadata
 	 */
-	function setNormalPriority() {
+	function setNormalPriority(): self {
 		$this->priority = APNSPriority::IMMEDIATE;
 		return $this;
 	}
@@ -88,9 +99,9 @@ class APNSRequestMetadata {
 	 *
 	 * Send the push message at a time that takes into account power considerations for the device. Notifications with this priority might be grouped and delivered in bursts. They are throttled, and in some cases are not delivered.
 	 *
-	 * @return Current_Class_Name
+	 * @return APNSRequestMetadata
 	 */
-	function setLowPriority() {
+	function setLowPriority(): self {
 		$this->priority = APNSPriority::THROTTLED;
 		return $this;
 	}
@@ -104,8 +115,9 @@ class APNSRequestMetadata {
 	 *
 	 * Multiple notifications with the same collapse identifier are displayed to the user as a single notification.
 	 * The length of this identifier must not exceed 64 bytes.
+	 * @return self
 	 */
-	function setCollapseIdentifier( string $identifier ) {
+	function setCollapseIdentifier( string $identifier ): self {
 
 		if ( strlen( $identifier ) > 64 ) {
 			throw new InvalidArgumentException( 'The collapse identifier ' . $identifier . ' is greater than 64 byes in length' );
@@ -119,7 +131,7 @@ class APNSRequestMetadata {
 		return $this->uuid;
 	}
 
-	function setUuid( string $uuid ) {
+	function setUuid( string $uuid ): self {
 		$this->uuid = $uuid;
 		return $this;
 	}
@@ -164,7 +176,7 @@ class APNSRequestMetadata {
 		return json_encode( $object );
 	}
 
-	public static function fromJSON( $data ): self {
+	public static function fromJSON( string $data ): self {
 		$object = json_decode( $data );
 
 		$topic = $object->topic;

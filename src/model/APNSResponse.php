@@ -3,9 +3,16 @@ declare( strict_types = 1 );
 
 class APNSResponse {
 
+	/** @var string */
 	private $uuid;
+
+	/** @var int */
 	private $status_code;
+
+	/** @var string|null */
 	private $error_message;
+
+	/** @var APNSResponseMetrics */
 	private $metrics;
 
 	function __construct( int $status_code, string $response_text, APNSResponseMetrics $metrics ) {
@@ -33,7 +40,7 @@ class APNSResponse {
 		return $this->status_code !== 200;
 	}
 
-	function getErrorMessage(): string {
+	function getErrorMessage(): ?string {
 		return $this->error_message;
 	}
 
