@@ -29,6 +29,7 @@
     "scripts": {
         "lint": "./vendor/bin/phpcs",
         "fix": "./vendor/bin/phpcbf",
-        "test": "./vendor/bin/phpunit"
+        "test": "./vendor/bin/phpunit",
+        "psalm": "./vendor/bin/psalm"
     }
 }

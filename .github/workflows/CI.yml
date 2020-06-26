@@ -25,7 +25,9 @@ jobs:
       run: composer install --prefer-dist --no-progress --no-suggest
     - name: Lint
       run: composer lint
-      
+    - name: Validate
+      run: composer psalm
+
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest

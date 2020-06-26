@@ -131,7 +131,7 @@ class APNSClient {
 
 	/**
 	 * Parse a completed CURL handle into an APNSResponse object
-	 * 
+	 *
 	 * @param resource $handle
 	 */
 	private function processResponse( $handle ): APNSResponse {
