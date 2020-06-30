@@ -12,6 +12,11 @@
             "tests/helpers/TestHelpers.php"
         ]
     },
+    "config": {
+        "platform": {
+            "php": "7.3"
+        }
+    },
     "require": {
         "firebase/php-jwt": "^5.2",
         "illuminate/database": "^7.14",
