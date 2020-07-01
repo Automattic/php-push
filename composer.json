@@ -18,11 +18,12 @@
         }
     },
     "require": {
-        "firebase/php-jwt": "^5.2",
-        "illuminate/database": "^7.14",
-        "vlucas/phpdotenv": "^4.1"
+        "firebase/php-jwt": "^5.2"
+
     },
     "require-dev": {
+        "illuminate/database": "^7.14",
+        "vlucas/phpdotenv": "^4.1",
         "phpunit/phpunit": "^9.1",
         "phpunit/php-code-coverage": "^8.0",
         "mockery/mockery": "^1.4",
