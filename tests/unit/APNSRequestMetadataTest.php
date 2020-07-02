@@ -79,4 +79,59 @@ class APNSRequestMetadataTest extends APNSTest {
 		$meta = $this->new_metadata()->setUuid( $uuid );
 		$this->assertEquals( $uuid, $meta->getUuid() );
 	}
+
+	public function testThatMetadataSerializationIncludesTopic() {
+		$topic = $this->random_string();
+		$encoded = $this->from_json( $this->new_metadata( $topic )->toJSON() );
+		$this->assertEquals( $topic, $encoded->topic );
+	}
+
+	public function testThatMetadataSerializationIncludesUuid() {
+		$uuid = $this->random_string();
+		$encoded = $this->from_json( $this->new_metadata( $this->random_string(), $uuid )->toJSON() );
+		$this->assertEquals( $uuid, $encoded->uuid );
+	}
+
+	public function testThatMetadataSerializationDoesNotIncludePushTypeByDefault() {
+		$encoded = $this->from_json( $this->new_metadata()->toJSON() );
+		$this->assertFalse( property_exists( $encoded, 'push_type' ) );
+	}
+
+	public function testThatMetadataSerializationIncludesPushTypeIfSpecified() {
+		$push_type = APNSPushType::MDM;
+		$encoded = $this->from_json( $this->new_metadata()->setPushType( $push_type )->toJSON() );
+		$this->assertEquals( $push_type, $encoded->push_type );
+	}
+
+	public function testThatMetadataSerializationDoesNotIncludeExpirationTimestampByDefault() {
+		$encoded = $this->from_json( $this->new_metadata()->toJSON() );
+		$this->assertFalse( property_exists( $encoded, 'expiration_timestamp' ) );
+	}
+
+	public function testThatMetadataSerializationIncludesExpirationTimestampIfSpecified() {
+		$expires_at = random_int( 1, time() );
+		$encoded = $this->from_json( $this->new_metadata()->setExpirationTimestamp( $expires_at )->toJSON() );
+		$this->assertEquals( $expires_at, $encoded->expiration_timestamp );
+	}
+
+	public function testThatMetadataSerializationDoesNotIncludePriorityByDefault() {
+		$encoded = $this->from_json( $this->new_metadata()->toJSON() );
+		$this->assertFalse( property_exists( $encoded, 'priority' ) );
+	}
+
+	public function testThatMetadataSerializationIncludesPriorityIfSpecified() {
+		$encoded = $this->from_json( $this->new_metadata()->setLowPriority()->toJSON() );
+		$this->assertEquals( APNSPriority::THROTTLED, $encoded->priority );
+	}
+
+	public function testThatMetadataSerializationDoesNotIncludeCollapseIdentifierByDefault() {
+		$encoded = $this->from_json( $this->new_metadata()->toJSON() );
+		$this->assertFalse( property_exists( $encoded, 'collapse_identifier' ) );
+	}
+
+	public function testThatMetadataSerializationIncludesCollapseIdentifierIfSpecified() {
+		$identifier = $this->random_string();
+		$encoded = $this->from_json( $this->new_metadata()->setCollapseIdentifier( $identifier )->toJSON() );
+		$this->assertEquals( $identifier, $encoded->collapse_identifier );
+	}
 }
