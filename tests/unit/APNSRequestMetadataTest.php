@@ -134,4 +134,69 @@ class APNSRequestMetadataTest extends APNSTest {
 		$encoded = $this->from_json( $this->new_metadata()->setCollapseIdentifier( $identifier )->toJSON() );
 		$this->assertEquals( $identifier, $encoded->collapse_identifier );
 	}
+
+	public function testThatMetadataDeserializationIncludesTopic() {
+		$topic = $this->random_string();
+		$meta = APNSRequestMetadata::fromJSON( $this->new_metadata( $topic )->toJSON() );
+		$this->assertEquals( $topic, $meta->getTopic() );
+	}
+
+	public function testThatMetadataDeserializationIncludesUuid() {
+		$uuid = $this->random_uuid();
+		$meta = APNSRequestMetadata::fromJSON( $this->new_metadata( null, $uuid )->toJSON() );
+		$this->assertEquals( $uuid, $meta->getUuid() );
+	}
+
+	public function testThatMetadataDeserializationThrowsForMissingTopic() {
+		$json = $this->json_without( $this->new_metadata()->toJSON(), 'topic' );
+		$this->expectException( InvalidArgumentException::class );
+		APNSRequestMetadata::fromJSON( $json );
+	}
+
+	public function testThatMetadataDeserializationThrowsForMissingUuid() {
+		$json = $this->json_without( $this->new_metadata()->toJSON(), 'uuid' );
+		$this->expectException( InvalidArgumentException::class );
+		APNSRequestMetadata::fromJSON( $json );
+	}
+
+	public function testThatMetadataDeserializationIncludesPushTypeIfPresent() {
+		$push_type = APNSPushType::MDM;
+		$json = $this->json_adding( $this->new_metadata()->toJSON(), 'push_type', $push_type );
+		$meta = APNSRequestMetadata::fromJSON( $json );
+		$this->assertEquals( $push_type, $meta->getPushType() );
+	}
+
+	public function testThatMetadataDeserializationIncludesExpirationTimestampIfPresent() {
+		$expiration_timestamp = time();
+		$json = $this->json_adding( $this->new_metadata()->toJSON(), 'expiration_timestamp', $expiration_timestamp );
+		$meta = APNSRequestMetadata::fromJSON( $json );
+		$this->assertEquals( $expiration_timestamp, $meta->getExpirationTimestamp() );
+	}
+
+	public function testThatMetadataDeserializationIncludesLowPriorityIfPresent() {
+		$priority = APNSPriority::THROTTLED;
+		$json = $this->json_adding( $this->new_metadata()->toJSON(), 'priority', $priority );
+		$meta = APNSRequestMetadata::fromJSON( $json );
+		$this->assertEquals( $priority, $meta->getPriority() );
+	}
+
+	public function testThatMetadataDeserializationIncludesNormalPriorityIfPresent() {
+		$priority = APNSPriority::IMMEDIATE;
+		$json = $this->json_adding( $this->new_metadata()->toJSON(), 'priority', $priority );
+		$meta = APNSRequestMetadata::fromJSON( $json );
+		$this->assertEquals( $priority, $meta->getPriority() );
+	}
+
+	public function testThatMetadataDeserializationThrowsForInvalidPriority() {
+		$json = $this->json_adding( $this->new_metadata()->toJSON(), 'priority', 0 );
+		$this->expectException( InvalidArgumentException::class );
+		APNSRequestMetadata::fromJSON( $json );
+	}
+
+	public function testThatMetadataDeserializationIncludesCollapseIdentifierIfPresent() {
+		$collapse_identifier = $this->random_string();
+		$json = $this->json_adding( $this->new_metadata()->toJSON(), 'collapse_identifier', $collapse_identifier );
+		$meta = APNSRequestMetadata::fromJSON( $json );
+		$this->assertEquals( $collapse_identifier, $meta->getCollapseIdentifier() );
+	}
 }

@@ -179,18 +179,40 @@ class APNSRequestMetadata {
 	public static function fromJSON( string $data ): self {
 		$object = json_decode( $data );
 
-		$topic = $object->topic;
-
-		if ( is_null( $topic ) ) {
+		if ( ! property_exists( $object, 'topic' ) || is_null( $object->topic ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `topic` is not present' );
 		}
 
-		$uuid = $object->uuid;
-
-		if ( is_null( $uuid ) ) {
+		if ( ! property_exists( $object, 'uuid' ) || is_null( $object->uuid ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `uuid` is not present' );
 		}
 
-		return new APNSRequestMetadata( $topic, $uuid );
+		$metadata = new APNSRequestMetadata( $object->topic, $object->uuid );
+
+		if ( property_exists( $object, 'push_type' ) && ! is_null( $object->push_type ) ) {
+			$metadata->setPushType( $object->push_type );
+		}
+
+		if ( property_exists( $object, 'expiration_timestamp' ) && ! is_null( $object->expiration_timestamp ) ) {
+			$metadata->setExpirationTimestamp( $object->expiration_timestamp );
+		}
+
+		if ( property_exists( $object, 'priority' ) && ! is_null( $object->priority ) ) {
+			if ( ! APNSPriority::isValid( $object->priority ) ) {
+				throw new InvalidArgumentException( 'Unable to unserialize object – `priority` is invalid' );
+			}
+
+			if ( $object->priority === APNSPriority::IMMEDIATE ) {
+				$metadata->setNormalPriority();
+			} elseif ( $object->priority === APNSPriority::THROTTLED ) {
+				$metadata->setLowPriority();
+			}
+		}
+
+		if ( property_exists( $object, 'collapse_identifier' ) && ! is_null( $object->collapse_identifier ) ) {
+			$metadata->setCollapseIdentifier( $object->collapse_identifier );
+		}
+
+		return $metadata;
 	}
 }
