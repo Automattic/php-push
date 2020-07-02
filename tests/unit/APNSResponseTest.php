@@ -19,4 +19,31 @@ class APNSResponseTest extends APNSTest {
 		$this->assertEquals( 400, $response->getStatusCode() );
 		$this->assertEquals( 'BadDeviceToken', $response->getErrorMessage() );
 	}
+
+	public function testThatUnrecoverableErrorsAreCorrectlyRecognized() {
+		$this->assertTrue( $this->makeAPNSResponseFor( 400 )->isUnrecoverableError() );
+		$this->assertTrue( $this->makeAPNSResponseFor( 403 )->isUnrecoverableError() );
+		$this->assertTrue( $this->makeAPNSResponseFor( 404 )->isUnrecoverableError() );
+		$this->assertTrue( $this->makeAPNSResponseFor( 405 )->isUnrecoverableError() );
+		$this->assertTrue( $this->makeAPNSResponseFor( 410 )->isUnrecoverableError() );
+		$this->assertTrue( $this->makeAPNSResponseFor( 413 )->isUnrecoverableError() );
+		$this->assertFalse( $this->makeAPNSResponseFor( 429 )->isUnrecoverableError() );
+	}
+
+	private function makeAPNSResponseFor( int $status_code ) {
+		return new APNSResponse(
+			$status_code,
+			$this->fakeAPNSHTTPFailureResponse( $status_code, 'not read here' ),
+			new APNSResponseMetrics()
+		);
+	}
+
+	private function fakeAPNSHTTPFailureResponse( int $status_code, string $reason ): string {
+		return <<<TEXT
+HTTP/2 $status_code
+apns-id: 8FE746FE-1112-2966-3590-2DC3F038536B
+
+{"reason":"$reason"}
+TEXT;
+	}
 }
