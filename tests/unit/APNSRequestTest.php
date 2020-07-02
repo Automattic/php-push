@@ -182,4 +182,40 @@ class APNSRequestTest extends APNSTest {
 		$request = $this->new_request_from_token( $token );
 		$this->assertEquals( $token, $request->getToken() );
 	}
+
+	public function testThatRequestDeserializationIncludesPayload() {
+		$payload = $this->new_payload();
+		$request = APNSRequest::fromJSON( $this->new_request( $payload )->toJSON() );
+		$this->assertEquals( json_encode( $payload ), $request->getBody() );
+	}
+
+	public function testThatRequestDeserializationIncludesToken() {
+		$token = $this->random_string();
+		$request = APNSRequest::fromJSON( $this->new_request_from_token( $token )->toJSON() );
+		$this->assertEquals( $token, $request->getToken() );
+	}
+
+	public function testThatRequestDeserializationIncludesMetadata() {
+		$meta = $this->new_metadata();
+		$request = APNSRequest::fromJSON( $this->new_request_from_metadata( $meta )->toJSON() );
+		$this->assertEquals( $meta, $request->getMetadata() );
+	}
+
+	public function testThatRequestDeserializationThrowsForMissingPayload() {
+		$json = $this->json_without( $this->new_request()->toJSON(), 'payload' );
+		$this->expectException( InvalidArgumentException::class );
+		APNSRequest::fromJSON( $json );
+	}
+
+	public function testThatRequestDeserializationThrowsForMissingToken() {
+		$json = $this->json_without( $this->new_request()->toJSON(), 'token' );
+		$this->expectException( InvalidArgumentException::class );
+		APNSRequest::fromJSON( $json );
+	}
+
+	public function testThatRequestDeserializationThrowsForMissingMetadata() {
+		$json = $this->json_without( $this->new_request()->toJSON(), 'metadata' );
+		$this->expectException( InvalidArgumentException::class );
+		APNSRequest::fromJSON( $json );
+	}
 }

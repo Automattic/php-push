@@ -31,6 +31,10 @@ class APNSRequest {
 		return $this->token;
 	}
 
+	function getMetadata(): APNSRequestMetadata {
+		return $this->metadata;
+	}
+
 	function getBody(): string {
 		return $this->body;
 	}
@@ -89,8 +93,8 @@ class APNSRequest {
 		return json_encode(
 			[
 				'payload' => $this->body,
-				'metadata' => $this->metadata->toJSON(),
 				'token' => $this->token,
+				'metadata' => $this->metadata->toJSON(),
 			]
 		);
 	}
@@ -98,10 +102,18 @@ class APNSRequest {
 	public static function fromJSON( string $data ): self {
 		$object = json_decode( $data );
 
-		$payload = $object->payload;
-		$metadata = APNSRequestMetadata::fromJSON( $object->metadata );
-		$token = $object->token;
+		if ( ! property_exists( $object, 'payload' ) || is_null( $object->payload ) ) {
+			throw new InvalidArgumentException( 'Unable to unserialize object – `payload` is invalid' );
+		}
 
-		return new APNSRequest( $payload, $token, $metadata );
+		if ( ! property_exists( $object, 'token' ) || is_null( $object->token ) ) {
+			throw new InvalidArgumentException( 'Unable to unserialize object – `token` is invalid' );
+		}
+
+		if ( ! property_exists( $object, 'metadata' ) || is_null( $object->metadata ) ) {
+			throw new InvalidArgumentException( 'Unable to unserialize object – `metadata` is invalid' );
+		}
+
+		return new APNSRequest( $object->payload, $object->token, APNSRequestMetadata::fromJSON( $object->metadata ) );
 	}
 }
