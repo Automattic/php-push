@@ -20,7 +20,7 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetBodyRetrievesJSONEncodedPush() {
 		$push = $this->new_payload();
-		$this->assertEquals( json_encode( $push ), $this->getRequest( $push )->getBody() );
+		$this->assertEquals( json_encode( $push ), $this->new_request( $push )->getBody() );
 	}
 
 	public function testThatGetUuidRetrievesUuid() {
@@ -34,7 +34,7 @@ class APNSRequestTest extends APNSTest {
 		$token = $this->random_string();
 		$configuration = $this->new_sandbox_configuration();
 
-		$req = $this->getRequest( $this->new_payload(), $token, $this->new_metadata() );
+		$req = $this->new_request( $this->new_payload(), $token, $this->new_metadata() );
 
 		$this->assertEquals( APNSConfiguration::APNS_ENDPOINT_SANDBOX . $token, $req->getUrlForConfiguration( $configuration ) );
 	}
@@ -43,7 +43,7 @@ class APNSRequestTest extends APNSTest {
 		$token = $this->random_string();
 		$configuration = $this->new_configuration_with_mocked_provider_token( $token );
 
-		$headers = $this->getRequest( $this->new_payload(), $token, $this->new_metadata() )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), $token, $this->new_metadata() )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'authorization', $headers );
 		$this->assertEquals( 'bearer ' . $token, $headers['authorization'] );
@@ -52,7 +52,7 @@ class APNSRequestTest extends APNSTest {
 	public function testThatGetHeadersContainsContentType() {
 		$configuration = $this->new_configuration();
 
-		$headers = $this->getRequest( $this->new_payload() )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload() )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'content-type', $headers );
 		$this->assertEquals( 'application/json', $headers['content-type'] );
@@ -62,7 +62,7 @@ class APNSRequestTest extends APNSTest {
 		$push = $this->new_payload();
 		$configuration = $this->new_configuration();
 
-		$headers = $this->getRequest( $push )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $push )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'content-length', $headers );
 		$this->assertEquals( strlen( json_encode( $push ) ), $headers['content-length'] );
@@ -73,7 +73,7 @@ class APNSRequestTest extends APNSTest {
 		$expiration = time() + 60;
 		$meta = $this->new_metadata()->setExpirationTimestamp( $expiration );
 
-		$headers = $this->getRequest( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-expiration', $headers );
 		$this->assertEquals( $expiration, $headers['apns-expiration'] );
@@ -84,7 +84,7 @@ class APNSRequestTest extends APNSTest {
 		$push_type = APNSPushType::MDM;
 		$meta = $this->new_metadata()->setPushType( $push_type );
 
-		$headers = $this->getRequest( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-push-type', $headers );
 		$this->assertEquals( $push_type, $headers['apns-push-type'] );
@@ -95,7 +95,7 @@ class APNSRequestTest extends APNSTest {
 		$topic = $this->random_string();
 		$meta = $this->new_metadata()->setTopic( $topic );
 
-		$headers = $this->getRequest( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-topic', $headers );
 		$this->assertEquals( $topic, $headers['apns-topic'] );
@@ -103,14 +103,14 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersDoesNotContainUserAgentByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayNotHasKey( 'user-agent', $this->getRequest()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayNotHasKey( 'user-agent', $this->new_request()->getHeadersForConfiguration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsUserAgentIfSet() {
 		$ua = $this->random_string();
 		$configuration = $this->new_configuration()->setUserAgent( $ua );
 
-		$headers = $this->getRequest( $this->new_payload(), null, $this->new_metadata() )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $this->new_metadata() )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'user-agent', $headers );
 		$this->assertEquals( $ua, $headers['user-agent'] );
@@ -118,14 +118,14 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersDoesNotContainPriorityByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayNotHasKey( 'apns-priority', $this->getRequest()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayNotHasKey( 'apns-priority', $this->new_request()->getHeadersForConfiguration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsPriorityIfSet() {
 		$configuration = $this->new_configuration();
 		$meta = $this->new_metadata()->setLowPriority();
 
-		$headers = $this->getRequest( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-priority', $headers );
 		$this->assertEquals( 5, $headers['apns-priority'] );
@@ -133,7 +133,7 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersAlwaysContainApnsIdByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayHasKey( 'apns-id', $this->getRequest()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayHasKey( 'apns-id', $this->new_request()->getHeadersForConfiguration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsApnsIdIfSet() {
@@ -141,7 +141,7 @@ class APNSRequestTest extends APNSTest {
 		$uuid = $this->random_uuid();
 		$meta = $this->new_metadata()->setUuid( $uuid );
 
-		$headers = $this->getRequest( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-id', $headers );
 		$this->assertEquals( $uuid, $headers['apns-id'] );
@@ -149,7 +149,7 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersDoesNotContainCollapseIdByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayNotHasKey( 'apns-collapse-id', $this->getRequest()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayNotHasKey( 'apns-collapse-id', $this->new_request()->getHeadersForConfiguration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsCollapseIdIfSet() {
@@ -157,26 +157,9 @@ class APNSRequestTest extends APNSTest {
 		$id = $this->random_string();
 		$meta = $this->new_metadata()->setCollapseIdentifier( $id );
 
-		$headers = $this->getRequest( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-collapse-id', $headers );
 		$this->assertEquals( $id, $headers['apns-collapse-id'] );
-	}
-
-	private function getRequest( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null ) {
-
-		if ( is_null( $payload ) ) {
-			$payload = $this->new_payload();
-		}
-
-		if ( is_null( $token ) ) {
-			$token = $this->random_string();
-		}
-
-		if ( is_null( $metadata ) ) {
-			$metadata = $this->new_metadata();
-		}
-
-		return APNSRequest::fromPayload( $payload, $token, $metadata );
 	}
 }

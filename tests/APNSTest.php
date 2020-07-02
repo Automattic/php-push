@@ -40,6 +40,23 @@ abstract class APNSTest extends TestCase {
 		return new APNSAlert( $this->random_string(), $this->random_string() );
 	}
 
+	function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null ) {
+
+		if ( is_null( $payload ) ) {
+			$payload = $this->new_payload();
+		}
+
+		if ( is_null( $token ) ) {
+			$token = $this->random_string();
+		}
+
+		if ( is_null( $metadata ) ) {
+			$metadata = $this->new_metadata();
+		}
+
+		return APNSRequest::fromPayload( $payload, $token, $metadata );
+	}
+
 	function new_metadata( ?string $topic = null, ?string $uuid = null ): APNSRequestMetadata {
 
 		if ( is_null( $topic ) ) {
