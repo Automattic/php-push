@@ -162,4 +162,24 @@ class APNSRequestTest extends APNSTest {
 		$this->assertArrayHasKey( 'apns-collapse-id', $headers );
 		$this->assertEquals( $id, $headers['apns-collapse-id'] );
 	}
+
+	public function testThatRequestSerializationIncludesPayload() {
+		$payload = $this->new_payload();
+		$request = $this->decode( $this->new_request( $payload )->toJSON() );
+
+		$this->assertEquals( json_encode( $payload ), $request->payload );
+	}
+
+	public function testThatRequestSerializationIncludesMetadata() {
+		$metadata = $this->new_metadata();
+		$request = $this->decode( $this->new_request_from_metadata( $metadata )->toJSON() );
+
+		$this->assertEquals( $metadata->toJSON(), $request->metadata );
+	}
+
+	public function testThatRequestSerializationIncludesToken() {
+		$token = $this->random_string();
+		$request = $this->new_request_from_token( $token );
+		$this->assertEquals( $token, $request->getToken() );
+	}
 }
