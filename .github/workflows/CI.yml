@@ -49,7 +49,12 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
 
-    - name: Run test suite
-      run: |
-        php -v
-        composer test
+    - name: Test and Upload Coverage
+      uses: paambaati/codeclimate-action@v2.6.0
+      env:
+        CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+      with:
+        coverageCommand: composer test
+        debug: true
+        coverageLocations: |
+          ${{github.workspace}}/coverage/coverage.xml:clover
