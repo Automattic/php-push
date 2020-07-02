@@ -108,6 +108,18 @@ abstract class APNSTest extends TestCase {
 		return json_decode( $string );
 	}
 
+	function json_without( string $string, string $key ): string {
+		$object = json_decode( $string );
+		unset( $object->$key );
+		return json_encode( $object );
+	}
+
+	function json_adding( string $string, string $key, $value ): string {
+		$object = json_decode( $string );
+		$object->$key = $value;
+		return json_encode( $object );
+	}
+
 	function replace_object_key_with_value( $object, $key, $value ) {
 		$class = new ReflectionClass( get_class( $object ) );
 
