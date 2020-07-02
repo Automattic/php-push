@@ -35,7 +35,7 @@
     "scripts": {
         "lint": "./vendor/bin/phpcs",
         "fix": "./vendor/bin/phpcbf",
-        "test": "./vendor/bin/phpunit",
+        "test": "./vendor/bin/phpunit --coverage-clover 'coverage/coverage.xml' --coverage-html 'coverage'",
         "psalm": "./vendor/bin/psalm"
     }
 }
