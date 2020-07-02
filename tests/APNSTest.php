@@ -40,13 +40,17 @@ abstract class APNSTest extends TestCase {
 		return new APNSAlert( $this->random_string(), $this->random_string() );
 	}
 
-	function new_metadata( ?string $topic = null ): APNSRequestMetadata {
+	function new_metadata( ?string $topic = null, ?string $uuid = null ): APNSRequestMetadata {
 
 		if ( is_null( $topic ) ) {
 			$topic = $this->random_string();
 		}
 
-		return new APNSRequestMetadata( $topic );
+		if ( is_null( $uuid ) ) {
+			$uuid = $this->random_uuid();
+		}
+
+		return new APNSRequestMetadata( $topic, $uuid );
 	}
 
 	function new_payload(): APNSPayload {
@@ -98,6 +102,10 @@ abstract class APNSTest extends TestCase {
 
 	function encode_to_array( $object ) {
 		return json_decode( json_encode( $object ), true );
+	}
+
+	function from_json( string $string ): object {
+		return json_decode( $string );
 	}
 
 	function replace_object_key_with_value( $object, $key, $value ) {
