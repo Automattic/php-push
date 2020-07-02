@@ -2,9 +2,32 @@
 declare( strict_types = 1 );
 class APNSRequestTest extends APNSTest {
 
+	public function testRequestInstatiationFromString() {
+		$message = $this->random_string();
+		$token = $this->random_string();
+
+		$request = APNSRequest::fromString( $message, $token, $this->new_metadata() );
+		$this->assertEquals( $message, $this->decode( $request->getBody() )->aps->alert );
+	}
+
+	public function testThatGetTokenRetrievesToken() {
+		$message = $this->random_string();
+		$token = $this->random_string();
+
+		$request = APNSRequest::fromString( $message, $token, $this->new_metadata() );
+		$this->assertEquals( $token, $request->getToken() );
+	}
+
 	public function testThatGetBodyRetrievesJSONEncodedPush() {
 		$push = $this->new_payload();
 		$this->assertEquals( json_encode( $push ), $this->getRequest( $push )->getBody() );
+	}
+
+	public function testThatGetUuidRetrievesUuid() {
+		$uuid = $this->random_uuid();
+
+		$request = APNSRequest::fromString( '', '', $this->new_metadata( null, $uuid ) );
+		$this->assertEquals( $uuid, $request->getUuid() );
 	}
 
 	public function testThatGetUrlForTokenRetrievesValidValue() {
