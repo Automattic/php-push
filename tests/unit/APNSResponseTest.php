@@ -33,12 +33,12 @@ class APNSResponseTest extends APNSTest {
 	private function makeAPNSResponseFor( int $status_code ) {
 		return new APNSResponse(
 			$status_code,
-			$this->fakeAPNSHTTPFailureResponse( $status_code, 'not read here' ),
+			$this->fakeAPNSHTTPFailureResponse( $status_code ),
 			new APNSResponseMetrics()
 		);
 	}
 
-	private function fakeAPNSHTTPFailureResponse( int $status_code, string $reason ): string {
+	private function fakeAPNSHTTPFailureResponse( int $status_code, string $reason = 'not read here' ): string {
 		return <<<TEXT
 HTTP/2 $status_code
 apns-id: 8FE746FE-1112-2966-3590-2DC3F038536B
