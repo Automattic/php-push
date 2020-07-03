@@ -7,7 +7,7 @@ This library aims to be:
 
 **Lightweight**
 
-There's not a lot here – just enough classes to model the API and provide a client. Bring your own business logic, job queue, and framework integrations.
+There's not a lot here – just enough classes to model the API and provide a client. Bring your own business logic, job queue, and framework integrations.
 
 **Opinionated**
 
