@@ -1,7 +1,8 @@
 <?php
 
-require_once '../vendor/autoload.php';
-require_once 'db-connect.php';
+require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+require_once __DIR__ . '/db-connect.php';
+
 global $capsule;
 
 echo '=== Push Notification Server ===' . PHP_EOL;
