@@ -2,7 +2,7 @@
 declare( strict_types = 1 );
 class APNSRequestTest extends APNSTest {
 
-	public function testRequestInstatiationFromString() {
+	public function testRequestInstantiationFromString() {
 		$message = $this->random_string();
 		$token = $this->random_string();
 
