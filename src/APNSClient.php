@@ -153,8 +153,8 @@ class APNSClient {
 	 */
 	private function convertRequestHeaders( array $headers ): array {
 		$_headers = [];
-		foreach ( $_headers as $key => $value ) {
-			$headers[] = $key . ': ' . $value;
+		foreach ( $headers as $key => $value ) {
+			$_headers[] = $key . ': ' . $value;
 		}
 		return $_headers;
 	}
