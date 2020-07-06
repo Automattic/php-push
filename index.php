@@ -1,7 +1,7 @@
 <?php
 declare( strict_types = 1 );
 
-require_once __DIR__ . '/vendor/autoload.php' );
+require_once __DIR__ . '/vendor/autoload.php';
 
 use Dotenv\Dotenv;
 
@@ -9,10 +9,11 @@ Dotenv::createImmutable( __DIR__ )->load();
 
 echo '=== Push Notification Server ===' . PHP_EOL;
 
-// var_dump(getenv('USER_AGENT'));
-// die();
+$key_id = strval( getenv( 'KEY_ID' ) );
+$team_id = strval( getenv( 'TEAM_ID' ) );
+$key = strval( getenv( 'KEY' ) );
 
-$auth = new APNSCredentials( getenv( 'KEY_ID' ), getenv( 'TEAM_ID' ), getenv( 'KEY' ) );
+$auth = new APNSCredentials( $key_id, $team_id, $key );
 $configuration = APNSConfiguration::production( $auth );
 // $configuration->setUserAgent( getenv( 'USER_AGENT' ) );
 $client = new APNSClient( $configuration );
@@ -20,7 +21,7 @@ $client = new APNSClient( $configuration );
 
 echo "\t Connected.\n";
 
-$token = getenv( 'TOKEN' );
+$token = strval( getenv( 'TOKEN' ) );
 $payload = new APNSPayload( new APNSAlert( 'Title', 'Message' ) );
 $metadata = new APNSRequestMetadata( 'org.WordPress' );
 $request = APNSRequest::fromPayload( $payload, $token, $metadata );
@@ -43,9 +44,9 @@ foreach ( $responses as $response ) {
 		$notifications_to_delete[] = $response->getUuid();
 	} elseif ( $response->shouldRetry() ) {
 		$notifications_to_retry[] = $response->getUuid();
-	} elseif ( $response->shouldUnsubscribeDevice() ) {
-		$tokens_to_delete[] = $response->getToken();
-	}
+	}// elseif ( $response->shouldUnsubscribeDevice() ) {
+	//	$tokens_to_delete[] = $response->getToken();
+	//}
 }
 
 echo '=== Requests to Delete ===' . PHP_EOL;
