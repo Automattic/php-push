@@ -36,7 +36,6 @@ foreach ( range( 0, 2 ) as $i ) {
 $responses = $client->sendRequests( $requests );
 
 $notifications_to_retry = [];
-$notifications_to_delete = [];
 $tokens_to_delete = [];
 
 foreach ( $responses as $response ) {
@@ -44,9 +43,7 @@ foreach ( $responses as $response ) {
 		$notifications_to_delete[] = $response->getUuid();
 	} elseif ( $response->shouldRetry() ) {
 		$notifications_to_retry[] = $response->getUuid();
-	}// elseif ( $response->shouldUnsubscribeDevice() ) {
-	//	$tokens_to_delete[] = $response->getToken();
-	//}
+	}
 }
 
 echo '=== Requests to Delete ===' . PHP_EOL;
@@ -57,11 +54,6 @@ foreach ( $notifications_to_delete as $uuid ) {
 echo '=== Requests to Retry ===' . PHP_EOL;
 foreach ( $notifications_to_retry as $uuid ) {
 	echo "\t$uuid" . PHP_EOL;
-}
-
-echo '=== Tokens to Delete ===' . PHP_EOL;
-foreach ( $tokens_to_delete as $token ) {
-	echo "\t$token" . PHP_EOL;
 }
 
 $client->close();
