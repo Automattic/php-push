@@ -23,7 +23,7 @@ echo "\t Connected.\n";
 
 $token = strval( getenv( 'TOKEN' ) );
 $payload = new APNSPayload( new APNSAlert( 'Title', 'Message' ) );
-$metadata = new APNSRequestMetadata( 'org.WordPress' );
+$metadata = new APNSRequestMetadata( strval( getenv( 'TOPIC' ) ) );
 $request = APNSRequest::fromPayload( $payload, $token, $metadata );
 
 $requests = [];
