@@ -36,7 +36,7 @@ foreach ( range( 0, 2 ) as $i ) {
 $responses = $client->sendRequests( $requests );
 
 $notifications_to_retry = [];
-$tokens_to_delete = [];
+$notifications_to_delete = [];
 
 foreach ( $responses as $response ) {
 	if ( $response->isUnrecoverableError() ) {
