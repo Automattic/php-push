@@ -20,9 +20,14 @@ $client = new APNSClient( $configuration );
 $client->setDebug( true );
 
 echo "\t Connected.\n";
+$title = 'Title';
+$message = 'Timestamp ' . time();
+echo "\t Will send notification with:\n";
+echo "\t - Title: " . $title . PHP_EOL;
+echo "\t - Message: " . $message . PHP_EOL;
 
 $token = strval( getenv( 'TOKEN' ) );
-$payload = new APNSPayload( new APNSAlert( 'Title', 'Message' ) );
+$payload = new APNSPayload( new APNSAlert( $title, $message ) );
 $metadata = new APNSRequestMetadata( strval( getenv( 'TOPIC' ) ) );
 $request = APNSRequest::fromPayload( $payload, $token, $metadata );
 
