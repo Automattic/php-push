@@ -4,6 +4,7 @@ declare( strict_types = 1 );
 // For use in non-composer environments
 
 require_once __DIR__ . '/APNSClient.php';
+require_once __DIR__ . '/CURLManager.php';
 
 require_once __DIR__ . '/model/APNSAlert.php';
 require_once __DIR__ . '/model/APNSConfiguration.php';
