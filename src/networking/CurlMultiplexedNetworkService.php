@@ -1,48 +1,7 @@
 <?php
 declare( strict_types = 1 );
 
-class Response {
-
-	/** @var int */
-	public $status_code;
-
-	/** @var string */
-	public $text;
-
-	/** @var int */
-	public $transfer_time;
-
-	/** @var int */
-	public $total_bytes;
-
-	public function __construct( int $status_code, string $text, int $transfer_time, int $total_bytes ) {
-		$this->status_code = $status_code;
-		$this->text = $text;
-		$this->transfer_time = $transfer_time;
-		$this->total_bytes = $total_bytes;
-	}
-}
-
-// TODO: make it clear that this is multiplexed
-interface ConnectionManager {
-
-	// This function signature could be made tidier if it knew the details of
-	// APNSRequest and APNSConfiguration.
-	// I think it's better to keep this type ignorant about it and focused on
-	// HTTP instead.
-	//
-	// Enqueue a request into the multiplexed queue.
-	public function enqueueRequest( string $url, int $port, array $headers, string $body, bool $debug, bool $ssl_verification_enabled ): void;
-
-	public function sendQueuedRequests(): array;
-
-	// TODO: Why do we need to return int?
-	public function execute( int &$still_running ): int;
-
-	public function closeConnection(): void;
-}
-
-class CURLConnectionManager implements ConnectionManager {
+class CurlMultiplexedNetworkService implements MultiplexedNetworkService {
 
 	/** @var resource **/
 	private $curl_handle;
