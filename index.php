@@ -14,7 +14,7 @@ $team_id = strval( getenv( 'TEAM_ID' ) );
 $key = strval( getenv( 'KEY' ) );
 
 $auth = new APNSCredentials( $key_id, $team_id, $key );
-$configuration = APNSConfiguration::production( $auth );
+$configuration = APNSConfiguration::sandbox( $auth );
 $configuration->setUserAgent( strval( getenv( 'USER_AGENT' ) ) );
 $client = new APNSClient( $configuration );
 $client->setDebug( true );
