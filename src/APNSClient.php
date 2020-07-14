@@ -3,8 +3,8 @@ declare( strict_types = 1 );
 
 class APNSClient {
 
-	/** @var ConnectionManager **/
-	private $connection_manager;
+	/** @var MultiplexedNetworkService **/
+	private $network_service;
 
 	/** @var APNSConfiguration */
 	private $configuration;
@@ -24,7 +24,7 @@ class APNSClient {
 	public function __construct( APNSConfiguration $configuration ) {
 		$this->configuration = $configuration;
 		// TODO: how to inject this?
-		$this->connection_manager = new CURLConnectionManager();
+		$this->network_service = new CurlMultiplexedNetworkService();
 
 		$this->refreshToken();
 	}
@@ -53,7 +53,7 @@ class APNSClient {
 	}
 
 	public function close(): void {
-		$this->connection_manager->closeConnection();
+		$this->network_service->closeConnection();
 	}
 
 	public function setDebug( bool $debug ): self {
@@ -71,7 +71,7 @@ class APNSClient {
 		$headers = $this->convertRequestHeaders( $headers );
 		$url = $request->getUrlForConfiguration( $this->configuration );
 
-		$this->connection_manager->enqueueRequest( $url, $this->port_number, $headers, $request->getBody(), $this->debug, ! $this->disable_ssl_verification );
+		$this->network_service->enqueueRequest( $url, $this->port_number, $headers, $request->getBody(), $this->debug, ! $this->disable_ssl_verification );
 	}
 
 	/**
@@ -81,7 +81,7 @@ class APNSClient {
 	 */
 	private function sendQueuedRequests(): array {
 
-		$network_responses = $this->connection_manager->sendQueuedRequests();
+		$network_responses = $this->network_service->sendQueuedRequests();
 
 		$apns_responses = [];
 
