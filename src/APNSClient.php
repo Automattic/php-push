@@ -21,10 +21,9 @@ class APNSClient {
 	/** @var bool */
 	private $disable_ssl_verification = false;
 
-	public function __construct( APNSConfiguration $configuration ) {
+	public function __construct( APNSConfiguration $configuration, MultiplexedNetworkService $network_service ) {
 		$this->configuration = $configuration;
-		// TODO: how to inject this?
-		$this->network_service = new CurlMultiplexedNetworkService();
+		$this->network_service = $network_service;
 
 		$this->refreshToken();
 	}
