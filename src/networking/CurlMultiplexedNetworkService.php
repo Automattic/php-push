@@ -15,17 +15,17 @@ class CurlMultiplexedNetworkService implements MultiplexedNetworkService {
 		$this->curl_handle = $ch;
 	}
 
-	public function enqueueRequest( string $url, int $port, array $headers, string $body, bool $debug, bool $ssl_verification_enabled ): void {
-		$ch = curl_init( $url );
+	public function enqueueRequest( Request $request ): void {
+		$ch = curl_init( $request->url );
 		curl_setopt( $ch, CURLOPT_HEADER, true );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, $request->headers );
 		curl_setopt( $ch, CURLOPT_POST, true );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $body );
-		curl_setopt( $ch, CURLOPT_VERBOSE, $debug );
-		curl_setopt( $ch, CURLOPT_PORT, $port );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, $ssl_verification_enabled );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request->body );
+		curl_setopt( $ch, CURLOPT_VERBOSE, $request->debug );
+		curl_setopt( $ch, CURLOPT_PORT, $request->port );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, $request->ssl_verification_enabled );
 
 		curl_multi_add_handle( $this->curl_handle, $ch );
 	}
