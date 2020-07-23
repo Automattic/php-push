@@ -125,7 +125,17 @@ abstract class APNSTest extends TestCase {
 		if ( is_a( $object, APNSPayload::class ) ) {
 			return $this->from_json( $object->toJSON() );
 		}
+
 		return json_decode( json_encode( $object ) );
+	}
+
+	function new_apns_http_failure_response( int $status_code, string $reason = 'not read here' ): string {
+		return <<<TEXT
+HTTP/2 $status_code
+apns-id: 8FE746FE-1112-2966-3590-2DC3F038536B
+
+{"reason":"$reason"}
+TEXT;
 	}
 
 	function from_json( string $string ): object {
