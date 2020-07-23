@@ -70,7 +70,7 @@ class APNSClient {
 		$headers = $this->convertRequestHeaders( $headers );
 		$url = $request->getUrlForConfiguration( $this->configuration );
 
-		$this->network_service->enqueueRequest( $url, $this->port_number, $headers, $request->getBody(), $this->debug, ! $this->disable_ssl_verification );
+		$this->network_service->enqueueRequest( new Request( $url, $this->port_number, $headers, $request->getBody(), $this->debug, ! $this->disable_ssl_verification ) );
 	}
 
 	/**

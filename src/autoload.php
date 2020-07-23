@@ -7,6 +7,7 @@ require_once __DIR__ . '/APNSClient.php';
 
 require_once __DIR__ . '/networking/MultiplexedNetworkService.php';
 require_once __DIR__ . '/networking/CurlMultiplexedNetworkService.php';
+require_once __DIR__ . '/networking/Request.php';
 require_once __DIR__ . '/networking/Response.php';
 
 require_once __DIR__ . '/model/APNSAlert.php';
