@@ -37,7 +37,7 @@ class APNSConfiguration {
 	protected function __construct( APNSCredentials $credentials, string $environment, ?APNSTokenFactory $factory ) {
 		$this->credentials = $credentials;
 		$this->environment = $environment;
-		$this->token_factory = $factory ?? new APNSDefaultTokenFactory( $credentials );
+		$this->token_factory = $factory ?? new APNSDefaultTokenFactory();
 	}
 
 	static function production( APNSCredentials $credentials, ?APNSTokenFactory $factory = null ): self {

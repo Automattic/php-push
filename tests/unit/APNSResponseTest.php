@@ -30,6 +30,19 @@ class APNSResponseTest extends APNSTest {
 		$this->assertFalse( $this->makeAPNSResponseFor( 429 )->isUnrecoverableError() );
 	}
 
+	public function testThatUnsubscribeResponseIsCorrectlyRecognized() {
+		$this->assertTrue( $this->makeAPNSResponseFor( 410 )->shouldUnsubscribeDevice() );
+	}
+
+	public function testThatRetryableResponsesAreCorrectlyRecognized() {
+		$this->assertTrue( $this->makeAPNSResponseFor( 429 )->shouldRetry() );
+		$this->assertTrue( $this->makeAPNSResponseFor( random_int( 500, 599 ) )->shouldRetry() );
+	}
+
+	public function testThatServerErrorResponsesAreCorrectlyRecognized() {
+		$this->assertTrue( $this->makeAPNSResponseFor( random_int( 500, 599 ) )->isServerError() );
+	}
+
 	private function makeAPNSResponseFor( int $status_code ) {
 		return new APNSResponse(
 			$status_code,
