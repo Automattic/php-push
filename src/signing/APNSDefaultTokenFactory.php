@@ -4,13 +4,6 @@ declare( strict_types = 1 );
 use \Firebase\JWT\JWT;
 
 class APNSDefaultTokenFactory implements APNSTokenFactory {
-
-	private $credentials;
-
-	public function __construct( APNSCredentials $credentials ) {
-		$this->credentials = $credentials;
-	}
-
 	public function get_token( string $team_id, string $key_id, string $key_bytes ): string {
 		$payload = [
 			'iss' => $team_id,
