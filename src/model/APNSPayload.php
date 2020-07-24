@@ -4,8 +4,29 @@ declare( strict_types = 1 );
 // Partial list of keys: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943363
 class APNSPayload implements JsonSerializable {
 
-	/** @var array */
-	private $internal = [];
+	/** @var string|APNSAlert */
+	private $alert = '';
+
+	/** @var ?int */
+	private $badge = null;
+
+	/** @var ?string|?APNSSound */
+	private $sound = null;
+
+	/** @var ?bool */
+	private $content_available = null;
+
+	/** @var ?bool */
+	private $mutable_content = null;
+
+	/** @var ?string */
+	private $target_content_id = null;
+
+	/** @var ?string */
+	private $category = null;
+
+	/** @var ?string */
+	private $thread_id = null;
 
 	/** @var array */
 	private $custom = [];
@@ -29,12 +50,12 @@ class APNSPayload implements JsonSerializable {
 	function setAlert( $alert ): self {
 
 		if ( is_string( $alert ) ) {
-			$this->internal['alert'] = $alert;
+			$this->alert = $alert;
 			return $this;
 		}
 
 		if ( is_object( $alert ) && get_class( $alert ) === APNSAlert::class ) {
-			$this->internal['alert'] = $alert;
+			$this->alert = $alert;
 			return $this;
 		}
 
@@ -42,7 +63,7 @@ class APNSPayload implements JsonSerializable {
 	}
 
 	function setBadgeCount( int $count ): self {
-		$this->internal['badge'] = $count;
+		$this->badge = $count;
 		return $this;
 	}
 
@@ -54,12 +75,12 @@ class APNSPayload implements JsonSerializable {
 	function setSound( $sound ): self {
 
 		if ( is_string( $sound ) ) {
-			$this->internal['sound'] = $sound;
+			$this->sound = $sound;
 			return $this;
 		}
 
 		if ( is_object( $sound ) && get_class( $sound ) === APNSSound::class ) {
-			$this->internal['sound'] = $sound;
+			$this->sound = $sound;
 			return $this;
 		}
 
@@ -67,27 +88,27 @@ class APNSPayload implements JsonSerializable {
 	}
 
 	function setContentAvailable( bool $content_available ): self {
-		$this->internal['content-available'] = $content_available ? 1 : 0;
+		$this->content_available = $content_available;
 		return $this;
 	}
 
-	function setMutableContent( bool $mutable ): self {
-		$this->internal['mutable-content'] = $mutable ? 1 : 0;
+	function setMutableContent( bool $mutable_content ): self {
+		$this->mutable_content = $mutable_content;
 		return $this;
 	}
 
 	function setTargetContentId( string $id ): self {
-		$this->internal['target-content-id'] = $id;
+		$this->target_content_id = $id;
 		return $this;
 	}
 
 	function setCategory( string $category ): self {
-		$this->internal['category'] = $category;
+		$this->category = $category;
 		return $this;
 	}
 
 	function setThreadId( string $id ): self {
-		$this->internal['thread-id'] = $id;
+		$this->thread_id = $id;
 		return $this;
 	}
 
@@ -100,7 +121,18 @@ class APNSPayload implements JsonSerializable {
 		return array_merge(
 			$this->custom,
 			[
-				'aps' => $this->internal,
+				'aps' => (object) array_filter(
+					[
+						'alert' => $this->alert,
+						'badge' => $this->badge,
+						'sound' => $this->sound,
+						'content-available' => $this->content_available,
+						'mutable-content' => $this->mutable_content,
+						'target-content-id' => $this->target_content_id,
+						'category' => $this->category,
+						'thread-id' => $this->thread_id,
+					], function( $value ) { return ! is_null( $value ); }
+				),
 			]
 		);
 	}
