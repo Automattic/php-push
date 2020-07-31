@@ -9,7 +9,7 @@ class APNSConfigurationTest extends APNSTest {
 
 	public function testThatProductionEndpointIsCorrect() {
 		$config = APNSConfiguration::production( $this->new_credentials() );
-		$this->assertEquals( $config->get_endpoint(), APNSConfiguration::APNS_ENDPOINT_PRODUCTION );
+		$this->assertEquals( $config->getEndpoint(), APNSConfiguration::APNS_ENDPOINT_PRODUCTION );
 	}
 
 	public function testThatSandboxInitializerUsesSandboxEnvironment() {
@@ -19,7 +19,7 @@ class APNSConfigurationTest extends APNSTest {
 
 	public function testThatSandboxEndpointIsCorrect() {
 		$config = APNSConfiguration::sandbox( $this->new_credentials() );
-		$this->assertEquals( $config->get_endpoint(), APNSConfiguration::APNS_ENDPOINT_SANDBOX );
+		$this->assertEquals( $config->getEndpoint(), APNSConfiguration::APNS_ENDPOINT_SANDBOX );
 	}
 
 	// This should be impossible to hit, but just in case, we'll make sure it works
@@ -27,7 +27,7 @@ class APNSConfigurationTest extends APNSTest {
 		$config = APNSConfiguration::sandbox( $this->new_credentials() );
 		$this->replace_object_key_with_value( $config, 'environment', $this->random_string() );
 		$this->expectException( OutOfBoundsException::class );
-		$config->get_endpoint();
+		$config->getEndpoint();
 	}
 
 	public function testThatUserAgentSetterWorks() {
