@@ -44,7 +44,7 @@ class APNSRequest {
 	}
 
 	function getUrlForConfiguration( APNSConfiguration $configuration ): string {
-		return $configuration->get_endpoint() . $this->token;
+		return $configuration->getEndpoint() . $this->token;
 	}
 
 	/**

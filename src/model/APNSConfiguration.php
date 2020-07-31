@@ -101,7 +101,7 @@ class APNSConfiguration {
 		return $this;
 	}
 
-	function get_endpoint(): string {
+	function getEndpoint(): string {
 		if ( $this->environment === APNSConfiguration::APNS_ENVIRONMENT_PRODUCTION ) {
 			return APNSConfiguration::APNS_ENDPOINT_PRODUCTION;
 		}
