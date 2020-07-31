@@ -10,6 +10,14 @@ class APNSRequestTest extends APNSTest {
 		$this->assertEquals( $message, $this->decode( $request->getBody() )->aps->alert );
 	}
 
+	public function testRequestInstantiationFromPayload() {
+		$message = $this->random_string();
+		$token = $this->random_string();
+
+		$request = APNSRequest::fromPayload( new APNSPayload( $message ), $token, $this->new_metadata() );
+		$this->assertEquals( $message, $this->decode( $request->getBody() )->aps->alert );
+	}
+
 	public function testThatGetTokenRetrievesToken() {
 		$message = $this->random_string();
 		$token = $this->random_string();
@@ -20,7 +28,7 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetBodyRetrievesJSONEncodedPush() {
 		$push = $this->new_payload();
-		$this->assertEquals( json_encode( $push ), $this->new_request( $push )->getBody() );
+		$this->assertEquals( $push->toJSON(), $this->new_request( $push )->getBody() );
 	}
 
 	public function testThatGetUuidRetrievesUuid() {
@@ -65,7 +73,7 @@ class APNSRequestTest extends APNSTest {
 		$headers = $this->new_request( $push )->getHeadersForConfiguration( $configuration );
 
 		$this->assertArrayHasKey( 'content-length', $headers );
-		$this->assertEquals( strlen( json_encode( $push ) ), $headers['content-length'] );
+		$this->assertEquals( strlen( $push->toJSON() ), $headers['content-length'] );
 	}
 
 	public function testThatGetHeadersContainsAPNSExpiration() {
@@ -167,7 +175,7 @@ class APNSRequestTest extends APNSTest {
 		$payload = $this->new_payload();
 		$request = $this->decode( $this->new_request( $payload )->toJSON() );
 
-		$this->assertEquals( json_encode( $payload ), $request->payload );
+		$this->assertEquals( $payload->toJSON(), $request->payload );
 	}
 
 	public function testThatRequestSerializationIncludesMetadata() {
@@ -186,7 +194,7 @@ class APNSRequestTest extends APNSTest {
 	public function testThatRequestDeserializationIncludesPayload() {
 		$payload = $this->new_payload();
 		$request = APNSRequest::fromJSON( $this->new_request( $payload )->toJSON() );
-		$this->assertEquals( json_encode( $payload ), $request->getBody() );
+		$this->assertEquals( $payload->toJSON(), $request->getBody() );
 	}
 
 	public function testThatRequestDeserializationIncludesToken() {

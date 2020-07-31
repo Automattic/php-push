@@ -14,11 +14,11 @@ class APNSRequest {
 
 	static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ): self {
 		$payload = new APNSPayload( $payload );
-		return new APNSRequest( json_encode( $payload ), $token, $metadata );
+		return new APNSRequest( $payload->toJSON(), $token, $metadata );
 	}
 
 	static function fromPayload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata ): self {
-		return new APNSRequest( json_encode( $payload ), $token, $metadata );
+		return new APNSRequest( $payload->toJSON(), $token, $metadata );
 	}
 
 	protected function __construct( string $payload, string $token, APNSRequestMetadata $metadata ) {

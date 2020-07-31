@@ -9,7 +9,7 @@ abstract class APNSTest extends TestCase {
 
 	protected function assertKeyIsNotPresentForObject( $key, object $object ) {
 		$this->assertNotNull( $object );
-		$object = $this->encode( $object );
+		$object = $this->to_stdclass( $object );
 		$this->assertFalse( property_exists( $object, $key ) );
 	}
 
@@ -121,12 +121,11 @@ abstract class APNSTest extends TestCase {
 		return new APNSCredentials( $this->random_string( 10 ), $this->random_string( 10 ), '' );
 	}
 
-	function encode( $object ) {
+	function to_stdclass( $object ): object {
+		if ( is_a( $object, APNSPayload::class ) ) {
+			return $this->from_json( $object->toJSON() );
+		}
 		return json_decode( json_encode( $object ) );
-	}
-
-	function encode_to_array( $object ) {
-		return json_decode( json_encode( $object ), true );
 	}
 
 	function from_json( string $string ): object {
