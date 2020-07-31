@@ -2,7 +2,7 @@
 declare( strict_types = 1 );
 
 // Partial list of keys: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943363
-class APNSPayload implements JsonSerializable {
+class APNSPayload {
 
 	/** @var string|APNSAlert */
 	private $alert = '';
@@ -117,23 +117,25 @@ class APNSPayload implements JsonSerializable {
 		return $this;
 	}
 
-	public function jsonSerialize() {
-		return array_merge(
-			$this->custom,
-			[
-				'aps' => (object) array_filter(
-					[
-						'alert' => $this->alert,
-						'badge' => $this->badge,
-						'sound' => $this->sound,
-						'content-available' => $this->content_available,
-						'mutable-content' => $this->mutable_content,
-						'target-content-id' => $this->target_content_id,
-						'category' => $this->category,
-						'thread-id' => $this->thread_id,
-					], function( $value ) { return ! is_null( $value ); }
-				),
-			]
+	public function toJSON(): string {
+		return json_encode(
+			array_merge(
+				$this->custom,
+				[
+					'aps' => (object) array_filter(
+						[
+							'alert' => $this->alert,
+							'badge' => $this->badge,
+							'sound' => $this->sound,
+							'content-available' => $this->content_available,
+							'mutable-content' => $this->mutable_content,
+							'target-content-id' => $this->target_content_id,
+							'category' => $this->category,
+							'thread-id' => $this->thread_id,
+						], function( $value ) { return ! is_null( $value ); }
+					),
+				]
+			)
 		);
 	}
 }
