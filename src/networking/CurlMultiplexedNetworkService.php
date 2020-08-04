@@ -1,7 +1,7 @@
 <?php
 declare( strict_types = 1 );
 
-class CurlMultiplexedNetworkService implements MultiplexedNetworkService {
+class CurlMultiplexedNetworkService {
 
 	/** @var resource **/
 	private $curl_handle;

@@ -16,7 +16,7 @@ $key = strval( getenv( 'KEY' ) );
 $auth = new APNSCredentials( $key_id, $team_id, $key );
 $configuration = APNSConfiguration::sandbox( $auth );
 $configuration->setUserAgent( strval( getenv( 'USER_AGENT' ) ) );
-$client = new APNSClient( $configuration, new CurlMultiplexedNetworkService() );
+$client = new APNSClient( $configuration );
 $client->setDebug( true );
 
 echo "\t Connected.\n";
