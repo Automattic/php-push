@@ -14,7 +14,7 @@ $auth = new APNSCredentials( $kid, $tid, $key );
 $configuration = APNSConfiguration::production( $auth );
 $configuration->setUserAgent( 'wordpress.com development' );
 
-$client = new APNSClient( $configuration, new CurlMultiplexedNetworkService() );
+$client = new APNSClient( $configuration );
 
 echo "\t Connected.\n";
 

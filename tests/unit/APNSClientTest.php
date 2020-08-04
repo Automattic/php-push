@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 class APNSClientTest extends APNSTest {
 
 	public function testThatRequestsFromNetworkAreProcessed() {
-		$network_service_mock = Mockery::mock( 'MultiplexedNetworkService' );
+		$network_service_mock = Mockery::mock( 'CurlMultiplexedNetworkService' );
 		$network_service_mock
 			->shouldReceive( 'enqueueRequest' )
 			->once();
