@@ -6,7 +6,6 @@ declare( strict_types = 1 );
 require_once __DIR__ . '/APNSClient.php';
 
 require_once __DIR__ . '/networking/APNSNetworkService.php';
-require_once __DIR__ . '/networking/Response.php';
 
 require_once __DIR__ . '/model/APNSAlert.php';
 require_once __DIR__ . '/model/APNSConfiguration.php';
