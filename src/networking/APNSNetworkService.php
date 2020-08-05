@@ -48,10 +48,6 @@ class APNSNetworkService {
 		curl_multi_add_handle( $this->curl_handle, $ch );
 	}
 
-	public function execute( int &$still_running ): int {
-		return curl_multi_exec( $this->curl_handle, $still_running );
-	}
-
 	/**
 	 * @return Response[]
 	 *
