@@ -3,7 +3,7 @@ declare( strict_types = 1 );
 
 class APNSClient {
 
-	/** @var CurlMultiplexedNetworkService **/
+	/** @var APNSNetworkService **/
 	private $network_service;
 
 	/** @var APNSConfiguration */
@@ -21,9 +21,9 @@ class APNSClient {
 	/** @var bool */
 	private $disable_ssl_verification = false;
 
-	public function __construct( APNSConfiguration $configuration, ?CurlMultiplexedNetworkService $network_service = null ) {
+	public function __construct( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ) {
 		$this->configuration = $configuration;
-		$this->network_service = $network_service ?? new CurlMultiplexedNetworkService();
+		$this->network_service = $network_service ?? new APNSNetworkService();
 
 		$this->refreshToken();
 	}
