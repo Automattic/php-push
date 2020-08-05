@@ -6,6 +6,9 @@ class APNSNetworkService {
 	/** @var resource **/
 	private $curl_handle;
 
+	/** @var int */
+	public $port = 443;
+
 	/** @var bool **/
 	private $debug = false;
 
@@ -42,6 +45,11 @@ class APNSNetworkService {
 		$this->curl_handle = $ch;
 	}
 
+	public function setPort( int $port ): self {
+		$this->port = $port;
+		return $this;
+	}
+
 	public function setDebug( bool $debug ): self {
 		$this->debug = $debug;
 		return $this;
@@ -61,7 +69,7 @@ class APNSNetworkService {
 		curl_setopt( $ch, CURLOPT_POST, true );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request->body );
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
-		curl_setopt( $ch, CURLOPT_PORT, $request->port );
+		curl_setopt( $ch, CURLOPT_PORT, $this->port );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, $this->ssl_verification_enabled );
 
 		curl_multi_add_handle( $this->curl_handle, $ch );
