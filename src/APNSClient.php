@@ -61,8 +61,7 @@ class APNSClient {
 		$headers = $this->convertRequestHeaders( $headers );
 		$url = $request->getUrlForConfiguration( $this->configuration );
 
-		// TODO: hardcoding here because network_service now uses its own instance variables and we'll remove the Request type next
-		$this->network_service->enqueueRequest( new Request( $url, 0, $headers, $request->getBody(), false, false ) );
+		$this->network_service->enqueueRequest( $url, $headers, $request->getBody() );
 	}
 
 	/**

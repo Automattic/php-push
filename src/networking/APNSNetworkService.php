@@ -60,14 +60,14 @@ class APNSNetworkService {
 		return $this;
 	}
 
-	public function enqueueRequest( Request $request ): void {
-		$ch = curl_init( $request->url );
+	public function enqueueRequest( string $url, array $headers, string $body ): void {
+		$ch = curl_init( $url );
 		curl_setopt( $ch, CURLOPT_HEADER, true );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, $request->headers );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 		curl_setopt( $ch, CURLOPT_POST, true );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request->body );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, $body );
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port );
 		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, $this->ssl_verification_enabled );
