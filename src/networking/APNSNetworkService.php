@@ -7,12 +7,12 @@ class APNSNetworkService {
 	private $curl_handle;
 
 	/** @var bool **/
-	private $debug;
+	private $debug = false;
 
 	/** @var bool **/
-	private $ssl_verification_enabled;
+	private $ssl_verification_enabled = true;
 
-	public function __construct( bool $debug = false, bool $ssl_verification_enabled = true ) {
+	public function __construct() {
 		$ch = curl_multi_init();
 		curl_multi_setopt( $ch, CURLMOPT_PIPELINING, CURLPIPE_MULTIPLEX );
 		curl_multi_setopt( $ch, CURLMOPT_MAX_TOTAL_CONNECTIONS, 1 );
@@ -40,8 +40,6 @@ class APNSNetworkService {
 		// curl_multi_setopt( $ch, CURLOPT_PIPEWAIT, 1 );
 
 		$this->curl_handle = $ch;
-		$this->debug = $debug;
-		$this->ssl_verification_enabled = $ssl_verification_enabled;
 	}
 
 	public function setDebug( bool $debug ): self {
