@@ -12,9 +12,6 @@ class APNSClient {
 	/** @var string */
 	private $provider_token;
 
-	/** @var int */
-	private $port_number = 443;
-
 	public function __construct( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ) {
 		$this->configuration = $configuration;
 		$this->network_service = $network_service ?? new APNSNetworkService();
@@ -23,7 +20,7 @@ class APNSClient {
 	}
 
 	public function setPortNumber( int $port ): void {
-		$this->port_number = $port;
+		$this->network_service->setPort( $port );
 	}
 
 	// Can't be overridden, otherwise the subclass might not correctly refresh the token
@@ -65,7 +62,7 @@ class APNSClient {
 		$url = $request->getUrlForConfiguration( $this->configuration );
 
 		// TODO: hardcoding here because network_service now uses its own instance variables and we'll remove the Request type next
-		$this->network_service->enqueueRequest( new Request( $url, $this->port_number, $headers, $request->getBody(), false, false ) );
+		$this->network_service->enqueueRequest( new Request( $url, 0, $headers, $request->getBody(), false, false ) );
 	}
 
 	/**
