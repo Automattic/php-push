@@ -76,9 +76,9 @@ class APNSNetworkService {
 	}
 
 	/**
-	 * @return Response[]
+	 * @return APNSResponse[]
 	 *
-	 * @psalm-return list<Response>
+	 * @psalm-return list<APNSResponse>
 	 */
 	public function sendQueuedRequests(): array {
 
@@ -119,7 +119,7 @@ class APNSNetworkService {
 	/**
 	 * @param resource $handle
 	 */
-	private function process( $handle ): Response {
+	private function process( $handle ): APNSResponse {
 		// Error Code and Details
 		$status_code = intval( curl_getinfo( $handle, CURLINFO_HTTP_CODE ) );
 		$response_text = curl_multi_getcontent( $handle );
@@ -128,7 +128,9 @@ class APNSNetworkService {
 		$transfer_time = curl_getinfo( $handle, CURLINFO_TOTAL_TIME_T );
 		$total_bytes = curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD_T );
 
-		return new Response( $status_code, $response_text, $transfer_time, $total_bytes );
+		$metrics = new APNSResponseMetrics( $total_bytes, $transfer_time );
+
+		return new APNSResponse( $status_code, $response_text, $metrics );
 	}
 
 	public function closeConnection(): void {

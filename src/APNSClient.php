@@ -76,20 +76,10 @@ class APNSClient {
 		$apns_responses = [];
 
 		foreach ( $network_responses as $response ) {
-			$apns_responses[] = $this->processResponse( $response );
+			$apns_responses[] = $response;
 		}
 
 		return $apns_responses;
-	}
-
-	/**
-	 * Parse a Response from the network layer into an APNSResponse object
-	 *
-	 * @param Response $response
-	 */
-	private function processResponse( $response ): APNSResponse {
-		$metrics = new APNSResponseMetrics( $response->total_bytes, $response->transfer_time );
-		return new APNSResponse( $response->status_code, $response->text, $metrics );
 	}
 
 	/**
