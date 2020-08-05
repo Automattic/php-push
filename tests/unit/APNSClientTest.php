@@ -19,12 +19,12 @@ class APNSClientTest extends APNSTest {
 
 		$responses = $client->sendRequests( [ $this->new_request() ] );
 
-		$this->assertEquals( 2, count( $responses ) );
+		$this->assertEquals( count( $fake_responses ), count( $responses ) );
 		// For the purpose of this test it's enough to verify that the received
 		// requests are mapped to the expected type by means of calling a
 		// method on them. It's then up to the test for the type initialization
 		// to verify the mapping is done correctly.
-		$this->assertEquals( 200, $responses[0]->getStatusCode() );
-		$this->assertEquals( 400, $responses[1]->getStatusCode() );
+		$this->assertEquals( $fake_responses[0]->getStatusCode(), $responses[0]->getStatusCode() );
+		$this->assertEquals( $fake_responses[1]->getStatusCode(), $responses[1]->getStatusCode() );
 	}
 }
