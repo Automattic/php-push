@@ -16,7 +16,28 @@ class APNSNetworkService {
 		$ch = curl_multi_init();
 		curl_multi_setopt( $ch, CURLMOPT_PIPELINING, CURLPIPE_MULTIPLEX );
 		curl_multi_setopt( $ch, CURLMOPT_MAX_TOTAL_CONNECTIONS, 1 );
-		curl_multi_setopt( $ch, CURLMOPT_MAX_PIPELINE_LENGTH, 1000 );
+		// TODO: Setting CURLOPT_PIPEWAIT results in the following error
+		//
+		// ```
+		// PHP Warning:  curl_multi_setopt(): Invalid curl multi configuration option in php-push/src/networking/APNSNetworkService.php on line 19
+		// PHP Stack trace:
+		// PHP   1. {main}() php-push/index.php:0
+		// PHP   2. APNSClient->__construct() php-push/index.php:19
+		// PHP   3. APNSNetworkService->__construct() php-push/src/APNSClient.php:20
+		// PHP   4. curl_multi_setopt() php-push/src/networking/APNSNetworkService.php:19
+		//
+		// Warning: curl_multi_setopt(): Invalid curl multi configuration option in php-push/src/networking/APNSNetworkService.php on line 19
+		//
+		// Call Stack:
+		// 0.0005     408072   1. {main}() php-push/index.php:0
+		// 0.0229    2340472   2. APNSClient->__construct() php-push/index.php:19
+		// 0.0231    2354752   3. APNSNetworkService->__construct() php-push/src/APNSClient.php:20
+		// 0.0238    2354880   4. curl_multi_setopt() php-push/src/networking/APNSNetworkService.php:19
+		// ```
+		//
+		// The docs can be found here: // https://curl.haxx.se/libcurl/c/CURLOPT_PIPEWAIT.html
+		//
+		// curl_multi_setopt( $ch, CURLOPT_PIPEWAIT, 1 );
 
 		$this->curl_handle = $ch;
 		$this->debug = $debug;
