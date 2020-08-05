@@ -6,13 +6,31 @@ class APNSNetworkService {
 	/** @var resource **/
 	private $curl_handle;
 
-	public function __construct() {
+	/** @var bool **/
+	private $debug;
+
+	/** @var bool **/
+	private $ssl_verification_enabled;
+
+	public function __construct( bool $debug = false, bool $ssl_verification_enabled = true ) {
 		$ch = curl_multi_init();
 		curl_multi_setopt( $ch, CURLMOPT_PIPELINING, CURLPIPE_MULTIPLEX );
 		curl_multi_setopt( $ch, CURLMOPT_MAX_TOTAL_CONNECTIONS, 1 );
 		curl_multi_setopt( $ch, CURLMOPT_MAX_PIPELINE_LENGTH, 1000 );
 
 		$this->curl_handle = $ch;
+		$this->debug = $debug;
+		$this->ssl_verification_enabled = $ssl_verification_enabled;
+	}
+
+	public function setDebug( bool $debug ): self {
+		$this->debug = $debug;
+		return $this;
+	}
+
+	public function setSslVerificationEnabled( bool $ssl_verification_enabled ): self {
+		$this->ssl_verification_enabled = $ssl_verification_enabled;
+		return $this;
 	}
 
 	public function enqueueRequest( Request $request ): void {
@@ -23,9 +41,9 @@ class APNSNetworkService {
 		curl_setopt( $ch, CURLOPT_HTTPHEADER, $request->headers );
 		curl_setopt( $ch, CURLOPT_POST, true );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $request->body );
-		curl_setopt( $ch, CURLOPT_VERBOSE, $request->debug );
+		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $request->port );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, $request->ssl_verification_enabled );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, $this->ssl_verification_enabled );
 
 		curl_multi_add_handle( $this->curl_handle, $ch );
 	}
