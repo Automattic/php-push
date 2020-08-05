@@ -15,12 +15,6 @@ class APNSClient {
 	/** @var int */
 	private $port_number = 443;
 
-	/** @var bool */
-	private $debug = false;
-
-	/** @var bool */
-	private $disable_ssl_verification = false;
-
 	public function __construct( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ) {
 		$this->configuration = $configuration;
 		$this->network_service = $network_service ?? new APNSNetworkService();
@@ -56,12 +50,12 @@ class APNSClient {
 	}
 
 	public function setDebug( bool $debug ): self {
-		$this->debug = $debug;
+		$this->network_service->setDebug( $debug );
 		return $this;
 	}
 
 	public function setDisableSSLVerification( bool $disable ): self {
-		$this->disable_ssl_verification = $disable;
+		$this->network_service->setSslVerificationEnabled( ! $disable );
 		return $this;
 	}
 
@@ -70,7 +64,8 @@ class APNSClient {
 		$headers = $this->convertRequestHeaders( $headers );
 		$url = $request->getUrlForConfiguration( $this->configuration );
 
-		$this->network_service->enqueueRequest( new Request( $url, $this->port_number, $headers, $request->getBody(), $this->debug, ! $this->disable_ssl_verification ) );
+		// TODO: hardcoding here because network_service now uses its own instance variables and we'll remove the Request type next
+		$this->network_service->enqueueRequest( new Request( $url, $this->port_number, $headers, $request->getBody(), false, false ) );
 	}
 
 	/**
