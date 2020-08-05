@@ -5,7 +5,7 @@ declare( strict_types = 1 );
 
 require_once __DIR__ . '/APNSClient.php';
 
-require_once __DIR__ . '/networking/CurlMultiplexedNetworkService.php';
+require_once __DIR__ . '/networking/APNSNetworkService.php';
 require_once __DIR__ . '/networking/Request.php';
 require_once __DIR__ . '/networking/Response.php';
 

@@ -1,7 +1,7 @@
 <?php
 declare( strict_types = 1 );
 
-class CurlMultiplexedNetworkService {
+class APNSNetworkService {
 
 	/** @var resource **/
 	private $curl_handle;
