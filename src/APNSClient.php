@@ -39,7 +39,7 @@ class APNSClient {
 			$this->enqueueRequest( $request );
 		}
 
-		return $this->sendQueuedRequests();
+		return $this->network_service->sendQueuedRequests();
 	}
 
 	public function close(): void {
@@ -62,24 +62,6 @@ class APNSClient {
 		$url = $request->getUrlForConfiguration( $this->configuration );
 
 		$this->network_service->enqueueRequest( $url, $headers, $request->getBody() );
-	}
-
-	/**
-	 * @return APNSResponse[]
-	 *
-	 * @psalm-return list<APNSResponse>
-	 */
-	private function sendQueuedRequests(): array {
-
-		$network_responses = $this->network_service->sendQueuedRequests();
-
-		$apns_responses = [];
-
-		foreach ( $network_responses as $response ) {
-			$apns_responses[] = $response;
-		}
-
-		return $apns_responses;
 	}
 
 	/**
