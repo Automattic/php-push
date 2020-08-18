@@ -55,6 +55,9 @@ class APNSClient {
 		return $this;
 	}
 
+	public function setCertificateBundlePath( string $path ): self {
+		$this->network_service->setCertificateBundlePath( $path );
+		return $this;
 	}
 
 	/**
