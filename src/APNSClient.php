@@ -18,8 +18,9 @@ class APNSClient {
 		return new APNSClient( $configuration, $network_service );
 	}
 
-	public function setPortNumber( int $port ): void {
+	public function setPortNumber( int $port ): self {
 		$this->network_service->setPort( $port );
+		return $this;
 	}
 
 	/**
@@ -39,8 +40,9 @@ class APNSClient {
 		return $this->network_service->sendQueuedRequests();
 	}
 
-	public function close(): void {
+	public function close(): self {
 		$this->network_service->closeConnection();
+		return $this;
 	}
 
 	public function setDebug( bool $debug ): self {
