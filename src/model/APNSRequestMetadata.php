@@ -26,6 +26,10 @@ class APNSRequestMetadata {
 		$this->uuid = $uuid ?? $this->generate_uuid();
 	}
 
+	public static function withTopic( string $topic ): self {
+		return new APNSRequestMetadata( $topic );
+	}
+
 	function getTopic(): string {
 		return $this->topic;
 	}

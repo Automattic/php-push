@@ -8,6 +8,11 @@ class APNSRequestMetadataTest extends APNSTest {
 		$this->assertEquals( $topic, $meta->getTopic() );
 	}
 
+	public function testThatConvenienceInitializerStoresTopic() {
+		$topic = $this->random_string();
+		$this->assertEquals( $topic, APNSRequestMetadata::withTopic( $topic )->getTopic() );
+	}
+
 	public function testThatTopicSetterWorks() {
 		$topic = $this->random_string();
 		$meta = $this->new_metadata()->setTopic( $topic );

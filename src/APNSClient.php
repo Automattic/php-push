@@ -19,6 +19,10 @@ class APNSClient {
 		$this->refreshToken();
 	}
 
+	public static function withConfiguration( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ): self {
+		return new APNSClient( $configuration, $network_service );
+	}
+
 	public function setPortNumber( int $port ): void {
 		$this->network_service->setPort( $port );
 	}

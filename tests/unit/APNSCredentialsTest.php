@@ -2,7 +2,7 @@
 declare( strict_types = 1 );
 class APNSCredentialsTest extends APNSTest {
 
-	public function testThatAPNSCredentialInstantationProperlyStoresValues() {
+	public function testThatAPNSCredentialInstantiationProperlyStoresValues() {
 		$key_id = $this->random_string( 10 );
 		$team_id = $this->random_string( 10 );
 		$key_bytes = random_bytes( 32 );
