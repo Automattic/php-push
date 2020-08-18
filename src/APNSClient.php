@@ -30,7 +30,10 @@ class APNSClient {
 	public function sendRequests( array $requests ): array {
 		foreach ( $requests as $request ) {
 			assert( get_class( $request ) === APNSRequest::class );
-			$this->enqueueRequest( $request );
+
+			$url = $request->getUrlForConfiguration( $this->configuration );
+			$headers = $request->getHeadersForConfiguration( $this->configuration );
+			$this->network_service->enqueueRequest( $url, $this->convertRequestHeaders( $headers ), $request->getBody() );
 		}
 
 		return $this->network_service->sendQueuedRequests();
@@ -50,12 +53,6 @@ class APNSClient {
 		return $this;
 	}
 
-	private function enqueueRequest( APNSRequest $request ): void {
-		$headers = $request->getHeadersForConfiguration( $this->configuration );
-		$headers = $this->convertRequestHeaders( $headers );
-		$url = $request->getUrlForConfiguration( $this->configuration );
-
-		$this->network_service->enqueueRequest( $url, $headers, $request->getBody() );
 	}
 
 	/**
