@@ -15,7 +15,7 @@ class APNSClientTest extends APNSTest {
 		$network_service_mock
 			->shouldReceive( 'sendQueuedRequests' )
 			->andReturn( $fake_responses );
-		$client = new APNSClient( $this->new_configuration(), $network_service_mock );
+		$client = APNSClient::withConfiguration( $this->new_configuration(), $network_service_mock );
 
 		$responses = $client->sendRequests( [ $this->new_request() ] );
 
