@@ -9,14 +9,9 @@ class APNSClient {
 	/** @var APNSConfiguration */
 	private $configuration;
 
-	/** @var string */
-	private $provider_token;
-
 	public function __construct( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ) {
 		$this->configuration = $configuration;
 		$this->network_service = $network_service ?? new APNSNetworkService();
-
-		$this->refreshToken();
 	}
 
 	public static function withConfiguration( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ): self {
@@ -25,11 +20,6 @@ class APNSClient {
 
 	public function setPortNumber( int $port ): void {
 		$this->network_service->setPort( $port );
-	}
-
-	// Can't be overridden, otherwise the subclass might not correctly refresh the token
-	public final function refreshToken(): void {
-		$this->provider_token = $this->configuration->getProviderToken();
 	}
 
 	/**
