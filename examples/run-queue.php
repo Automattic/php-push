@@ -21,12 +21,13 @@ echo "\t Connected.\n";
 while ( true ) {
 	$start = microtime( true );
 
-	$pushes = get_request();
+	/** @var list<APNSRequest>*/
+	$pushes = get_request()->all();
 
 	$time = microtime( true ) - $start;
 	echo PHP_EOL . '=== Fetched ' . count( $pushes ) . ' Messages in ' . $time . ' seconds === ' . PHP_EOL;
 
-	$client->sendRequests( $pushes->all() );
+	$client->sendRequests( $pushes );
 
 	$time = microtime( true ) - $start;
 	echo PHP_EOL . '=== Done in ' . $time . ' seconds === ' . PHP_EOL;

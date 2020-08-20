@@ -23,8 +23,8 @@ class APNSResponse {
 		$this->uuid = $parser->getHeader( 'apns-id' );
 
 		if ( $this->isError() ) {
-			$body = json_decode( $parser->getBody(), false, 512, JSON_THROW_ON_ERROR );
-			$this->error_message = $body->reason;
+			$body = (object) json_decode( $parser->getBody(), false, 512, JSON_THROW_ON_ERROR );
+			$this->error_message = strval( $body->reason );
 		}
 	}
 

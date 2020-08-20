@@ -9,7 +9,7 @@ class HTTPMessageParser {
 	/** @var int */
 	private $status_code;
 
-	/** @var array */
+	/** @var string[] */
 	private $headers = [];
 
 	/** @var string */

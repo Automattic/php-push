@@ -21,7 +21,7 @@ class APNSRequestMetadata {
 	/** @var string */
 	private $uuid;
 
-	function __construct( string $topic, string $uuid = null ) {
+	function __construct( string $topic, ?string $uuid = null ) {
 		$this->topic = $topic;
 		$this->uuid = $uuid ?? $this->generate_uuid();
 	}
@@ -183,26 +183,26 @@ class APNSRequestMetadata {
 	public static function fromJSON( string $data ): self {
 		$object = (object) json_decode( $data, false, 512, JSON_THROW_ON_ERROR );
 
-		if ( ! property_exists( $object, 'topic' ) || is_null( $object->topic ) ) {
+		if ( ! property_exists( $object, 'topic' ) || is_null( $object->topic ) || ! is_string( $object->topic ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `topic` is not present' );
 		}
 
-		if ( ! property_exists( $object, 'uuid' ) || is_null( $object->uuid ) ) {
+		if ( ! property_exists( $object, 'uuid' ) || is_null( $object->uuid ) || ! is_string( $object->uuid ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `uuid` is not present' );
 		}
 
 		$metadata = new APNSRequestMetadata( $object->topic, $object->uuid );
 
-		if ( property_exists( $object, 'push_type' ) && ! is_null( $object->push_type ) ) {
+		if ( property_exists( $object, 'push_type' ) && ! is_null( $object->push_type ) && is_string( $object->push_type ) ) {
 			$metadata->setPushType( $object->push_type );
 		}
 
-		if ( property_exists( $object, 'expiration_timestamp' ) && ! is_null( $object->expiration_timestamp ) ) {
-			$metadata->setExpirationTimestamp( $object->expiration_timestamp );
+		if ( property_exists( $object, 'expiration_timestamp' ) && ! is_null( $object->expiration_timestamp ) && is_numeric( $object->expiration_timestamp ) ) {
+			$metadata->setExpirationTimestamp( intval( $object->expiration_timestamp ) );
 		}
 
-		if ( property_exists( $object, 'priority' ) && ! is_null( $object->priority ) ) {
-			if ( ! APNSPriority::isValid( $object->priority ) ) {
+		if ( property_exists( $object, 'priority' ) && ! is_null( $object->priority ) && is_numeric( $object->priority ) ) {
+			if ( ! APNSPriority::isValid( intval( $object->priority ) ) ) {
 				throw new InvalidArgumentException( 'Unable to unserialize object – `priority` is invalid' );
 			}
 
@@ -213,7 +213,7 @@ class APNSRequestMetadata {
 			}
 		}
 
-		if ( property_exists( $object, 'collapse_identifier' ) && ! is_null( $object->collapse_identifier ) ) {
+		if ( property_exists( $object, 'collapse_identifier' ) && ! is_null( $object->collapse_identifier ) && is_string( $object->collapse_identifier ) ) {
 			$metadata->setCollapseIdentifier( $object->collapse_identifier );
 		}
 

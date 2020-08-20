@@ -99,10 +99,11 @@ class APNSNetworkService {
 				}
 
 				if ( $info['result'] !== CURLE_OK ) {
-					throw new Exception( 'Request failed: ' . $info['result'] );
+					throw new Exception( 'Request failed: ' . strval( $info['result'] ) );
 				}
 
 				if ( ! is_null( $info['handle'] ) ) {
+					/** @var resource */
 					$handle = $info['handle'];
 					$responses[] = $this->process( $handle );
 
@@ -113,7 +114,7 @@ class APNSNetworkService {
 		} while ( $running_operation_count > 0 && $status === CURLM_OK );
 
 		if ( $status !== CURLM_OK ) {
-			throw new Exception( 'Unable to continue sending – ' . curl_multi_strerror( $status ) );
+			throw new Exception( 'Unable to continue sending – ' . ( curl_multi_strerror( $status ) ?? 'unknown error' ) );
 		}
 
 		return $responses;
