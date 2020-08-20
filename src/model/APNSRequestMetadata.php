@@ -181,7 +181,7 @@ class APNSRequestMetadata {
 	}
 
 	public static function fromJSON( string $data ): self {
-		$object = json_decode( $data );
+		$object = (object) json_decode( $data, false, 512, JSON_THROW_ON_ERROR );
 
 		if ( ! property_exists( $object, 'topic' ) || is_null( $object->topic ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `topic` is not present' );
