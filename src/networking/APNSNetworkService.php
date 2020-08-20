@@ -12,9 +12,6 @@ class APNSNetworkService {
 	/** @var bool **/
 	private $debug = false;
 
-	/** @var bool **/
-	private $ssl_verification_enabled = true;
-
 	/** @var string **/
 	private $certificate_bundle_path;
 
@@ -61,11 +58,6 @@ class APNSNetworkService {
 		return $this;
 	}
 
-	public function setSslVerificationEnabled( bool $ssl_verification_enabled ): self {
-		$this->ssl_verification_enabled = $ssl_verification_enabled;
-		return $this;
-	}
-
 	public function setCertificateBundlePath( string $path ): self {
 		$this->certificate_bundle_path = $path;
 		return $this;
@@ -82,7 +74,6 @@ class APNSNetworkService {
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port );
 		curl_setopt( $ch, CURLOPT_CAINFO, $this->certificate_bundle_path );
-		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, $this->ssl_verification_enabled );
 
 		curl_multi_add_handle( $this->curl_handle, $ch );
 	}
