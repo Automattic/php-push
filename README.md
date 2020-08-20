@@ -25,3 +25,13 @@ The library is designed to maximize queue throughput and minimize latency – to
 - PHP 7.3 or greater
 - PHP curl extension version 7.61 or greater
 - PHP curl compiled with HTTP/2 support
+
+## Common Issues
+
+### `CURLE_PEER_FAILED_VERIFICATION` (error 60)
+
+Debian removed the Geotrust certificate that Apple relies on [in the `20200601` ca-certificates update](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=962596). The best workaround until that's fixed is to use the another certificate bundle, such as [the one provided by curl](https://curl.haxx.se/docs/caextract.html). You can do this by using:
+
+```php
+$client = APNSClient::withConfiguration($configuration)->setCertificateBundlePath('/path/to/cacert.pem');
+```

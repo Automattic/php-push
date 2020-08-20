@@ -50,11 +50,6 @@ class APNSClient {
 		return $this;
 	}
 
-	public function setDisableSSLVerification( bool $disable ): self {
-		$this->network_service->setSslVerificationEnabled( ! $disable );
-		return $this;
-	}
-
 	public function setCertificateBundlePath( string $path ): self {
 		$this->network_service->setCertificateBundlePath( $path );
 		return $this;

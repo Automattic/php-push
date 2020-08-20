@@ -18,11 +18,6 @@ class APNSClientSmokeTest extends APNSTest {
 		$this->assertNotNull( $client );
 	}
 
-	public function testThatSetDisableSSLWorks() {
-		$client = ( new APNSClient( $this->new_configuration() ) )->setDisableSSLVerification( true );
-		$this->assertNotNull( $client );
-	}
-
 	public function testThatSetCertificateBundlePathWorks() {
 		$client = ( new APNSClient( $this->new_configuration() ) )->setCertificateBundlePath( $this->random_string() );
 		$this->assertNotNull( $client );
