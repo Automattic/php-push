@@ -12,6 +12,7 @@ class APNSSoundTest extends APNSTest {
 		$name = $this->random_string();
 		$sound = $this->new_sound()->setName( $name );
 		$this->assertEquals( $name, $this->to_string( $sound ) );
+		$this->assertEquals( $name, $sound->getName() );
 	}
 
 	public function testThatDefaultVolumeIsMax() {
