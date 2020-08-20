@@ -37,9 +37,17 @@ class APNSAlert implements JsonSerializable {
 		return new APNSAlert( $string );
 	}
 
+	function getTitle(): string {
+		return $this->title;
+	}
+
 	function setTitle( string $title ): self {
 		$this->title = $title;
 		return $this;
+	}
+
+	function getBody(): ?string {
+		return $this->body;
 	}
 
 	function setBody( string $body ): self {
@@ -47,9 +55,17 @@ class APNSAlert implements JsonSerializable {
 		return $this;
 	}
 
+	function getLocalizedTitleKey(): ?string {
+		return $this->localized_title_key;
+	}
+
 	function setLocalizedTitleKey( string $key ): self {
 		$this->localized_title_key = $key;
 		return $this;
+	}
+
+	function getLocalizedTitleArgs(): ?array {
+		return $this->localized_title_args;
 	}
 
 	function setLocalizedTitleArgs( array $args ): self {
@@ -57,9 +73,17 @@ class APNSAlert implements JsonSerializable {
 		return $this;
 	}
 
+	function getLocalizedActionKey(): ?string {
+		return $this->localized_action_key;
+	}
+
 	function setLocalizedActionKey( string $key ): self {
 		$this->localized_action_key = $key;
 		return $this;
+	}
+
+	function getLocalizedMessageKey(): ?string {
+		return $this->localized_message_key;
 	}
 
 	function setLocalizedMessageKey( string $key ): self {
@@ -67,9 +91,17 @@ class APNSAlert implements JsonSerializable {
 		return $this;
 	}
 
+	function getLocalizedMessageArgs(): ?array {
+		return $this->localized_message_args;
+	}
+
 	function setLocalizedMessageArgs( array $args ): self {
 		$this->localized_message_args = $args;
 		return $this;
+	}
+
+	function getLaunchImage(): ?string {
+		return $this->launch_image;
 	}
 
 	function setLaunchImage( string $name ): self {

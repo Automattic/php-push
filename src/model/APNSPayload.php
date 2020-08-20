@@ -46,6 +46,10 @@ class APNSPayload {
 		return new APNSPayload( APNSAlert::fromString( $string ) );
 	}
 
+	function getAlert(): APNSAlert {
+		return $this->alert;
+	}
+
 	/**
 	 * Set the alert field to the provided APNSAlert object or string.
 	 *
@@ -66,11 +70,22 @@ class APNSPayload {
 		return $this;
 	}
 
+	function getBadgeCount(): ?int {
+		return $this->badge;
 	}
 
 	function setBadgeCount( int $count ): self {
 		$this->badge = $count;
 		return $this;
+	}
+
+	/**
+	 * Returns the currently set `APNSSound` object for this payload, or `null` if none exists.
+	 *
+	 * @return APNSSound|null
+	 */
+	function getSound(): ?APNSSound {
+		return $this->sound;
 	}
 
 	/**
@@ -93,9 +108,17 @@ class APNSPayload {
 		throw new InvalidArgumentException( 'Invalid Sound – you must pass either a string or `APNSSound` object.' );
 	}
 
+	function getIsContentAvailable(): bool {
+		return $this->content_available;
+	}
+
 	function setContentAvailable( bool $content_available ): self {
 		$this->content_available = $content_available;
 		return $this;
+	}
+
+	function getIsMutableContent(): bool {
+		return $this->mutable_content;
 	}
 
 	function setMutableContent( bool $mutable_content ): self {
@@ -103,9 +126,17 @@ class APNSPayload {
 		return $this;
 	}
 
+	function getTargetContentId(): ?string {
+		return $this->target_content_id;
+	}
+
 	function setTargetContentId( string $id ): self {
 		$this->target_content_id = $id;
 		return $this;
+	}
+
+	function getCategory(): ?string {
+		return $this->category;
 	}
 
 	function setCategory( string $category ): self {
@@ -113,9 +144,17 @@ class APNSPayload {
 		return $this;
 	}
 
+	function getThreadId(): ?string {
+		return $this->thread_id;
+	}
+
 	function setThreadId( string $id ): self {
 		$this->thread_id = $id;
 		return $this;
+	}
+
+	function getCustomData(): array {
+		return $this->custom;
 	}
 
 	function setCustomData( array $data ): self {

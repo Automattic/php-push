@@ -12,6 +12,7 @@ class APNSPayloadTest extends APNSTest {
 		$alert = $this->random_string();
 		$payload = $this->new_payload()->setAlert( $alert );
 		$this->assertEquals( $alert, $this->to_stdclass( $payload )->aps->alert );
+		$this->assertEquals( $alert, $payload->getAlert()->getTitle() );
 	}
 
 	public function testThatAlertSetterThrowsForInvalidValues() {
@@ -28,12 +29,14 @@ class APNSPayloadTest extends APNSTest {
 		$sound = $this->random_string();
 		$payload = $this->new_payload()->setSound( $sound );
 		$this->assertEquals( $sound, $this->to_stdclass( $payload )->aps->sound );
+		$this->assertEquals( $sound, $payload->getSound()->getName() );
 	}
 
 	public function testThatSoundSetterWorksForSoundObjects() {
 		$sound = $this->new_sound();
 		$payload = $this->new_payload()->setSound( $sound );
 		$this->assertEquals( $sound->getName(), $this->to_stdclass( $payload )->aps->sound );
+		$this->assertEquals( $sound, $payload->getSound() );
 	}
 
 	public function testThatSoundSetterThrowsForInvalidValues() {
@@ -50,6 +53,7 @@ class APNSPayloadTest extends APNSTest {
 		$badge_count = random_int( 1, 99 );
 		$payload = $this->new_payload()->setBadgeCount( $badge_count );
 		$this->assertEquals( $badge_count, $this->to_stdclass( $payload )->aps->badge );
+		$this->assertEquals( $badge_count, $payload->getBadgeCount() );
 	}
 
 	public function testThatContentAvailableIsNotPresentByDefault() {
@@ -59,9 +63,11 @@ class APNSPayloadTest extends APNSTest {
 	public function testThatSetContentAvailableWorks() {
 		$payload = $this->new_payload()->setContentAvailable( true );
 		$this->assertEquals( 1, $this->to_stdclass( $payload )->aps->{'content-available'} );
+		$this->assertTrue( $payload->getIsContentAvailable() );
 
 		$payload = $payload->setContentAvailable( false );
 		$this->assertEquals( 0, $this->to_stdclass( $payload )->aps->{'content-available'} );
+		$this->assertFalse( $payload->getIsContentAvailable() );
 	}
 
 	public function testThatMutableContentIsNotPresentByDefault() {
@@ -71,9 +77,11 @@ class APNSPayloadTest extends APNSTest {
 	public function testThatMutableContentSetterWorks() {
 		$payload = $this->new_payload()->setMutableContent( true );
 		$this->assertEquals( 1, $this->to_stdclass( $payload )->aps->{'mutable-content'} );
+		$this->assertTrue( $payload->getIsMutableContent() );
 
 		$payload = $payload->setMutableContent( false );
 		$this->assertEquals( 0, $this->to_stdclass( $payload )->aps->{'mutable-content'} );
+		$this->assertFalse( $payload->getIsMutableContent() );
 	}
 
 	public function testThatTargetContentIdIsNotPresentByDefault() {
@@ -84,6 +92,7 @@ class APNSPayloadTest extends APNSTest {
 		$id = $this->random_string();
 		$payload = $this->new_payload()->setTargetContentId( $id );
 		$this->assertEquals( $id, $this->to_stdclass( $payload )->aps->{'target-content-id'} );
+		$this->assertEquals( $id, $payload->getTargetContentId() );
 	}
 
 	public function testThatCategoryIsNotPresentByDefault() {
@@ -94,6 +103,7 @@ class APNSPayloadTest extends APNSTest {
 		$category = $this->random_string();
 		$payload = $this->new_payload()->setCategory( $category );
 		$this->assertEquals( $category, $this->to_stdclass( $payload )->aps->category );
+		$this->assertEquals( $category, $payload->getCategory() );
 	}
 
 	public function testThatThreadIdIsNotPresentByDefault() {
@@ -104,12 +114,14 @@ class APNSPayloadTest extends APNSTest {
 		$thread = $this->random_string();
 		$payload = $this->new_payload()->setThreadId( $thread );
 		$this->assertEquals( $thread, $this->to_stdclass( $payload )->aps->{'thread-id'} );
+		$this->assertEquals( $thread, $payload->getThreadId() );
 	}
 
 	// The only key that should be present by default is `aps`
 	public function testThatNoCustomDataIsPresentByDefault() {
 		$payload = $this->to_stdclass( $this->new_payload() );
 		$this->assertEquals( 1, count( get_object_vars( $payload ) ) );
+		$this->assertEquals( 'aps', array_keys( get_object_vars( $payload ) )[0] );
 	}
 
 	public function testThatCustomDataSetterWorks() {
@@ -121,5 +133,6 @@ class APNSPayloadTest extends APNSTest {
 		$object = $this->to_stdclass( $payload );
 		unset( $object->aps );
 		$this->assertEquals( $custom_data, (array) $object );
+		$this->assertEquals( $custom_data, $payload->getCustomData() );
 	}
 }
