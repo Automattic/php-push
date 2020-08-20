@@ -129,6 +129,10 @@ abstract class APNSTest extends TestCase {
 		return json_decode( json_encode( $object ) );
 	}
 
+	function to_string( $object ): string {
+		return json_decode( json_encode( $object ) );
+	}
+
 	function new_apns_http_failure_response( int $status_code, string $reason = 'not read here' ): string {
 		return <<<TEXT
 HTTP/2 $status_code

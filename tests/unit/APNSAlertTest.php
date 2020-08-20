@@ -10,10 +10,18 @@ class APNSAlertTest extends APNSTest {
 		$this->assertEquals( $body, $this->to_stdclass( $alert )->body );
 	}
 
-	public function testThatAlertTitleSetterWorks() {
-		$title = 'title';
+	public function testThatAlertWithoutBodySerializesToString() {
+		$string = $this->random_string();
+
+		$alert = new APNSAlert( $string );
+		$this->assertEquals( '"' . $string . '"', json_encode( $alert ) );
+	}
+
+	public function testThatAlertTitleSetterWorksForStrings() {
+		$title = $this->random_string();
 		$alert = $this->new_alert()->setTitle( $title );
 		$this->assertEquals( $title, $this->to_stdclass( $alert )->title );
+		$this->assertEquals( $title, $alert->getTitle() );
 	}
 
 	public function testThatAlertBodySetterWorks() {

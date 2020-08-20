@@ -11,7 +11,7 @@ class APNSSoundTest extends APNSTest {
 	public function testThatNameSetterWorks() {
 		$name = $this->random_string();
 		$sound = $this->new_sound()->setName( $name );
-		$this->assertEquals( $name, $this->to_stdclass( $sound )->name );
+		$this->assertEquals( $name, $this->to_string( $sound ) );
 	}
 
 	public function testThatDefaultVolumeIsMax() {
@@ -46,5 +46,22 @@ class APNSSoundTest extends APNSTest {
 
 		$sound = $this->new_sound()->setIsCritical( false );
 		$this->assertFalse( $sound->getIsCritical() );
+	}
+
+	public function testThatSerializationForDefaultsReturnsString() {
+		$name = $this->random_string();
+		$sound = APNSSound::fromString( $name );
+		$this->assertEquals( '"' . $name . '"', json_encode( $sound ) );
+	}
+
+	public function testThatSerializationForCustomVolumeReturnsObject() {
+		$volume = rand( 0, 10 ) / 10;
+		$sound = $this->new_sound()->setVolume( $volume );
+		$this->assertEquals( $volume, $this->to_stdclass( $sound )->volume );
+	}
+
+	public function testThatSerializationForCustomCriticalityReturnsObject() {
+		$sound = $this->new_sound()->setIsCritical( true );
+		$this->assertEquals( 1, $this->to_stdclass( $sound )->critical );
 	}
 }
