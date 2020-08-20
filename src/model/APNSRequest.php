@@ -100,7 +100,7 @@ class APNSRequest {
 	}
 
 	public static function fromJSON( string $data ): self {
-		$object = json_decode( $data );
+		$object = (object) json_decode( $data, false, 512, JSON_THROW_ON_ERROR );
 
 		if ( ! property_exists( $object, 'payload' ) || is_null( $object->payload ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `payload` is invalid' );
