@@ -13,7 +13,7 @@ class APNSRequest {
 	private $token;
 
 	static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ): self {
-		$payload = new APNSPayload( $payload );
+		$payload = APNSPayload::fromString( $payload );
 		return new APNSRequest( $payload->toJSON(), $token, $metadata );
 	}
 

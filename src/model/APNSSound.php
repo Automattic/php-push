@@ -19,6 +19,10 @@ class APNSSound implements JsonSerializable {
 		$this->setIsCritical( $is_critical );
 	}
 
+	static function fromString( string $name ): APNSSound {
+		return new APNSSound( $name );
+	}
+
 	function getIsCritical(): bool {
 		return $this->is_critical;
 	}
@@ -51,6 +55,12 @@ class APNSSound implements JsonSerializable {
 	}
 
 	function jsonSerialize() {
+
+		// If the volume and `critical` flags haven't been modified, we can just send the filename to save space
+		if ( 1.0 === $this->volume && false === $this->is_critical ) {
+			return $this->name;
+		}
+
 		return [
 			'critical' => $this->is_critical ? 1 : 0,
 			'name' => $this->name,

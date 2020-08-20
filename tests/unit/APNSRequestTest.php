@@ -14,7 +14,7 @@ class APNSRequestTest extends APNSTest {
 		$message = $this->random_string();
 		$token = $this->random_string();
 
-		$request = APNSRequest::fromPayload( new APNSPayload( $message ), $token, $this->new_metadata() );
+		$request = APNSRequest::fromPayload( APNSPayload::fromString( $message ), $token, $this->new_metadata() );
 		$this->assertEquals( $message, $this->decode( $request->getBody() )->aps->alert );
 	}
 

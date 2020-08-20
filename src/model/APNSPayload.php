@@ -4,20 +4,20 @@ declare( strict_types = 1 );
 // Partial list of keys: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943363
 class APNSPayload {
 
-	/** @var string|APNSAlert */
-	private $alert = '';
+	/** @var APNSAlert */
+	private $alert;
 
 	/** @var ?int */
 	private $badge = null;
 
-	/** @var ?string|?APNSSound */
+	/** @var ?APNSSound */
 	private $sound = null;
 
-	/** @var ?bool */
-	private $content_available = null;
+	/** @var bool */
+	private $content_available = false;
 
-	/** @var ?bool */
-	private $mutable_content = null;
+	/** @var bool */
+	private $mutable_content = false;
 
 	/** @var ?string */
 	private $target_content_id = null;
@@ -34,12 +34,16 @@ class APNSPayload {
 	/**
 	 * Create an APNSPayload from the provided APNSAlert or string object, as well as any custom data
 	 *
-	 * @param string|APNSAlert $alert
+	 * @param APNSAlert $alert
 	 * @param array $custom
 	 */
-	function __construct( $alert, array $custom = [] ) {
-		$this->setAlert( $alert );
+	function __construct( APNSAlert $alert, array $custom = [] ) {
+		$this->alert = $alert;
 		$this->custom = $custom;
+	}
+
+	static function fromString( string $string ): APNSPayload {
+		return new APNSPayload( APNSAlert::fromString( $string ) );
 	}
 
 	/**
@@ -50,16 +54,18 @@ class APNSPayload {
 	function setAlert( $alert ): self {
 
 		if ( is_string( $alert ) ) {
-			$this->alert = $alert;
-			return $this;
+			$alert = new APNSAlert( $alert );
 		}
 
-		if ( is_object( $alert ) && get_class( $alert ) === APNSAlert::class ) {
-			$this->alert = $alert;
-			return $this;
+		/** @psalm-suppress DocblockTypeContradiction – we need to validate that this is an object in case of external callers **/
+		if ( ! is_object( $alert ) || get_class( $alert ) !== APNSAlert::class ) {
+			throw new InvalidArgumentException( 'Invalid Alert – you must pass either a string or `APNSAlert` object.' );
 		}
 
-		throw new InvalidArgumentException( 'Invalid Alert – you must pass either a string or `APNSAlert` object.' );
+		$this->alert = $alert;
+		return $this;
+	}
+
 	}
 
 	function setBadgeCount( int $count ): self {
@@ -75,7 +81,7 @@ class APNSPayload {
 	function setSound( $sound ): self {
 
 		if ( is_string( $sound ) ) {
-			$this->sound = $sound;
+			$this->sound = APNSSound::fromString( $sound );
 			return $this;
 		}
 
@@ -118,24 +124,25 @@ class APNSPayload {
 	}
 
 	public function toJSON(): string {
-		return json_encode(
-			array_merge(
-				$this->custom,
-				[
-					'aps' => (object) array_filter(
-						[
-							'alert' => $this->alert,
-							'badge' => $this->badge,
-							'sound' => $this->sound,
-							'content-available' => $this->content_available,
-							'mutable-content' => $this->mutable_content,
-							'target-content-id' => $this->target_content_id,
-							'category' => $this->category,
-							'thread-id' => $this->thread_id,
-						], function( $value ) { return ! is_null( $value ); }
-					),
-				]
-			)
+		$payload_data = [
+			'alert' => $this->alert,
+			'badge' => $this->badge,
+			'sound' => $this->sound,
+			'content-available' => $this->content_available,
+			'mutable-content' => $this->mutable_content,
+			'target-content-id' => $this->target_content_id,
+			'category' => $this->category,
+			'thread-id' => $this->thread_id,
+		];
+
+		$payload_data = array_filter(
+			$payload_data, function( $value ) {
+				return ! is_null( $value );
+			}
 		);
+
+		$all_data = array_merge( $this->custom, [ 'aps' => $payload_data ] );
+
+		return json_encode( $all_data );
 	}
 }

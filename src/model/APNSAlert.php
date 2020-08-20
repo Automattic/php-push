@@ -4,55 +4,103 @@ declare( strict_types = 1 );
 // Keys defined at https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943365
 class APNSAlert implements JsonSerializable {
 
-	/** @var array */
-	protected $internal = [];
+	/** @var string */
+	protected $title;
 
-	function __construct( string $title, string $body ) {
-		$this->internal['title'] = $title;
-		$this->internal['body'] = $body;
+	/** @var ?string */
+	protected $body;
+
+	/** @var ?string */
+	protected $localized_title_key;
+
+	/** @var ?array */
+	protected $localized_title_args = null;
+
+	/** @var ?string */
+	protected $localized_action_key;
+
+	/** @var ?string */
+	protected $localized_message_key;
+
+	/** @var ?array */
+	protected $localized_message_args = null;
+
+	/** @var ?string */
+	protected $launch_image;
+
+	function __construct( string $title, ?string $body = null ) {
+		$this->title = $title;
+		$this->body = $body;
+	}
+
+	static function fromString( string $string ): APNSAlert {
+		return new APNSAlert( $string );
 	}
 
 	function setTitle( string $title ): self {
-		$this->internal['title'] = $title;
+		$this->title = $title;
 		return $this;
 	}
 
 	function setBody( string $body ): self {
-		$this->internal['body'] = $body;
+		$this->body = $body;
 		return $this;
 	}
 
 	function setLocalizedTitleKey( string $key ): self {
-		$this->internal['title-loc-key'] = $key;
+		$this->localized_title_key = $key;
 		return $this;
 	}
 
 	function setLocalizedTitleArgs( array $args ): self {
-		$this->internal['title-loc-args'] = $args;
+		$this->localized_title_args = $args;
 		return $this;
 	}
 
 	function setLocalizedActionKey( string $key ): self {
-		$this->internal['action-loc-key'] = $key;
+		$this->localized_action_key = $key;
 		return $this;
 	}
 
 	function setLocalizedMessageKey( string $key ): self {
-		$this->internal['loc-key'] = $key;
+		$this->localized_message_key = $key;
 		return $this;
 	}
 
 	function setLocalizedMessageArgs( array $args ): self {
-		$this->internal['loc-args'] = $args;
+		$this->localized_message_args = $args;
 		return $this;
 	}
 
 	function setLaunchImage( string $name ): self {
-		$this->internal['launch-image'] = $name;
+		$this->launch_image = $name;
 		return $this;
 	}
 
 	function jsonSerialize() {
-		return $this->internal;
+
+		$data = [
+			'title' => $this->title,
+			'body' => $this->body,
+			'title-loc-key' => $this->localized_title_key,
+			'title-loc-args' => $this->localized_title_args,
+			'action-loc-key' => $this->localized_action_key,
+			'loc-key' => $this->localized_message_key,
+			'loc-args' => $this->localized_message_args,
+			'launch-image' => $this->launch_image,
+		];
+
+		$output = array_filter(
+			$data, function( $value ) {
+				return ! is_null( $value );
+			}
+		);
+
+		// If only the title is present, return it instead of an object
+		if ( count( $output ) === 1 && array_keys( $output )[0] === 'title' ) {
+			return $this->title;
+		}
+
+		return $output;
 	}
 }
