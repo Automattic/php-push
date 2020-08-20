@@ -24,9 +24,9 @@ class APNSClient {
 	}
 
 	/**
-	 * @return APNSResponse[]
+	 * @param APNSRequest[] $requests
 	 *
-	 * @psalm-return list<APNSResponse>
+	 * @return APNSResponse[]
 	 */
 	public function sendRequests( array $requests ): array {
 		foreach ( $requests as $request ) {
@@ -58,6 +58,9 @@ class APNSClient {
 	/**
 	 *
 	 * @param array $headers
+	 * @psalm-param array<string, string> $headers
+	 *
+	 * @return string[]
 	 */
 	private function convertRequestHeaders( array $headers ): array {
 		$_headers = [];

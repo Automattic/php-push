@@ -48,9 +48,9 @@ class APNSRequest {
 	}
 
 	/**
-	 * @return (int|mixed|null|string)[]
+	 * @return string[]
 	 *
-	 * @psalm-return array{authorization: string, content-type: string, content-length: int, apns-expiration: int, apns-push-type: string, apns-topic: mixed, user-agent?: null|string, apns-priority?: mixed, apns-id?: string, apns-collapse-id?: null|string}
+	 * @psalm-return array<string, string>
 	 */
 	function getHeadersForConfiguration( APNSConfiguration $configuration ): array {
 
@@ -58,22 +58,22 @@ class APNSRequest {
 			// Typical HTTP Headers
 			'authorization' => 'bearer ' . $configuration->getProviderToken(),
 			'content-type' => 'application/json',
-			'content-length' => strlen( $this->body ),
+			'content-length' => strval( strlen( $this->body ) ),
 
 			// Apple-specific Required Headers
-			'apns-expiration' => $this->metadata->getExpirationTimestamp(),
+			'apns-expiration' => strval( $this->metadata->getExpirationTimestamp() ),
 			'apns-push-type' => $this->metadata->getPushType(),
 			'apns-topic' => $this->metadata->getTopic(),
 		];
 
 		// A developer-provided user agent is optional, and if it's not set, the transport mechanism can manually specify this
 		if ( ! is_null( $configuration->getUserAgent() ) ) {
-			$headers['user-agent'] = $configuration->getUserAgent();
+			$headers['user-agent'] = $configuration->getUserAgent() ?? 'unknown';
 		}
 
 		// Only include priority if it has been specifically set by the developer
 		if ( $this->metadata->getPriority() !== 10 ) {
-			$headers['apns-priority'] = $this->metadata->getPriority();
+			$headers['apns-priority'] = strval( $this->metadata->getPriority() );
 		}
 
 		if ( ! is_null( $this->metadata->getUuid() ) ) {
@@ -82,8 +82,9 @@ class APNSRequest {
 
 		// Collapse identifier is optional – we won't set it unless it's present, because an empty value is a valid collapse identifer
 		// and this would group notifications together in a way we don't want
-		if ( ! is_null( $this->metadata->getCollapseIdentifier() ) ) {
-			$headers['apns-collapse-id'] = $this->metadata->getCollapseIdentifier();
+		$collapse_identifier = $this->metadata->getCollapseIdentifier();
+		if ( ! is_null( $collapse_identifier ) ) {
+			$headers['apns-collapse-id'] = $collapse_identifier;
 		}
 
 		return $headers;
@@ -102,15 +103,15 @@ class APNSRequest {
 	public static function fromJSON( string $data ): self {
 		$object = (object) json_decode( $data, false, 512, JSON_THROW_ON_ERROR );
 
-		if ( ! property_exists( $object, 'payload' ) || is_null( $object->payload ) ) {
+		if ( ! property_exists( $object, 'payload' ) || is_null( $object->payload ) || ! is_string( $object->payload ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `payload` is invalid' );
 		}
 
-		if ( ! property_exists( $object, 'token' ) || is_null( $object->token ) ) {
+		if ( ! property_exists( $object, 'token' ) || is_null( $object->token ) || ! is_string( $object->token ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `token` is invalid' );
 		}
 
-		if ( ! property_exists( $object, 'metadata' ) || is_null( $object->metadata ) ) {
+		if ( ! property_exists( $object, 'metadata' ) || is_null( $object->metadata ) || ! is_string( $object->metadata ) ) {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `metadata` is invalid' );
 		}
 
