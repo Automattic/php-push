@@ -128,8 +128,8 @@ class APNSNetworkService {
 		$response_text = curl_multi_getcontent( $handle );
 
 		// Interesting Request Metrics for stats
-		$transfer_time = curl_getinfo( $handle, CURLINFO_TOTAL_TIME_T );
-		$total_bytes = curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD_T );
+		$transfer_time = intval( curl_getinfo( $handle, CURLINFO_TOTAL_TIME_T ) ); // as microseconds
+		$total_bytes = intval( curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD_T ) );
 
 		$metrics = new APNSResponseMetrics( $total_bytes, $transfer_time );
 
