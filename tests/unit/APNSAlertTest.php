@@ -2,8 +2,8 @@
 declare( strict_types = 1 );
 class APNSAlertTest extends APNSTest {
 	public function testThatAlertConstructorStoresTitleAndBody() {
-		$title = 'title';
-		$body = 'body';
+		$title = $this->random_string();
+		$body = $this->random_string();
 
 		$alert = new APNSAlert( $title, $body );
 		$this->assertEquals( $title, $this->to_stdclass( $alert )->title );
@@ -25,7 +25,7 @@ class APNSAlertTest extends APNSTest {
 	}
 
 	public function testThatAlertBodySetterWorks() {
-		$body = 'body';
+		$body = $this->random_string();
 		$alert = $this->new_alert()->setBody( $body );
 		$this->assertEquals( $body, $this->to_stdclass( $alert )->body );
 	}
@@ -35,7 +35,7 @@ class APNSAlertTest extends APNSTest {
 	}
 
 	public function testThatLocalizedTitleKeySetterWorks() {
-		$key = 'key';
+		$key = $this->random_string();
 		$alert = $this->new_alert()->setLocalizedTitleKey( $key );
 		$this->assertEquals( $key, $this->to_stdclass( $alert )->{'title-loc-key'} );
 	}
@@ -47,13 +47,13 @@ class APNSAlertTest extends APNSTest {
 	}
 
 	public function testThatLocalizedActionKeySetterWorks() {
-		$key = 'key';
+		$key = $this->random_string();
 		$alert = $this->new_alert()->setLocalizedActionKey( $key );
 		$this->assertEquals( $key, $this->to_stdclass( $alert )->{'action-loc-key'} );
 	}
 
 	public function testThatAlertLocalizedMessageKeySetterWorks() {
-		$key = 'key';
+		$key = $this->random_string();
 		$alert = $this->new_alert()->setLocalizedMessageKey( $key );
 		$this->assertEquals( $key, $this->to_stdclass( $alert )->{'loc-key'} );
 	}
@@ -65,7 +65,7 @@ class APNSAlertTest extends APNSTest {
 	}
 
 	public function testThatAlertLaunchImageSetterWorks() {
-		$name = 'file-name';
+		$name = $this->random_string();
 		$alert = $this->new_alert()->setLaunchImage( $name );
 		$this->assertEquals( $name, $this->to_stdclass( $alert )->{'launch-image'} );
 	}
