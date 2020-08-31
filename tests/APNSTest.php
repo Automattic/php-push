@@ -79,7 +79,7 @@ abstract class APNSTest extends TestCase {
 	}
 
 	function new_payload(): APNSPayload {
-		return new APNSPayload( $this->new_alert() );
+		return APNSPayload::fromAlert( $this->new_alert() );
 	}
 
 	function new_configuration(): APNSConfiguration {

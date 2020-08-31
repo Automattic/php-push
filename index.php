@@ -27,7 +27,7 @@ echo "\t - Title: " . $title . PHP_EOL;
 echo "\t - Message: " . $message . PHP_EOL;
 
 $token = strval( getenv( 'TOKEN' ) );
-$payload = new APNSPayload( new APNSAlert( $title, $message ) );
+$payload = APNSPayload::fromAlert( new APNSAlert( $title, $message ) );
 $metadata = new APNSRequestMetadata( strval( getenv( 'TOPIC' ) ) );
 $request = APNSRequest::fromPayload( $payload, $token, $metadata );
 
