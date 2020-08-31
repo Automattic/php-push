@@ -2,6 +2,13 @@
 declare( strict_types = 1 );
 class APNSPayloadTest extends APNSTest {
 
+	public function testThatBadgeCountInitializerOnlySetsBadgeCount() {
+		$count = random_int( 0, PHP_INT_MAX );
+		$payload = APNSPayload::fromBadgeCount( $count );
+		$this->assertEquals( $count, $this->to_stdclass( $payload )->aps->badge );
+		$this->assertEquals( 1, count( get_object_vars( $this->to_stdclass( $payload )->aps ) ) );
+	}
+
 	public function testThatAlertInitializerSetsAlertCorrectly() {
 		$alert = $this->new_alert();
 		$payload = APNSPayload::fromAlert( $alert );

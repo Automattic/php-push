@@ -54,6 +54,15 @@ class APNSPayload {
 		return $payload;
 	}
 
+	/**
+	 * Create an APNSPayload that contains only a badge count
+	 *
+	 * @param APNSAlert $alert
+	 * @param array $custom
+	 */
+	static function fromBadgeCount( int $count ): APNSPayload {
+		return ( new APNSPayload() )
+			->setBadgeCount( $count );
 	}
 
 	function getAlert(): ?APNSAlert {
