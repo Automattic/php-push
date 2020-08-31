@@ -12,8 +12,8 @@ class APNSNetworkService {
 	/** @var bool **/
 	private $debug = false;
 
-	/** @var string **/
-	private $certificate_bundle_path;
+	/** @var ?string **/
+	private $certificate_bundle_path = null;
 
 	public function __construct() {
 		$ch = curl_multi_init();
@@ -43,9 +43,6 @@ class APNSNetworkService {
 		// curl_multi_setopt( $ch, CURLOPT_PIPEWAIT, 1 );
 
 		$this->curl_handle = $ch;
-
-		// Use the default certificate bundle path until one is provided
-		$this->certificate_bundle_path = ! empty( ini_get( 'curl.cainfo' ) ) ? ini_get( 'curl.cainfo' ) : ini_get( 'openssl.cafile' );
 	}
 
 	public function setPort( int $port ): self {
@@ -73,7 +70,10 @@ class APNSNetworkService {
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $body );
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port );
-		curl_setopt( $ch, CURLOPT_CAINFO, $this->certificate_bundle_path );
+
+		if( ! is_null( $this->certificate_bundle_path ) ) {
+			curl_setopt( $ch, CURLOPT_CAINFO, $this->certificate_bundle_path );
+		}
 
 		curl_multi_add_handle( $this->curl_handle, $ch );
 	}
