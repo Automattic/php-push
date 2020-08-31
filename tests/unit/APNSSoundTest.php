@@ -56,7 +56,7 @@ class APNSSoundTest extends APNSTest {
 	}
 
 	public function testThatSerializationForCustomVolumeReturnsObject() {
-		$volume = rand( 0, 10 ) / 10;
+		$volume = random_int( 0, 9 ) / 10;
 		$sound = $this->new_sound()->setVolume( $volume );
 		$this->assertEquals( $volume, $this->to_stdclass( $sound )->volume );
 	}
