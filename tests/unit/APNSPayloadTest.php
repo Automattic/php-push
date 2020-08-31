@@ -2,6 +2,12 @@
 declare( strict_types = 1 );
 class APNSPayloadTest extends APNSTest {
 
+	public function testThatAlertInitializerSetsAlertCorrectly() {
+		$alert = $this->new_alert();
+		$payload = APNSPayload::fromAlert( $alert );
+		$this->assertEquals( $this->to_stdclass( $alert ), $this->to_stdclass( $payload )->aps->alert );
+	}
+
 	public function testThatAlertSetterWorksForAlertObjects() {
 		$alert = $this->new_alert();
 		$payload = $this->new_payload()->setAlert( $alert );

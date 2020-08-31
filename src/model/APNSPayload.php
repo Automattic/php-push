@@ -4,7 +4,7 @@ declare( strict_types = 1 );
 // Partial list of keys: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification#2943363
 class APNSPayload {
 
-	/** @var APNSAlert */
+	/** @var ?APNSAlert */
 	private $alert;
 
 	/** @var ?int */
@@ -31,22 +31,32 @@ class APNSPayload {
 	/** @var array */
 	private $custom = [];
 
+	// This class can be set up too many different ways to have any kind of shared constructor, so we'll explicitly define an empty one
+	function __construct() { }
+
 	/**
-	 * Create an APNSPayload from the provided APNSAlert or string object, as well as any custom data
+	 * Create an APNSPayload from the provided string
+	 *
+	 * @param string $string
+	 */
+	static function fromString( string $string ): APNSPayload {
+		return APNSPayload::fromAlert( APNSAlert::fromString( $string ) );
+	}
+
+	/**
+	 * Create an APNSPayload from the provided APNSAlert or string object
 	 *
 	 * @param APNSAlert $alert
-	 * @param array $custom
 	 */
-	function __construct( APNSAlert $alert, array $custom = [] ) {
-		$this->alert = $alert;
-		$this->custom = $custom;
+	static function fromAlert( APNSAlert $alert ): APNSPayload {
+		$payload = new APNSPayload();
+		$payload->setAlert( $alert );
+		return $payload;
 	}
 
-	static function fromString( string $string ): APNSPayload {
-		return new APNSPayload( APNSAlert::fromString( $string ) );
 	}
 
-	function getAlert(): APNSAlert {
+	function getAlert(): ?APNSAlert {
 		return $this->alert;
 	}
 
