@@ -57,30 +57,30 @@ class APNSPayloadTest extends APNSTest {
 	}
 
 	public function testThatContentAvailableIsNotPresentByDefault() {
-		$this->assertKeyIsNotPresentForObject( 'content-available', $this->new_payload() );
+		$this->assertKeyIsNotPresentForObject( 'content-available', $this->to_stdclass( $this->new_payload() )->aps );
 	}
 
 	public function testThatSetContentAvailableWorks() {
 		$payload = $this->new_payload()->setContentAvailable( true );
-		$this->assertEquals( 1, $this->to_stdclass( $payload )->aps->{'content-available'} );
+		$this->assertSame( 1, $this->to_stdclass( $payload )->aps->{'content-available'} );
 		$this->assertTrue( $payload->getIsContentAvailable() );
 
 		$payload = $payload->setContentAvailable( false );
-		$this->assertEquals( 0, $this->to_stdclass( $payload )->aps->{'content-available'} );
+		$this->assertKeyIsNotPresentForObject( 'content-available', $this->to_stdclass( $payload )->aps );
 		$this->assertFalse( $payload->getIsContentAvailable() );
 	}
 
 	public function testThatMutableContentIsNotPresentByDefault() {
-		$this->assertKeyIsNotPresentForObject( 'mutable-content', $this->new_payload() );
+		$this->assertKeyIsNotPresentForObject( 'mutable-content', $this->to_stdclass( $this->new_payload() )->aps );
 	}
 
 	public function testThatMutableContentSetterWorks() {
 		$payload = $this->new_payload()->setMutableContent( true );
-		$this->assertEquals( 1, $this->to_stdclass( $payload )->aps->{'mutable-content'} );
+		$this->assertSame( 1, $this->to_stdclass( $payload )->aps->{'mutable-content'} );
 		$this->assertTrue( $payload->getIsMutableContent() );
 
 		$payload = $payload->setMutableContent( false );
-		$this->assertEquals( 0, $this->to_stdclass( $payload )->aps->{'mutable-content'} );
+		$this->assertKeyIsNotPresentForObject( 'mutable-content', $payload );
 		$this->assertFalse( $payload->getIsMutableContent() );
 	}
 
