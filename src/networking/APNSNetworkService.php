@@ -12,7 +12,12 @@ class APNSNetworkService {
 	/** @var bool **/
 	private $debug = false;
 
-	/** @var ?string **/
+	/**
+	 * An optional path to the certificate bundle libcurl should use. By default, we'll use the system one, but on some systems it's necessary
+	 * to override this. One example is Debian, where Apple's Geotrust certificate isn't trusted. (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=962596)
+	 *
+	 * @var ?string
+	 **/
 	private $certificate_bundle_path = null;
 
 	public function __construct() {
