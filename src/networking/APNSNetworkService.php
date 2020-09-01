@@ -76,7 +76,7 @@ class APNSNetworkService {
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port );
 
-		if( ! is_null( $this->certificate_bundle_path ) ) {
+		if ( ! is_null( $this->certificate_bundle_path ) ) {
 			curl_setopt( $ch, CURLOPT_CAINFO, $this->certificate_bundle_path );
 		}
 
@@ -146,4 +146,3 @@ class APNSNetworkService {
 		curl_multi_close( $this->curl_handle );
 	}
 }
-
