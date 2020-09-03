@@ -103,8 +103,10 @@ class APNSNetworkService {
 					break;
 				}
 
-				if ( $info['result'] !== CURLE_OK ) {
-					throw new Exception( 'Request failed: ' . strval( $info['result'] ) );
+				$result = intval( $info['result'] );
+
+				if ( $result !== CURLE_OK ) {
+					error_log( 'Request failed: ' . $result );
 				}
 
 				if ( ! is_null( $info['handle'] ) ) {
