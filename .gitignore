@@ -4,3 +4,7 @@
 /coverage
 /vendor
 /key*
+
+# Test Server Keys
+/tests/MockAPNSServer/test-key.pem
+/tests/MockAPNSServer/test-cert.pem
