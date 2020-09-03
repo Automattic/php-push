@@ -20,11 +20,17 @@ class APNSResponse {
 		$this->metrics = $metrics;
 
 		$parser = new HTTPMessageParser( $response_text );
-		$this->uuid = $parser->getHeader( 'apns-id' );
+		$this->uuid = $parser->getHeader( 'apns-id' ) ?? 'Not Available';
 
 		if ( $this->isError() ) {
-			$body = (object) json_decode( $parser->getBody(), false, 512, JSON_THROW_ON_ERROR );
-			$this->error_message = strval( $body->reason );
+			if ( ! empty( $response_text ) ) {
+				$body = (object) json_decode( $parser->getBody(), false, 512, JSON_THROW_ON_ERROR );
+				/** @var string */
+				$reason = $body->reason;
+				$this->error_message = $reason;
+			} else {
+				$this->error_message = '';
+			}
 		}
 	}
 
@@ -62,7 +68,7 @@ class APNSResponse {
 	}
 
 	function shouldRetry(): bool {
-		return $this->status_code === 429 || $this->isServerError();
+		return $this->status_code === 429 || $this->isServerError() || 0 === $this->status_code;
 	}
 
 	function isServerError(): bool {

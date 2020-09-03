@@ -37,6 +37,7 @@ class APNSResponseTest extends APNSTest {
 	public function testThatRetryableResponsesAreCorrectlyRecognized() {
 		$this->assertTrue( $this->makeAPNSResponseFor( 429 )->shouldRetry() );
 		$this->assertTrue( $this->makeAPNSResponseFor( random_int( 500, 599 ) )->shouldRetry() );
+		$this->assertTrue( $this->makeAPNSResponseFor( 0 )->shouldRetry() );
 	}
 
 	public function testThatServerErrorResponsesAreCorrectlyRecognized() {
