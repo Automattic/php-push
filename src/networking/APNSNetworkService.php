@@ -61,6 +61,9 @@ class APNSNetworkService {
 	}
 
 	public function setCertificateBundlePath( string $path ): self {
+		if ( ! file_exists( $path ) ) {
+			throw new InvalidArgumentException( 'There is no certificate bundle at ' . $path );
+		}
 		$this->certificate_bundle_path = $path;
 		return $this;
 	}
