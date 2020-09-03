@@ -42,12 +42,25 @@ jobs:
 
   build-and-test:
     name: Build and Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '7.3'
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Set up Mock Server
+      run: |
+        node -v
+        cd tests/MockAPNSServer 
+        yarn setup
+        yarn install
+        yarn serve &
+        cd -
 
     - name: Test and Upload Coverage
       uses: paambaati/codeclimate-action@v2.6.0
