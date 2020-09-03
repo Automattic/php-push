@@ -19,8 +19,13 @@ class APNSClientSmokeTest extends APNSTest {
 	}
 
 	public function testThatSetCertificateBundlePathWorks() {
-		$client = ( new APNSClient( $this->new_configuration() ) )->setCertificateBundlePath( $this->random_string() );
+		$client = ( new APNSClient( $this->new_configuration() ) )->setCertificateBundlePath( dirname( __DIR__ ) . '/MockAPNSServer/test-cert.pem' );
 		$this->assertNotNull( $client );
+	}
+
+	public function testThatSetCertificateBundlePathThrowsForInvalidPath() {
+		$this->expectException( InvalidArgumentException::class );
+		( new APNSClient( $this->new_configuration() ) )->setCertificateBundlePath( $this->random_string() );
 	}
 
 	public function testThatCloseWorks() {
