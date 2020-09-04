@@ -5,7 +5,7 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 
 	function setUp(): void {
 		// Ensure the server is running before each test
-		$this->assertTrue( $this->reset_mock_server() );
+		$this->assertTrue( $this->reset_mock_server(), "The mock server doesn't appear to be running." );
 	}
 
 	function testThatSendingAfterGoAwayFrameEmitsIsRecoverable() {
