@@ -1,6 +1,9 @@
 <?php
 declare( strict_types = 1 );
 
+/**
+ * @group e2e
+ */
 class APNSNetworkServiceIntegrationTest extends APNSTest {
 
 	function setUp(): void {
