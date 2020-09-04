@@ -68,7 +68,7 @@ class APNSResponse {
 	}
 
 	function shouldRetry(): bool {
-		return $this->status_code === 429 || $this->isServerError() || 0 === $this->status_code;
+		return $this->status_code === 429 || $this->isServerError() || $this->status_code === 0;
 	}
 
 	function isServerError(): bool {
