@@ -17,7 +17,6 @@ server.on("session", (session) => {
 
 server.on("stream", (stream, headers) => {
 
-  // stream is a Duplex
   stream.respond({
     "content-type": "text/html; charset=utf-8",
     ":status": 200,
