@@ -47,7 +47,7 @@ server.on("stream", (stream, headers) => {
     });
 
     sessions = [stream.session];
-    stream.end("Reset Complete: Current Count: 1");
+    stream.end(`Reset Complete: Current Sessions Count: ${session.length}`);
   }
 });
 
