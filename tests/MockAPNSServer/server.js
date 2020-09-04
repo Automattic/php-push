@@ -24,7 +24,7 @@ server.on("stream", (stream, headers) => {
   });
 
   if (headers[":path"] === "/") {
-    console.log("REQUEST:", headers);
+    console.log("Request:", headers);
     requestNumber++;
     stream.end("Request Count: " + requestNumber);
   }
@@ -46,7 +46,7 @@ server.on("stream", (stream, headers) => {
     });
 
     sessions = [stream.session];
-    stream.end(`Reset Complete: Current Sessions Count: ${session.length}`);
+    stream.end(`Reset Complete: Current Sessions Count: ${sessions.length}`);
   }
 });
 
