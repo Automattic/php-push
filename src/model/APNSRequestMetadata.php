@@ -21,7 +21,7 @@ class APNSRequestMetadata {
 	/** @var string */
 	private $uuid;
 
-	function __construct( string $topic, ?string $uuid = null ) {
+	public function __construct( string $topic, ?string $uuid = null ) {
 		$this->topic = $topic;
 		$this->uuid = $uuid ?? $this->generate_uuid();
 	}
@@ -30,11 +30,11 @@ class APNSRequestMetadata {
 		return new APNSRequestMetadata( $topic );
 	}
 
-	function getTopic(): string {
+	public function getTopic(): string {
 		return $this->topic;
 	}
 
-	function setTopic( string $topic ): self {
+	public function setTopic( string $topic ): self {
 
 		if ( empty( trim( $topic ) ) ) {
 			throw new InvalidArgumentException( 'The topic ' . $topic . ' must not be empty' );
@@ -44,11 +44,11 @@ class APNSRequestMetadata {
 		return $this;
 	}
 
-	function getPushType(): string {
+	public function getPushType(): string {
 		return $this->push_type;
 	}
 
-	function setPushType( string $type ): self {
+	public function setPushType( string $type ): self {
 		if ( ! APNSPushType::isValid( $type ) ) {
 			throw new InvalidArgumentException( 'Invalid Push Type: ' . $type );
 		}
@@ -64,7 +64,7 @@ class APNSRequestMetadata {
 	 *
 	 * @return int
 	 */
-	function getExpirationTimestamp(): int {
+	public function getExpirationTimestamp(): int {
 		return $this->expiration_timestamp;
 	}
 
@@ -75,12 +75,12 @@ class APNSRequestMetadata {
 	 * If this value is nonzero, APNs stores the notification and tries to deliver it at least once, repeating the attempt as needed if it is unable to deliver the notification the first time. If the value is 0, APNs treats the notification as if it expires immediately and does not store the notification or attempt to redeliver it.
 	 * @return APNSRequestMetadata
 	 */
-	function setExpirationTimestamp( int $timestamp ): self {
+	public function setExpirationTimestamp( int $timestamp ): self {
 		$this->expiration_timestamp = $timestamp;
 		return $this;
 	}
 
-	function getPriority(): int {
+	public function getPriority(): int {
 		return $this->priority;
 	}
 
@@ -93,7 +93,7 @@ class APNSRequestMetadata {
 	 *
 	 * @return APNSRequestMetadata
 	 */
-	function setNormalPriority(): self {
+	public function setNormalPriority(): self {
 		$this->priority = APNSPriority::IMMEDIATE;
 		return $this;
 	}
@@ -105,12 +105,12 @@ class APNSRequestMetadata {
 	 *
 	 * @return APNSRequestMetadata
 	 */
-	function setLowPriority(): self {
+	public function setLowPriority(): self {
 		$this->priority = APNSPriority::THROTTLED;
 		return $this;
 	}
 
-	function getCollapseIdentifier(): ?string {
+	public function getCollapseIdentifier(): ?string {
 		return $this->collapse_identifier;
 	}
 
@@ -121,7 +121,7 @@ class APNSRequestMetadata {
 	 * The length of this identifier must not exceed 64 bytes.
 	 * @return self
 	 */
-	function setCollapseIdentifier( string $identifier ): self {
+	public function setCollapseIdentifier( string $identifier ): self {
 
 		if ( strlen( $identifier ) > 64 ) {
 			throw new InvalidArgumentException( 'The collapse identifier ' . $identifier . ' is greater than 64 byes in length' );
@@ -131,11 +131,11 @@ class APNSRequestMetadata {
 		return $this;
 	}
 
-	function getUuid(): string {
+	public function getUuid(): string {
 		return $this->uuid;
 	}
 
-	function setUuid( string $uuid ): self {
+	public function setUuid( string $uuid ): self {
 		$this->uuid = $uuid;
 		return $this;
 	}

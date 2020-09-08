@@ -6,6 +6,7 @@
 	<file>index.php</file>
 
 	<rule ref="NeutronRuleset"/>
+	<rule ref="Squiz.Scope.MethodScope.Missing" />
 	<rule ref="NeutronStandard.Globals.DisallowGlobalFunctions.GlobalFunctions">
 		<exclude-pattern>/examples/db-connect\.php</exclude-pattern>
 	</rule>

@@ -32,14 +32,14 @@ class APNSPayload {
 	private $custom = [];
 
 	// This class can be set up too many different ways to have any kind of shared constructor, so we'll explicitly define an empty one
-	function __construct() { }
+	private function __construct() { }
 
 	/**
 	 * Create an APNSPayload from the provided string
 	 *
 	 * @param string $string
 	 */
-	static function fromString( string $string ): APNSPayload {
+	public static function fromString( string $string ): APNSPayload {
 		return APNSPayload::fromAlert( APNSAlert::fromString( $string ) );
 	}
 
@@ -48,7 +48,7 @@ class APNSPayload {
 	 *
 	 * @param APNSAlert $alert
 	 */
-	static function fromAlert( APNSAlert $alert ): APNSPayload {
+	public static function fromAlert( APNSAlert $alert ): APNSPayload {
 		$payload = new APNSPayload();
 		$payload->setAlert( $alert );
 		return $payload;
@@ -59,12 +59,12 @@ class APNSPayload {
 	 *
 	 * @param int $count
 	 */
-	static function fromBadgeCount( int $count ): APNSPayload {
+	public static function fromBadgeCount( int $count ): APNSPayload {
 		return ( new APNSPayload() )
 			->setBadgeCount( $count );
 	}
 
-	function getAlert(): ?APNSAlert {
+	public function getAlert(): ?APNSAlert {
 		return $this->alert;
 	}
 
@@ -73,7 +73,7 @@ class APNSPayload {
 	 *
 	 * @param string|APNSAlert $alert
 	 */
-	function setAlert( $alert ): self {
+	public function setAlert( $alert ): self {
 
 		if ( is_string( $alert ) ) {
 			$alert = new APNSAlert( $alert );
@@ -88,11 +88,11 @@ class APNSPayload {
 		return $this;
 	}
 
-	function getBadgeCount(): ?int {
+	public function getBadgeCount(): ?int {
 		return $this->badge;
 	}
 
-	function setBadgeCount( int $count ): self {
+	public function setBadgeCount( int $count ): self {
 		$this->badge = $count;
 		return $this;
 	}
@@ -102,7 +102,7 @@ class APNSPayload {
 	 *
 	 * @return APNSSound|null
 	 */
-	function getSound(): ?APNSSound {
+	public function getSound(): ?APNSSound {
 		return $this->sound;
 	}
 
@@ -111,7 +111,7 @@ class APNSPayload {
 	 *
 	 * @param string|APNSSound $sound
 	 */
-	function setSound( $sound ): self {
+	public function setSound( $sound ): self {
 
 		if ( is_string( $sound ) ) {
 			$this->sound = APNSSound::fromString( $sound );
@@ -126,56 +126,56 @@ class APNSPayload {
 		throw new InvalidArgumentException( 'Invalid Sound – you must pass either a string or `APNSSound` object.' );
 	}
 
-	function getIsContentAvailable(): bool {
+	public function getIsContentAvailable(): bool {
 		return $this->content_available;
 	}
 
-	function setContentAvailable( bool $content_available ): self {
+	public function setContentAvailable( bool $content_available ): self {
 		$this->content_available = $content_available;
 		return $this;
 	}
 
-	function getIsMutableContent(): bool {
+	public function getIsMutableContent(): bool {
 		return $this->mutable_content;
 	}
 
-	function setMutableContent( bool $mutable_content ): self {
+	public function setMutableContent( bool $mutable_content ): self {
 		$this->mutable_content = $mutable_content;
 		return $this;
 	}
 
-	function getTargetContentId(): ?string {
+	public function getTargetContentId(): ?string {
 		return $this->target_content_id;
 	}
 
-	function setTargetContentId( string $id ): self {
+	public function setTargetContentId( string $id ): self {
 		$this->target_content_id = $id;
 		return $this;
 	}
 
-	function getCategory(): ?string {
+	public function getCategory(): ?string {
 		return $this->category;
 	}
 
-	function setCategory( string $category ): self {
+	public function setCategory( string $category ): self {
 		$this->category = $category;
 		return $this;
 	}
 
-	function getThreadId(): ?string {
+	public function getThreadId(): ?string {
 		return $this->thread_id;
 	}
 
-	function setThreadId( string $id ): self {
+	public function setThreadId( string $id ): self {
 		$this->thread_id = $id;
 		return $this;
 	}
 
-	function getCustomData(): array {
+	public function getCustomData(): array {
 		return $this->custom;
 	}
 
-	function setCustomData( array $data ): self {
+	public function setCustomData( array $data ): self {
 		$this->custom = $data;
 		return $this;
 	}

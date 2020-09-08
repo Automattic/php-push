@@ -13,13 +13,13 @@ abstract class APNSTest extends TestCase {
 		$this->assertFalse( property_exists( $object, $key ) );
 	}
 
-	function random_string( $length = 32 ) {
+	protected function random_string( $length = 32 ) {
 		$hex = bin2hex( random_bytes( $length ) );
 		$string = substr( $hex, 0, $length );
 		return $string;
 	}
 
-	function random_uuid() {
+	protected function random_uuid() {
 		return $this->random_string( 8 ) .
 		'-' .
 		$this->random_string( 4 ) .
@@ -32,15 +32,15 @@ abstract class APNSTest extends TestCase {
 	}
 
 	// Fixtures
-	function new_sound(): APNSSound {
+	protected function new_sound(): APNSSound {
 		return new APNSSound( $this->random_string() );
 	}
 
-	function new_alert(): APNSAlert {
+	protected function new_alert(): APNSAlert {
 		return new APNSAlert( $this->random_string(), $this->random_string() );
 	}
 
-	function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null ) {
+	protected function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null ) {
 
 		if ( is_null( $payload ) ) {
 			$payload = $this->new_payload();
@@ -57,15 +57,15 @@ abstract class APNSTest extends TestCase {
 		return APNSRequest::fromPayload( $payload, $token, $metadata );
 	}
 
-	function new_request_from_token( string $token ): APNSRequest {
+	protected function new_request_from_token( string $token ): APNSRequest {
 		return $this->new_request( null, $token, null );
 	}
 
-	function new_request_from_metadata( APNSRequestMetadata $meta ): APNSRequest {
+	protected function new_request_from_metadata( APNSRequestMetadata $meta ): APNSRequest {
 		return $this->new_request( null, null, $meta );
 	}
 
-	function new_metadata( ?string $topic = null, ?string $uuid = null ): APNSRequestMetadata {
+	protected function new_metadata( ?string $topic = null, ?string $uuid = null ): APNSRequestMetadata {
 
 		if ( is_null( $topic ) ) {
 			$topic = $this->random_string();
@@ -78,11 +78,11 @@ abstract class APNSTest extends TestCase {
 		return new APNSRequestMetadata( $topic, $uuid );
 	}
 
-	function new_payload(): APNSPayload {
+	protected function new_payload(): APNSPayload {
 		return APNSPayload::fromAlert( $this->new_alert() );
 	}
 
-	function new_configuration(): APNSConfiguration {
+	protected function new_configuration(): APNSConfiguration {
 		$factory = Mockery::mock( APNSTokenFactory::class );
 		$factory->allows(
 			[
@@ -93,35 +93,35 @@ abstract class APNSTest extends TestCase {
 		return $this->new_configuration_with_token_factory( $factory );
 	}
 
-	function new_configuration_with_token_factory( APNSTokenFactory $factory ): APNSConfiguration {
+	protected function new_configuration_with_token_factory( APNSTokenFactory $factory ): APNSConfiguration {
 		return APNSConfiguration::production( $this->new_credentials(), $factory );
 	}
 
-	function new_token_factory_with_mocked_token( string $token ): APNSTokenFactory {
+	protected function new_token_factory_with_mocked_token( string $token ): APNSTokenFactory {
 		$factory = Mockery::mock( APNSTokenFactory::class );
 		$factory->shouldReceive( 'get_token' )->andReturn( $token )->once();
 		return $factory;
 	}
 
-	function new_configuration_with_mocked_provider_token( string $token ): APNSConfiguration {
+	protected function new_configuration_with_mocked_provider_token( string $token ): APNSConfiguration {
 		return $this->new_configuration_with_token_factory( $this->new_token_factory_with_mocked_token( $token ) );
 	}
 
-	function new_configuration_with_mocked_endpoint( string $endpoint ): APNSConfiguration {
+	protected function new_configuration_with_mocked_endpoint( string $endpoint ): APNSConfiguration {
 		$factory = Mockery::mock( APNSConfiguration::class );
 		$factory->shouldReceive( 'get_endpoint' )->andReturn( $endpoint )->once();
 		return $factory;
 	}
 
-	function new_sandbox_configuration(): APNSConfiguration {
+	protected function new_sandbox_configuration(): APNSConfiguration {
 		return APNSConfiguration::sandbox( $this->new_credentials() );
 	}
 
-	function new_credentials(): APNSCredentials {
+	protected function new_credentials(): APNSCredentials {
 		return new APNSCredentials( $this->random_string( 10 ), $this->random_string( 10 ), '' );
 	}
 
-	function to_stdclass( $object ): object {
+	protected function to_stdclass( $object ): object {
 		if ( is_a( $object, APNSPayload::class ) ) {
 			return $this->from_json( $object->toJSON() );
 		}
@@ -129,11 +129,11 @@ abstract class APNSTest extends TestCase {
 		return json_decode( json_encode( $object ) );
 	}
 
-	function to_string( $object ): string {
+	protected function to_string( $object ): string {
 		return json_decode( json_encode( $object ) );
 	}
 
-	function new_apns_http_failure_response( int $status_code, string $reason = 'not read here' ): string {
+	protected function new_apns_http_failure_response( int $status_code, string $reason = 'not read here' ): string {
 		return <<<TEXT
 HTTP/2 $status_code
 apns-id: 8FE746FE-1112-2966-3590-2DC3F038536B
@@ -142,27 +142,27 @@ apns-id: 8FE746FE-1112-2966-3590-2DC3F038536B
 TEXT;
 	}
 
-	function from_json( string $string ): object {
+	protected function from_json( string $string ): object {
 		return json_decode( $string );
 	}
 
-	function json_without( string $string, string $key ): string {
+	protected function json_without( string $string, string $key ): string {
 		$object = json_decode( $string );
 		unset( $object->$key );
 		return json_encode( $object );
 	}
 
-	function json_adding( string $string, string $key, $value ): string {
+	protected function json_adding( string $string, string $key, $value ): string {
 		$object = json_decode( $string );
 		$object->$key = $value;
 		return json_encode( $object );
 	}
 
-	function decode( string $string ): object {
+	protected function decode( string $string ): object {
 		return json_decode( $string );
 	}
 
-	function replace_object_key_with_value( $object, $key, $value ) {
+	protected function replace_object_key_with_value( $object, $key, $value ) {
 		$class = new ReflectionClass( get_class( $object ) );
 
 		$property = $class->getProperty( $key );
@@ -172,7 +172,7 @@ TEXT;
 		return $object;
 	}
 
-	function get_test_resource( $key ): string {
+	protected function get_test_resource( $key ): string {
 		return file_get_contents( 'tests/resources/' . $key . '.txt' );
 	}
 }

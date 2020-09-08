@@ -28,88 +28,88 @@ class APNSAlert implements JsonSerializable {
 	/** @var ?string */
 	protected $launch_image;
 
-	function __construct( string $title, ?string $body = null ) {
+	public function __construct( string $title, ?string $body = null ) {
 		$this->title = $title;
 		$this->body = $body;
 	}
 
-	static function fromString( string $string ): APNSAlert {
+	public static function fromString( string $string ): APNSAlert {
 		return new APNSAlert( $string );
 	}
 
-	function getTitle(): string {
+	public function getTitle(): string {
 		return $this->title;
 	}
 
-	function setTitle( string $title ): self {
+	public function setTitle( string $title ): self {
 		$this->title = $title;
 		return $this;
 	}
 
-	function getBody(): ?string {
+	public function getBody(): ?string {
 		return $this->body;
 	}
 
-	function setBody( string $body ): self {
+	public function setBody( string $body ): self {
 		$this->body = $body;
 		return $this;
 	}
 
-	function getLocalizedTitleKey(): ?string {
+	public function getLocalizedTitleKey(): ?string {
 		return $this->localized_title_key;
 	}
 
-	function setLocalizedTitleKey( string $key ): self {
+	public function setLocalizedTitleKey( string $key ): self {
 		$this->localized_title_key = $key;
 		return $this;
 	}
 
-	function getLocalizedTitleArgs(): ?array {
+	public function getLocalizedTitleArgs(): ?array {
 		return $this->localized_title_args;
 	}
 
-	function setLocalizedTitleArgs( array $args ): self {
+	public function setLocalizedTitleArgs( array $args ): self {
 		$this->localized_title_args = $args;
 		return $this;
 	}
 
-	function getLocalizedActionKey(): ?string {
+	public function getLocalizedActionKey(): ?string {
 		return $this->localized_action_key;
 	}
 
-	function setLocalizedActionKey( string $key ): self {
+	public function setLocalizedActionKey( string $key ): self {
 		$this->localized_action_key = $key;
 		return $this;
 	}
 
-	function getLocalizedMessageKey(): ?string {
+	public function getLocalizedMessageKey(): ?string {
 		return $this->localized_message_key;
 	}
 
-	function setLocalizedMessageKey( string $key ): self {
+	public function setLocalizedMessageKey( string $key ): self {
 		$this->localized_message_key = $key;
 		return $this;
 	}
 
-	function getLocalizedMessageArgs(): ?array {
+	public function getLocalizedMessageArgs(): ?array {
 		return $this->localized_message_args;
 	}
 
-	function setLocalizedMessageArgs( array $args ): self {
+	public function setLocalizedMessageArgs( array $args ): self {
 		$this->localized_message_args = $args;
 		return $this;
 	}
 
-	function getLaunchImage(): ?string {
+	public function getLaunchImage(): ?string {
 		return $this->launch_image;
 	}
 
-	function setLaunchImage( string $name ): self {
+	public function setLaunchImage( string $name ): self {
 		$this->launch_image = $name;
 		return $this;
 	}
 
-	function jsonSerialize() {
+	public function jsonSerialize() {
 
 		$data = [
 			'title' => $this->title,

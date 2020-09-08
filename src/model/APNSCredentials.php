@@ -12,7 +12,7 @@ class APNSCredentials {
 	/** @var string */
 	private $key_bytes;
 
-	function __construct( string $key_id, string $team_id, string $key_bytes ) {
+	public function __construct( string $key_id, string $team_id, string $key_bytes ) {
 
 		if ( strlen( $key_id ) !== 10 ) {
 			throw new InvalidArgumentException( 'Invalid key identifier: ' . $key_id . '. Key IDs must be 10 characters long (Found ' . strlen( $key_id ) . ').' );
@@ -27,15 +27,15 @@ class APNSCredentials {
 		$this->key_bytes = $key_bytes;
 	}
 
-	function getKeyId(): string {
+	public function getKeyId(): string {
 		return $this->key_id;
 	}
 
-	function getTeamId(): string {
+	public function getTeamId(): string {
 		return $this->team_id;
 	}
 
-	function getKeyBytes(): string {
+	public function getKeyBytes(): string {
 		return $this->key_bytes;
 	}
 }

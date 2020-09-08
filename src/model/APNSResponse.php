@@ -15,7 +15,7 @@ class APNSResponse {
 	/** @var APNSResponseMetrics */
 	private $metrics;
 
-	function __construct( int $status_code, string $response_text, APNSResponseMetrics $metrics ) {
+	public function __construct( int $status_code, string $response_text, APNSResponseMetrics $metrics ) {
 		$this->status_code = $status_code;
 		$this->metrics = $metrics;
 
@@ -34,23 +34,23 @@ class APNSResponse {
 		}
 	}
 
-	function getUuid(): string {
+	public function getUuid(): string {
 		return $this->uuid;
 	}
 
-	function getStatusCode(): int {
+	public function getStatusCode(): int {
 		return $this->status_code;
 	}
 
-	function isError(): bool {
+	public function isError(): bool {
 		return $this->status_code !== 200;
 	}
 
-	function getErrorMessage(): ?string {
+	public function getErrorMessage(): ?string {
 		return $this->error_message;
 	}
 
-	function isUnrecoverableError(): bool {
+	public function isUnrecoverableError(): bool {
 		return in_array(
 			$this->status_code, [
 				400,    // Bad request (invalid data)
@@ -63,15 +63,15 @@ class APNSResponse {
 		);
 	}
 
-	function shouldUnsubscribeDevice(): bool {
+	public function shouldUnsubscribeDevice(): bool {
 		return $this->status_code === 410;
 	}
 
-	function shouldRetry(): bool {
+	public function shouldRetry(): bool {
 		return $this->status_code === 429 || $this->isServerError() || $this->status_code === 0;
 	}
 
-	function isServerError(): bool {
+	public function isServerError(): bool {
 		return $this->status_code >= 500;
 	}
 }

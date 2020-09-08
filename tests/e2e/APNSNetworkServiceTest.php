@@ -6,12 +6,12 @@ declare( strict_types = 1 );
  */
 class APNSNetworkServiceIntegrationTest extends APNSTest {
 
-	function setUp(): void {
+	public function setUp(): void {
 		// Ensure the server is running before each test
 		$this->assertTrue( $this->reset_mock_server(), "The mock server doesn't appear to be running." );
 	}
 
-	function testThatSendingAfterGoAwayFrameEmitsIsRecoverable() {
+	public function testThatSendingAfterGoAwayFrameEmitsIsRecoverable() {
 
 		$count = random_int( 1, 1000 );
 
