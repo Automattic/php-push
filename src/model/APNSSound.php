@@ -54,6 +54,7 @@ class APNSSound implements JsonSerializable {
 		return $this;
 	}
 
+	/** @psalm-suppress InvalidReturnType */
 	public function jsonSerialize() {
 
 		// If the volume and `critical` flags haven't been modified, we can just send the filename to save space

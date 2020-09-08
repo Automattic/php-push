@@ -44,7 +44,7 @@ class APNSResponseTest extends APNSTest {
 		$this->assertTrue( $this->makeAPNSResponseFor( random_int( 500, 599 ) )->isServerError() );
 	}
 
-	private function makeAPNSResponseFor( int $status_code ) {
+	private function makeAPNSResponseFor( int $status_code ): APNSResponse {
 		return new APNSResponse(
 			$status_code,
 			$this->new_apns_http_failure_response( $status_code ),
