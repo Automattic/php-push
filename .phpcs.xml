@@ -7,6 +7,13 @@
 
 	<rule ref="NeutronRuleset"/>
 	<rule ref="Squiz.Scope.MethodScope.Missing" />
+	<rule ref="Squiz.Classes.SelfMemberReference.NotUsed" />
+	<rule ref="ImportDetection">
+		<exclude-pattern>index.php</exclude-pattern>
+		<exclude-pattern>/examples</exclude-pattern>
+		<exclude-pattern>/src</exclude-pattern>
+		<exclude-pattern>/tests</exclude-pattern>
+	</rule>
 	<rule ref="NeutronStandard.Globals.DisallowGlobalFunctions.GlobalFunctions">
 		<exclude-pattern>/examples/db-connect\.php</exclude-pattern>
 	</rule>
