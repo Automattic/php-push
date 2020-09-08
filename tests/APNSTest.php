@@ -13,13 +13,13 @@ abstract class APNSTest extends TestCase {
 		$this->assertFalse( property_exists( $object, $key ) );
 	}
 
-	protected function random_string( $length = 32 ) {
+	protected function random_string( $length = 32 ): string {
 		$hex = bin2hex( random_bytes( $length ) );
 		$string = substr( $hex, 0, $length );
 		return $string;
 	}
 
-	protected function random_uuid() {
+	protected function random_uuid(): string {
 		return $this->random_string( 8 ) .
 		'-' .
 		$this->random_string( 4 ) .
@@ -40,7 +40,7 @@ abstract class APNSTest extends TestCase {
 		return new APNSAlert( $this->random_string(), $this->random_string() );
 	}
 
-	protected function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null ) {
+	protected function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null ): APNSRequest {
 
 		if ( is_null( $payload ) ) {
 			$payload = $this->new_payload();
@@ -162,7 +162,7 @@ TEXT;
 		return json_decode( $string );
 	}
 
-	protected function replace_object_key_with_value( $object, $key, $value ) {
+	protected function replace_object_key_with_value( $object, $key, $value ): object {
 		$class = new ReflectionClass( get_class( $object ) );
 
 		$property = $class->getProperty( $key );

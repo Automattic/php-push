@@ -193,7 +193,7 @@ class APNSPayload {
 		];
 
 		$payload_data = array_filter(
-			$payload_data, function( $value ) {
+			$payload_data, function( $value ): bool {
 				return ! is_null( $value );
 			}
 		);

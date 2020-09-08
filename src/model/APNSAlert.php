@@ -109,6 +109,7 @@ class APNSAlert implements JsonSerializable {
 		return $this;
 	}
 
+	/** @psalm-suppress InvalidReturnType */
 	public function jsonSerialize() {
 
 		$data = [
@@ -123,7 +124,7 @@ class APNSAlert implements JsonSerializable {
 		];
 
 		$output = array_filter(
-			$data, function( $value ) {
+			$data, function( $value ): bool {
 				return ! is_null( $value );
 			}
 		);
@@ -133,6 +134,6 @@ class APNSAlert implements JsonSerializable {
 			return $this->title;
 		}
 
-		return $output;
+		return (object) $output;
 	}
 }
