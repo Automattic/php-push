@@ -12,12 +12,12 @@ class APNSRequest {
 	// The device token
 	private $token;
 
-	static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ): self {
+	public static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ): self {
 		$payload = APNSPayload::fromString( $payload );
 		return new APNSRequest( $payload->toJSON(), $token, $metadata );
 	}
 
-	static function fromPayload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata ): self {
+	public static function fromPayload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata ): self {
 		return new APNSRequest( $payload->toJSON(), $token, $metadata );
 	}
 
@@ -27,23 +27,23 @@ class APNSRequest {
 		$this->metadata = $metadata;
 	}
 
-	function getToken(): string {
+	public function getToken(): string {
 		return $this->token;
 	}
 
-	function getMetadata(): APNSRequestMetadata {
+	public function getMetadata(): APNSRequestMetadata {
 		return $this->metadata;
 	}
 
-	function getBody(): string {
+	public function getBody(): string {
 		return $this->body;
 	}
 
-	function getUuid(): string {
+	public function getUuid(): string {
 		return $this->metadata->getUuid();
 	}
 
-	function getUrlForConfiguration( APNSConfiguration $configuration ): string {
+	public function getUrlForConfiguration( APNSConfiguration $configuration ): string {
 		return $configuration->getEndpoint() . $this->token;
 	}
 
@@ -52,7 +52,7 @@ class APNSRequest {
 	 *
 	 * @psalm-return array<string, string>
 	 */
-	function getHeadersForConfiguration( APNSConfiguration $configuration ): array {
+	public function getHeadersForConfiguration( APNSConfiguration $configuration ): array {
 
 		$headers = [
 			// Typical HTTP Headers

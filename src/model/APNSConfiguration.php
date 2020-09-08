@@ -40,19 +40,19 @@ class APNSConfiguration {
 		$this->token_factory = $factory ?? new APNSDefaultTokenFactory();
 	}
 
-	static function production( APNSCredentials $credentials, ?APNSTokenFactory $factory = null ): self {
+	public static function production( APNSCredentials $credentials, ?APNSTokenFactory $factory = null ): self {
 		return new APNSConfiguration( $credentials, APNSConfiguration::APNS_ENVIRONMENT_PRODUCTION, $factory );
 	}
 
-	static function sandbox( APNSCredentials $credentials, ?APNSTokenFactory $factory = null ): self {
+	public static function sandbox( APNSCredentials $credentials, ?APNSTokenFactory $factory = null ): self {
 		return new APNSConfiguration( $credentials, APNSConfiguration::APNS_ENVIRONMENT_SANDBOX, $factory );
 	}
 
-	function getEnvironment(): string {
+	public function getEnvironment(): string {
 		return $this->environment;
 	}
 
-	function getProviderToken(): string {
+	public function getProviderToken(): string {
 
 		if ( ! is_null( $this->current_token ) && $this->expires > time() ) {
 			return $this->current_token;
@@ -70,23 +70,23 @@ class APNSConfiguration {
 		return $current_token;
 	}
 
-	function getUserAgent(): ?string {
+	public function getUserAgent(): ?string {
 		return $this->user_agent;
 	}
 
-	function setUserAgent( string $user_agent ): self {
+	public function setUserAgent( string $user_agent ): self {
 		$this->user_agent = $user_agent;
 		return $this;
 	}
 
-	function getTokenRefreshInterval(): int {
+	public function getTokenRefreshInterval(): int {
 		return $this->token_refresh_interval;
 	}
 
 	// Must be between 20 and 60 minutes:
 	// Refresh your token no more than once every 20 minutes and no less than once every 60 minutes. APNs rejects any request whose token contains a timestamp that is more than one hour old. Similarly, APNs reports an error if you recreate your tokens more than once every 20 minutes.
 	// Source: https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/establishing_a_token-based_connection_to_apns
-	function setTokenRefreshInterval( int $interval ): self {
+	public function setTokenRefreshInterval( int $interval ): self {
 
 		if ( $interval < 1260 ) {
 			throw new InvalidArgumentException( 'Invalid Token Refresh interval: ' . $interval . '. It must be greater than 21 minutes and less than 59 minutes (specified in seconds)' );
@@ -101,7 +101,7 @@ class APNSConfiguration {
 		return $this;
 	}
 
-	function getEndpoint(): string {
+	public function getEndpoint(): string {
 		if ( $this->environment === APNSConfiguration::APNS_ENVIRONMENT_PRODUCTION ) {
 			return APNSConfiguration::APNS_ENDPOINT_PRODUCTION;
 		}

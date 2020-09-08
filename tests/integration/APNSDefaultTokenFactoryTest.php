@@ -2,7 +2,7 @@
 declare( strict_types = 1 );
 class APNSDefaultTokenFactoryTest extends APNSTest {
 
-	function testThatTokenContainsExpectedValues() {
+	public function testThatTokenContainsExpectedValues() {
 		$team_id = $this->random_string( 10 );
 		$key_id = $this->random_string( 10 );
 

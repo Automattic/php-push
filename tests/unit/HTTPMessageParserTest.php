@@ -3,7 +3,7 @@ declare( strict_types = 1 );
 
 class HTTPMessageParserTest extends APNSTest {
 
-	function testThatParserReadsArbitraryResponses() {
+	public function testThatParserReadsArbitraryResponses() {
 		$data = $this->get_test_resource( 'valid-http-1-response' );
 		$parser = new HTTPMessageParser( $data );
 		$this->assertEquals( 'HTTP/1.1', $parser->getHttpVersion() );
@@ -12,7 +12,7 @@ class HTTPMessageParserTest extends APNSTest {
 		$this->assertEquals( 'Hello world!', $parser->getBody() );
 	}
 
-	function testThatParserReadsAPNSErrorResponses() {
+	public function testThatParserReadsAPNSErrorResponses() {
 		$data = $this->get_test_resource( '400-bad-device-token-response' );
 		$parser = new HTTPMessageParser( $data );
 		$this->assertEquals( 'HTTP/2', $parser->getHttpVersion() );
@@ -21,7 +21,7 @@ class HTTPMessageParserTest extends APNSTest {
 		$this->assertEquals( '{"reason":"BadDeviceToken"}', $parser->getBody() );
 	}
 
-	function testThatParserThrowsForMissingHTTPHeader() {
+	public function testThatParserThrowsForMissingHTTPHeader() {
 		$this->expectException( InvalidArgumentException::class );
 		$data = $this->get_test_resource( 'missing-http-header-response' );
 		new HTTPMessageParser( $data );

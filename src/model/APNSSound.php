@@ -13,39 +13,39 @@ class APNSSound implements JsonSerializable {
 	/** @var float */
 	private $volume;
 
-	function __construct( string $name, float $volume = 1.0, bool $is_critical = false ) {
+	public function __construct( string $name, float $volume = 1.0, bool $is_critical = false ) {
 		$this->name = $name;
 		$this->volume = $volume;
 		$this->setIsCritical( $is_critical );
 	}
 
-	static function fromString( string $name ): APNSSound {
+	public static function fromString( string $name ): APNSSound {
 		return new APNSSound( $name );
 	}
 
-	function getIsCritical(): bool {
+	public function getIsCritical(): bool {
 		return $this->is_critical;
 	}
 
-	function setIsCritical( bool $is_critical ): self {
+	public function setIsCritical( bool $is_critical ): self {
 		$this->is_critical = $is_critical;
 		return $this;
 	}
 
-	function getName(): string {
+	public function getName(): string {
 		return $this->name;
 	}
 
-	function setName( string $name ): self {
+	public function setName( string $name ): self {
 		$this->name = $name;
 		return $this;
 	}
 
-	function getVolume(): float {
+	public function getVolume(): float {
 		return $this->volume;
 	}
 
-	function setVolume( float $volume ): self {
+	public function setVolume( float $volume ): self {
 		if ( $volume < 0 || $volume > 1.0 ) {
 			throw new InvalidArgumentException( 'Invalid sound volume: ' . $volume . '. Valid volume levels are between 0.0 and 1.0' );
 		}
@@ -54,7 +54,7 @@ class APNSSound implements JsonSerializable {
 		return $this;
 	}
 
-	function jsonSerialize() {
+	public function jsonSerialize() {
 
 		// If the volume and `critical` flags haven't been modified, we can just send the filename to save space
 		if ( 1.0 === $this->volume && false === $this->is_critical ) {

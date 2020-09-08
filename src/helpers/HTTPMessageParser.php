@@ -15,7 +15,7 @@ class HTTPMessageParser {
 	/** @var string */
 	private $body = '';
 
-	function __construct( string $text ) {
+	public function __construct( string $text ) {
 
 		if ( empty( $text ) ) {
 			// If we can't make heads or tails of the response, it's probably because of a crashed request – set the defaults and move on
@@ -47,15 +47,15 @@ class HTTPMessageParser {
 		$this->body = trim( implode( PHP_EOL, $lines ) );
 	}
 
-	function getHttpVersion(): string {
+	public function getHttpVersion(): string {
 		return $this->http_version;
 	}
 
-	function getStatusCode(): int {
+	public function getStatusCode(): int {
 		return $this->status_code;
 	}
 
-	function getHeader( string $key ): ?string {
+	public function getHeader( string $key ): ?string {
 		if ( ! isset( $this->headers[ $key ] ) ) {
 			return null;
 		}
@@ -63,7 +63,7 @@ class HTTPMessageParser {
 		return $this->headers[ $key ];
 	}
 
-	function getBody(): string {
+	public function getBody(): string {
 		return $this->body;
 	}
 }
