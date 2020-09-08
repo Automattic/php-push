@@ -1,1 +1,3 @@
 node_modules
+test-cert.pem
+test-key.pem
