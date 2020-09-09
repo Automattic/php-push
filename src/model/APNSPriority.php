@@ -5,12 +5,14 @@ class APNSPriority {
 	public const IMMEDIATE = 10;
 	public const THROTTLED = 5;
 
-	public static function isValid( int $key ): bool {
+	public static function is_valid( int $key ): bool {
 		return in_array(
-			$key, [
-				APNSPriority::IMMEDIATE,
-				APNSPriority::THROTTLED,
-			], true
+			$key,
+			[
+				self::IMMEDIATE,
+				self::THROTTLED,
+			],
+			true
 		);
 	}
 }

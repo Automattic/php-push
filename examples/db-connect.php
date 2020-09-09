@@ -7,17 +7,17 @@ use Dotenv\Dotenv;
 
 Dotenv::createImmutable( dirname( __DIR__ ) )->load();
 
-$capsule = new Capsule;
+$capsule = new Capsule();
 $capsule->addConnection(
 	[
-		'driver' => 'mysql',
-		'host' => 'localhost',
-		'database' => getenv( 'DATABASE' ),
-		'username' => getenv( 'DB_USERNAME' ),
-		'password' => getenv( 'DB_PASSWORD' ),
-		'charset' => 'utf8',
+		'driver'    => 'mysql',
+		'host'      => 'localhost',
+		'database'  => getenv( 'DATABASE' ),
+		'username'  => getenv( 'DB_USERNAME' ),
+		'password'  => getenv( 'DB_PASSWORD' ),
+		'charset'   => 'utf8',
 		'collation' => 'utf8_unicode_ci',
-		'prefix' => '',
+		'prefix'    => '',
 	]
 );
 
@@ -29,11 +29,11 @@ function save_request( APNSRequest $request ): void {
 
 	$capsule->table( 'mobile_push_queue' )->insert(
 		[
-			'token' => $request->getToken(),
-			'payload' => $request->toJSON(),
-			'when' => gmdate( 'Y-m-d H:i:s' ),
+			'token'                 => $request->get_token(),
+			'payload'               => $request->to_json(),
+			'when'                  => gmdate( 'Y-m-d H:i:s' ),
 			'mobile_push_client_id' => get_client_id(),
-			'worker_id' => random_int( 1, 16 ),
+			'worker_id'             => random_int( 1, 16 ),
 		]
 	);
 }
@@ -48,13 +48,13 @@ function save_token( string $token ): void {
 
 	$capsule->table( 'mobile_push_tokens' )->insert(
 		[
-			'token' => $token,
-			'user_id' => random_int( 1, 2147483647 ),
-			'when' => gmdate( 'Y-m-d H:i:s' ),
-			'active' => 1,
-			'device_type' => [ 'apple', 'android' ][ random_int( 0, 1 ) ],
-			'production' => random_int( 0, 1 ),
-			'meta' => '',
+			'token'                 => $token,
+			'user_id'               => random_int( 1, 2147483647 ),
+			'when'                  => gmdate( 'Y-m-d H:i:s' ),
+			'active'                => 1,
+			'device_type'           => [ 'apple', 'android' ][ random_int( 0, 1 ) ],
+			'production'            => random_int( 0, 1 ),
+			'meta'                  => '',
 			'mobile_push_client_id' => get_client_id(),
 		]
 	);

@@ -14,38 +14,38 @@ class APNSSound implements JsonSerializable {
 	private $volume;
 
 	public function __construct( string $name, float $volume = 1.0, bool $is_critical = false ) {
-		$this->name = $name;
+		$this->name   = $name;
 		$this->volume = $volume;
-		$this->setIsCritical( $is_critical );
+		$this->set_is_critical( $is_critical );
 	}
 
-	public static function fromString( string $name ): APNSSound {
+	public static function from_string( string $name ): APNSSound {
 		return new APNSSound( $name );
 	}
 
-	public function getIsCritical(): bool {
+	public function get_is_critical(): bool {
 		return $this->is_critical;
 	}
 
-	public function setIsCritical( bool $is_critical ): self {
+	public function set_is_critical( bool $is_critical ): self {
 		$this->is_critical = $is_critical;
 		return $this;
 	}
 
-	public function getName(): string {
+	public function get_name(): string {
 		return $this->name;
 	}
 
-	public function setName( string $name ): self {
+	public function set_name( string $name ): self {
 		$this->name = $name;
 		return $this;
 	}
 
-	public function getVolume(): float {
+	public function get_volume(): float {
 		return $this->volume;
 	}
 
-	public function setVolume( float $volume ): self {
+	public function set_volume( float $volume ): self {
 		if ( $volume < 0 || $volume > 1.0 ) {
 			throw new InvalidArgumentException( 'Invalid sound volume: ' . $volume . '. Valid volume levels are between 0.0 and 1.0' );
 		}
@@ -64,8 +64,8 @@ class APNSSound implements JsonSerializable {
 
 		return [
 			'critical' => $this->is_critical ? 1 : 0,
-			'name' => $this->name,
-			'volume' => $this->volume,
+			'name'     => $this->name,
+			'volume'   => $this->volume,
 		];
 	}
 }

@@ -5,16 +5,24 @@
 	<file>examples</file>
 	<file>index.php</file>
 
-	<rule ref="NeutronRuleset"/>
+	<rule ref="WordPress"/>
+
+	<!-- Manually Enable These Rules -->
 	<rule ref="Squiz.Scope.MethodScope.Missing" />
-	<rule ref="Squiz.Classes.SelfMemberReference.NotUsed" />
-	<rule ref="ImportDetection">
-		<exclude-pattern>index.php</exclude-pattern>
-		<exclude-pattern>/examples</exclude-pattern>
-		<exclude-pattern>/src</exclude-pattern>
-		<exclude-pattern>/tests</exclude-pattern>
+
+	<!-- Manually Disable These Rules -->
+	<rule ref="Squiz.Commenting">
+		<severity>0</severity>
 	</rule>
-	<rule ref="NeutronStandard.Globals.DisallowGlobalFunctions.GlobalFunctions">
-		<exclude-pattern>/examples/db-connect\.php</exclude-pattern>
+	<rule ref="Generic.Commenting.DocComment.MissingShort">
+		<!-- TODO: Remove this one once we have comments for everything -->
+		<severity>0</severity>
+	</rule>	
+	<rule ref="Generic.Arrays.DisallowShortArraySyntax.Found">
+	  <severity>0</severity>
+	</rule> -->
+	<rule ref="WordPress.Files.FileName">
+		<severity>0</severity>
 	</rule>
+
 </ruleset>

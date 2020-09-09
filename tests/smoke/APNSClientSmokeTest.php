@@ -9,23 +9,23 @@ declare( strict_types = 1 );
 class APNSClientSmokeTest extends APNSTest {
 
 	public function testThatSetPortNumberWorks() {
-		$client = ( new APNSClient( $this->new_configuration() ) )->setPortNumber( random_int( 1, 65535 ) );
+		$client = ( new APNSClient( $this->new_configuration() ) )->set_port_number( random_int( 1, 65535 ) );
 		$this->assertNotNull( $client );
 	}
 
 	public function testThatSetDebugWorks() {
-		$client = ( new APNSClient( $this->new_configuration() ) )->setDebug( true );
+		$client = ( new APNSClient( $this->new_configuration() ) )->set_debug( true );
 		$this->assertNotNull( $client );
 	}
 
 	public function testThatSetCertificateBundlePathWorks() {
-		$client = ( new APNSClient( $this->new_configuration() ) )->setCertificateBundlePath( dirname( __DIR__ ) . '/MockAPNSServer/test-cert.pem' );
+		$client = ( new APNSClient( $this->new_configuration() ) )->set_certificate_bundle_path( dirname( __DIR__ ) . '/MockAPNSServer/test-cert.pem' );
 		$this->assertNotNull( $client );
 	}
 
 	public function testThatSetCertificateBundlePathThrowsForInvalidPath() {
 		$this->expectException( InvalidArgumentException::class );
-		( new APNSClient( $this->new_configuration() ) )->setCertificateBundlePath( $this->random_string() );
+		( new APNSClient( $this->new_configuration() ) )->set_certificate_bundle_path( $this->random_string() );
 	}
 
 	public function testThatCloseWorks() {

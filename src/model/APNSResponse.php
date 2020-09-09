@@ -17,16 +17,16 @@ class APNSResponse {
 
 	public function __construct( int $status_code, string $response_text, APNSResponseMetrics $metrics ) {
 		$this->status_code = $status_code;
-		$this->metrics = $metrics;
+		$this->metrics     = $metrics;
 
-		$parser = new HTTPMessageParser( $response_text );
-		$this->uuid = $parser->getHeader( 'apns-id' ) ?? 'Not Available';
+		$parser     = new HTTPMessageParser( $response_text );
+		$this->uuid = $parser->get_header( 'apns-id' ) ?? 'Not Available';
 
-		if ( $this->isError() ) {
+		if ( $this->is_error() ) {
 			if ( ! empty( $response_text ) ) {
-				$body = (object) json_decode( $parser->getBody(), false, 512, JSON_THROW_ON_ERROR );
+				$body = (object) json_decode( $parser->get_body(), false, 512, JSON_THROW_ON_ERROR );
 				/** @var string */
-				$reason = $body->reason;
+				$reason              = $body->reason;
 				$this->error_message = $reason;
 			} else {
 				$this->error_message = '';
@@ -34,44 +34,46 @@ class APNSResponse {
 		}
 	}
 
-	public function getUuid(): string {
+	public function get_uuid(): string {
 		return $this->uuid;
 	}
 
-	public function getStatusCode(): int {
+	public function get_status_code(): int {
 		return $this->status_code;
 	}
 
-	public function isError(): bool {
-		return $this->status_code !== 200;
+	public function is_error(): bool {
+		return 200 !== $this->status_code;
 	}
 
-	public function getErrorMessage(): ?string {
+	public function get_error_message(): ?string {
 		return $this->error_message;
 	}
 
-	public function isUnrecoverableError(): bool {
+	public function is_unrecoverable_error(): bool {
 		return in_array(
-			$this->status_code, [
+			$this->status_code,
+			[
 				400,    // Bad request (invalid data)
 				403,    // Authentication Token Error
 				404,    // Invalid Device Token (Bad URL Path)
 				405,    // Invalid HTTP Request Type
 				410,    // The device token is no longer active
 				413,    // Notification payload was too large
-			], true
+			],
+			true
 		);
 	}
 
-	public function shouldUnsubscribeDevice(): bool {
-		return $this->status_code === 410;
+	public function should_unsubscribe_device(): bool {
+		return 410 === $this->status_code;
 	}
 
-	public function shouldRetry(): bool {
-		return $this->status_code === 429 || $this->isServerError() || $this->status_code === 0;
+	public function should_retry(): bool {
+		return 429 === $this->status_code || $this->is_server_error() || 0 === $this->status_code;
 	}
 
-	public function isServerError(): bool {
-		return $this->status_code >= 500;
+	public function is_server_error(): bool {
+		return 500 <= $this->status_code;
 	}
 }

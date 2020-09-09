@@ -4,54 +4,54 @@ class APNSRequestTest extends APNSTest {
 
 	public function testRequestInstantiationFromString() {
 		$message = $this->random_string();
-		$token = $this->random_string();
+		$token   = $this->random_string();
 
-		$request = APNSRequest::fromString( $message, $token, $this->new_metadata() );
-		$this->assertEquals( $message, $this->decode( $request->getBody() )->aps->alert );
+		$request = APNSRequest::from_string( $message, $token, $this->new_metadata() );
+		$this->assertEquals( $message, $this->decode( $request->get_body() )->aps->alert );
 	}
 
 	public function testRequestInstantiationFromPayload() {
 		$message = $this->random_string();
-		$token = $this->random_string();
+		$token   = $this->random_string();
 
-		$request = APNSRequest::fromPayload( APNSPayload::fromString( $message ), $token, $this->new_metadata() );
-		$this->assertEquals( $message, $this->decode( $request->getBody() )->aps->alert );
+		$request = APNSRequest::from_payload( APNSPayload::from_string( $message ), $token, $this->new_metadata() );
+		$this->assertEquals( $message, $this->decode( $request->get_body() )->aps->alert );
 	}
 
 	public function testThatGetTokenRetrievesToken() {
 		$message = $this->random_string();
-		$token = $this->random_string();
+		$token   = $this->random_string();
 
-		$request = APNSRequest::fromString( $message, $token, $this->new_metadata() );
-		$this->assertEquals( $token, $request->getToken() );
+		$request = APNSRequest::from_string( $message, $token, $this->new_metadata() );
+		$this->assertEquals( $token, $request->get_token() );
 	}
 
 	public function testThatGetBodyRetrievesJSONEncodedPush() {
 		$push = $this->new_payload();
-		$this->assertEquals( $push->toJSON(), $this->new_request( $push )->getBody() );
+		$this->assertEquals( $push->to_json(), $this->new_request( $push )->get_body() );
 	}
 
 	public function testThatGetUuidRetrievesUuid() {
 		$uuid = $this->random_uuid();
 
-		$request = APNSRequest::fromString( '', '', $this->new_metadata( null, $uuid ) );
-		$this->assertEquals( $uuid, $request->getUuid() );
+		$request = APNSRequest::from_string( '', '', $this->new_metadata( null, $uuid ) );
+		$this->assertEquals( $uuid, $request->get_uuid() );
 	}
 
 	public function testThatGetUrlForTokenRetrievesValidValue() {
-		$token = $this->random_string();
+		$token         = $this->random_string();
 		$configuration = $this->new_sandbox_configuration();
 
 		$req = $this->new_request( $this->new_payload(), $token, $this->new_metadata() );
 
-		$this->assertEquals( APNSConfiguration::APNS_ENDPOINT_SANDBOX . $token, $req->getUrlForConfiguration( $configuration ) );
+		$this->assertEquals( APNSConfiguration::APNS_ENDPOINT_SANDBOX . $token, $req->get_url_for_configuration( $configuration ) );
 	}
 
 	public function testThatHeadersContainsAuthorizationToken() {
-		$token = $this->random_string();
+		$token         = $this->random_string();
 		$configuration = $this->new_configuration_with_mocked_provider_token( $token );
 
-		$headers = $this->new_request( $this->new_payload(), $token, $this->new_metadata() )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), $token, $this->new_metadata() )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'authorization', $headers );
 		$this->assertEquals( 'bearer ' . $token, $headers['authorization'] );
@@ -60,28 +60,28 @@ class APNSRequestTest extends APNSTest {
 	public function testThatGetHeadersContainsContentType() {
 		$configuration = $this->new_configuration();
 
-		$headers = $this->new_request( $this->new_payload() )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload() )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'content-type', $headers );
 		$this->assertEquals( 'application/json', $headers['content-type'] );
 	}
 
 	public function testThatGetHeadersContainsValidContentLength() {
-		$push = $this->new_payload();
+		$push          = $this->new_payload();
 		$configuration = $this->new_configuration();
 
-		$headers = $this->new_request( $push )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $push )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'content-length', $headers );
-		$this->assertEquals( strlen( $push->toJSON() ), $headers['content-length'] );
+		$this->assertEquals( strlen( $push->to_json() ), $headers['content-length'] );
 	}
 
 	public function testThatGetHeadersContainsAPNSExpiration() {
 		$configuration = $this->new_configuration();
-		$expiration = time() + 60;
-		$meta = $this->new_metadata()->setExpirationTimestamp( $expiration );
+		$expiration    = time() + 60;
+		$meta          = $this->new_metadata()->set_expiration_timestamp( $expiration );
 
-		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-expiration', $headers );
 		$this->assertEquals( $expiration, $headers['apns-expiration'] );
@@ -89,10 +89,10 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersContainsAPNSPushType() {
 		$configuration = $this->new_configuration();
-		$push_type = APNSPushType::MDM;
-		$meta = $this->new_metadata()->setPushType( $push_type );
+		$push_type     = APNSPushType::MDM;
+		$meta          = $this->new_metadata()->set_push_type( $push_type );
 
-		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-push-type', $headers );
 		$this->assertEquals( $push_type, $headers['apns-push-type'] );
@@ -100,10 +100,10 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersContainsTopic() {
 		$configuration = $this->new_configuration();
-		$topic = $this->random_string();
-		$meta = $this->new_metadata()->setTopic( $topic );
+		$topic         = $this->random_string();
+		$meta          = $this->new_metadata()->set_topic( $topic );
 
-		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-topic', $headers );
 		$this->assertEquals( $topic, $headers['apns-topic'] );
@@ -111,14 +111,14 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersDoesNotContainUserAgentByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayNotHasKey( 'user-agent', $this->new_request()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayNotHasKey( 'user-agent', $this->new_request()->get_headers_for_configuration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsUserAgentIfSet() {
-		$ua = $this->random_string();
-		$configuration = $this->new_configuration()->setUserAgent( $ua );
+		$ua            = $this->random_string();
+		$configuration = $this->new_configuration()->set_user_agent( $ua );
 
-		$headers = $this->new_request( $this->new_payload(), null, $this->new_metadata() )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $this->new_metadata() )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'user-agent', $headers );
 		$this->assertEquals( $ua, $headers['user-agent'] );
@@ -126,14 +126,14 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersDoesNotContainPriorityByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayNotHasKey( 'apns-priority', $this->new_request()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayNotHasKey( 'apns-priority', $this->new_request()->get_headers_for_configuration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsPriorityIfSet() {
 		$configuration = $this->new_configuration();
-		$meta = $this->new_metadata()->setLowPriority();
+		$meta          = $this->new_metadata()->set_low_priority();
 
-		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-priority', $headers );
 		$this->assertEquals( 5, $headers['apns-priority'] );
@@ -141,15 +141,15 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersAlwaysContainApnsIdByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayHasKey( 'apns-id', $this->new_request()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayHasKey( 'apns-id', $this->new_request()->get_headers_for_configuration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsApnsIdIfSet() {
 		$configuration = $this->new_configuration();
-		$uuid = $this->random_uuid();
-		$meta = $this->new_metadata()->setUuid( $uuid );
+		$uuid          = $this->random_uuid();
+		$meta          = $this->new_metadata()->set_uuid( $uuid );
 
-		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-id', $headers );
 		$this->assertEquals( $uuid, $headers['apns-id'] );
@@ -157,15 +157,15 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatGetHeadersDoesNotContainCollapseIdByDefault() {
 		$configuration = $this->new_configuration();
-		$this->assertArrayNotHasKey( 'apns-collapse-id', $this->new_request()->getHeadersForConfiguration( $configuration ) );
+		$this->assertArrayNotHasKey( 'apns-collapse-id', $this->new_request()->get_headers_for_configuration( $configuration ) );
 	}
 
 	public function testThatGetHeadersContainsCollapseIdIfSet() {
 		$configuration = $this->new_configuration();
-		$id = $this->random_string();
-		$meta = $this->new_metadata()->setCollapseIdentifier( $id );
+		$id            = $this->random_string();
+		$meta          = $this->new_metadata()->set_collapse_identifier( $id );
 
-		$headers = $this->new_request( $this->new_payload(), null, $meta )->getHeadersForConfiguration( $configuration );
+		$headers = $this->new_request( $this->new_payload(), null, $meta )->get_headers_for_configuration( $configuration );
 
 		$this->assertArrayHasKey( 'apns-collapse-id', $headers );
 		$this->assertEquals( $id, $headers['apns-collapse-id'] );
@@ -173,57 +173,57 @@ class APNSRequestTest extends APNSTest {
 
 	public function testThatRequestSerializationIncludesPayload() {
 		$payload = $this->new_payload();
-		$request = $this->decode( $this->new_request( $payload )->toJSON() );
+		$request = $this->decode( $this->new_request( $payload )->to_json() );
 
-		$this->assertEquals( $payload->toJSON(), $request->payload );
+		$this->assertEquals( $payload->to_json(), $request->payload );
 	}
 
 	public function testThatRequestSerializationIncludesMetadata() {
 		$metadata = $this->new_metadata();
-		$request = $this->decode( $this->new_request_from_metadata( $metadata )->toJSON() );
+		$request  = $this->decode( $this->new_request_from_metadata( $metadata )->to_json() );
 
-		$this->assertEquals( $metadata->toJSON(), $request->metadata );
+		$this->assertEquals( $metadata->to_json(), $request->metadata );
 	}
 
 	public function testThatRequestSerializationIncludesToken() {
-		$token = $this->random_string();
+		$token   = $this->random_string();
 		$request = $this->new_request_from_token( $token );
-		$this->assertEquals( $token, $request->getToken() );
+		$this->assertEquals( $token, $request->get_token() );
 	}
 
 	public function testThatRequestDeserializationIncludesPayload() {
 		$payload = $this->new_payload();
-		$request = APNSRequest::fromJSON( $this->new_request( $payload )->toJSON() );
-		$this->assertEquals( $payload->toJSON(), $request->getBody() );
+		$request = APNSRequest::from_json( $this->new_request( $payload )->to_json() );
+		$this->assertEquals( $payload->to_json(), $request->get_body() );
 	}
 
 	public function testThatRequestDeserializationIncludesToken() {
-		$token = $this->random_string();
-		$request = APNSRequest::fromJSON( $this->new_request_from_token( $token )->toJSON() );
-		$this->assertEquals( $token, $request->getToken() );
+		$token   = $this->random_string();
+		$request = APNSRequest::from_json( $this->new_request_from_token( $token )->to_json() );
+		$this->assertEquals( $token, $request->get_token() );
 	}
 
 	public function testThatRequestDeserializationIncludesMetadata() {
-		$meta = $this->new_metadata();
-		$request = APNSRequest::fromJSON( $this->new_request_from_metadata( $meta )->toJSON() );
-		$this->assertEquals( $meta, $request->getMetadata() );
+		$meta    = $this->new_metadata();
+		$request = APNSRequest::from_json( $this->new_request_from_metadata( $meta )->to_json() );
+		$this->assertEquals( $meta, $request->get_metadata() );
 	}
 
 	public function testThatRequestDeserializationThrowsForMissingPayload() {
-		$json = $this->json_without( $this->new_request()->toJSON(), 'payload' );
+		$json = $this->json_without( $this->new_request()->to_json(), 'payload' );
 		$this->expectException( InvalidArgumentException::class );
-		APNSRequest::fromJSON( $json );
+		APNSRequest::from_json( $json );
 	}
 
 	public function testThatRequestDeserializationThrowsForMissingToken() {
-		$json = $this->json_without( $this->new_request()->toJSON(), 'token' );
+		$json = $this->json_without( $this->new_request()->to_json(), 'token' );
 		$this->expectException( InvalidArgumentException::class );
-		APNSRequest::fromJSON( $json );
+		APNSRequest::from_json( $json );
 	}
 
 	public function testThatRequestDeserializationThrowsForMissingMetadata() {
-		$json = $this->json_without( $this->new_request()->toJSON(), 'metadata' );
+		$json = $this->json_without( $this->new_request()->to_json(), 'metadata' );
 		$this->expectException( InvalidArgumentException::class );
-		APNSRequest::fromJSON( $json );
+		APNSRequest::from_json( $json );
 	}
 }

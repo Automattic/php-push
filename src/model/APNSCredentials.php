@@ -22,20 +22,20 @@ class APNSCredentials {
 			throw new InvalidArgumentException( 'Invalid team identifier: ' . $team_id . '. Team IDs must be 10 characters long' );
 		}
 
-		$this->key_id = $key_id;
-		$this->team_id = $team_id;
+		$this->key_id    = $key_id;
+		$this->team_id   = $team_id;
 		$this->key_bytes = $key_bytes;
 	}
 
-	public function getKeyId(): string {
+	public function get_key_id(): string {
 		return $this->key_id;
 	}
 
-	public function getTeamId(): string {
+	public function get_team_id(): string {
 		return $this->team_id;
 	}
 
-	public function getKeyBytes(): string {
+	public function get_key_bytes(): string {
 		return $this->key_bytes;
 	}
 }

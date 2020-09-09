@@ -1,5 +1,9 @@
 <?php
 declare( strict_types = 1 );
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_init
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_setopt
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_exec
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_close
 
 /**
  * @group e2e
@@ -16,28 +20,28 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 		$count = random_int( 1, 1000 );
 
 		$service = ( new APNSNetworkService() )
-			->setCertificateBundlePath( dirname( __DIR__ ) . '/MockAPNSServer/test-cert.pem' )
-			->setPort( 8443 );
+			->set_certificate_bundle_path( dirname( __DIR__ ) . '/MockAPNSServer/test-cert.pem' )
+			->set_port( 8443 );
 
 		for ( $i = 0; $i < $count; $i++ ) {
-			$service->enqueueRequest( 'https://127.0.0.1/', [], '' );
+			$service->enqueue_request( 'https://127.0.0.1/', [], '' );
 		}
 
-		$responses = $service->sendQueuedRequests();
+		$responses = $service->send_queued_requests();
 		$this->assertCount( $count, $responses );
 
 		$this->reset_mock_server();
 
 		for ( $i = 0; $i < $count; $i++ ) {
-			$service->enqueueRequest( 'https://127.0.0.1/', [], '' );
+			$service->enqueue_request( 'https://127.0.0.1/', [], '' );
 		}
 
-		$responses = $service->sendQueuedRequests();
-		$this->assertTrue( $responses[0]->isError() );
-		$this->assertTrue( $responses[0]->shouldRetry() );
+		$responses = $service->send_queued_requests();
+		$this->assertTrue( $responses[0]->is_error() );
+		$this->assertTrue( $responses[0]->should_retry() );
 		$this->assertCount( $count, $responses );
 
-		$service->closeConnection();
+		$service->close_connection();
 	}
 
 	private function reset_mock_server(): bool {
@@ -52,6 +56,6 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 		$result = curl_exec( $ch );
 		curl_close( $ch );
 
-		return $result !== false;
+		return false !== $result;
 	}
 }

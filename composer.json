@@ -33,7 +33,7 @@
         "vimeo/psalm": "^3.12"
     },
     "scripts": {
-        "lint": "./vendor/bin/phpcs --ignore=tests/MockAPNSServer",
+        "lint": "./vendor/bin/phpcs -s --ignore=tests/MockAPNSServer",
         "fix": "./vendor/bin/phpcbf --ignore=tests/MockAPNSServer",
         "test": "./vendor/bin/phpunit --coverage-clover 'coverage/coverage.xml' --coverage-html 'coverage'",
         "psalm": "./vendor/bin/psalm"

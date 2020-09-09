@@ -14,10 +14,10 @@ while ( true ) {
 
 	for ( $i = 0; $i < 2; $i++ ) {
 		$message = bin2hex( random_bytes( random_int( 2, 2048 ) ) );
-		$alert = new APNSAlert( 'Title', $message );
-		$payload = APNSPayload::fromAlert( $alert );
+		$alert   = new APNSAlert( 'Title', $message );
+		$payload = APNSPayload::from_alert( $alert );
 
-		$request = APNSRequest::fromPayload( $payload, $token, new APNSRequestMetadata( $topic ) );
+		$request = APNSRequest::from_payload( $payload, $token, new APNSRequestMetadata( $topic ) );
 		save_request( $request );
 	}
 }
