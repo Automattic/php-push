@@ -1,5 +1,6 @@
 <?php
 declare( strict_types = 1 );
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -9,27 +10,27 @@ Dotenv::createImmutable( __DIR__ )->load();
 
 echo '=== Push Notification Server ===' . PHP_EOL;
 
-$key_id = strval( getenv( 'KEY_ID' ) );
+$key_id  = strval( getenv( 'KEY_ID' ) );
 $team_id = strval( getenv( 'TEAM_ID' ) );
-$key = strval( getenv( 'KEY' ) );
+$key     = strval( getenv( 'KEY' ) );
 
-$auth = new APNSCredentials( $key_id, $team_id, $key );
+$auth          = new APNSCredentials( $key_id, $team_id, $key );
 $configuration = APNSConfiguration::sandbox( $auth );
-$configuration->setUserAgent( strval( getenv( 'USER_AGENT' ) ) );
+$configuration->set_user_agent( strval( getenv( 'USER_AGENT' ) ) );
 $client = new APNSClient( $configuration );
-$client->setDebug( true );
+$client->set_debug( true );
 
 echo "\t Connected.\n";
-$title = 'Title';
-$message = 'Timestamp ' . time();
+$notification_title   = 'Title';
+$notification_message = 'Timestamp ' . time();
 echo "\t Will send notification with:\n";
-echo "\t - Title: " . $title . PHP_EOL;
-echo "\t - Message: " . $message . PHP_EOL;
+echo "\t - Title: $notification_title \n";
+echo "\t - Message: " . $notification_message . PHP_EOL;
 
-$token = strval( getenv( 'TOKEN' ) );
-$payload = APNSPayload::fromAlert( new APNSAlert( $title, $message ) );
+$token    = strval( getenv( 'TOKEN' ) );
+$payload  = APNSPayload::from_alert( new APNSAlert( $notification_title, $notification_message ) );
 $metadata = new APNSRequestMetadata( strval( getenv( 'TOPIC' ) ) );
-$request = APNSRequest::fromPayload( $payload, $token, $metadata );
+$request  = APNSRequest::from_payload( $payload, $token, $metadata );
 
 $requests = [];
 
@@ -38,16 +39,16 @@ foreach ( range( 0, 2 ) as $i ) {
 	$requests[] = $request;
 }
 
-$responses = $client->sendRequests( $requests );
+$responses = $client->send_requests( $requests );
 
-$notifications_to_retry = [];
+$notifications_to_retry  = [];
 $notifications_to_delete = [];
 
 foreach ( $responses as $response ) {
-	if ( $response->isUnrecoverableError() ) {
-		$notifications_to_delete[] = $response->getUuid();
-	} elseif ( $response->shouldRetry() ) {
-		$notifications_to_retry[] = $response->getUuid();
+	if ( $response->is_unrecoverable_error() ) {
+		$notifications_to_delete[] = $response->get_uuid();
+	} elseif ( $response->should_retry() ) {
+		$notifications_to_retry[] = $response->get_uuid();
 	}
 }
 

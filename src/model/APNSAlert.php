@@ -30,81 +30,81 @@ class APNSAlert implements JsonSerializable {
 
 	public function __construct( string $title, ?string $body = null ) {
 		$this->title = $title;
-		$this->body = $body;
+		$this->body  = $body;
 	}
 
-	public static function fromString( string $string ): APNSAlert {
+	public static function from_string( string $string ): APNSAlert {
 		return new APNSAlert( $string );
 	}
 
-	public function getTitle(): string {
+	public function get_title(): string {
 		return $this->title;
 	}
 
-	public function setTitle( string $title ): self {
+	public function set_title( string $title ): self {
 		$this->title = $title;
 		return $this;
 	}
 
-	public function getBody(): ?string {
+	public function get_body(): ?string {
 		return $this->body;
 	}
 
-	public function setBody( string $body ): self {
+	public function set_body( string $body ): self {
 		$this->body = $body;
 		return $this;
 	}
 
-	public function getLocalizedTitleKey(): ?string {
+	public function get_localized_title_key(): ?string {
 		return $this->localized_title_key;
 	}
 
-	public function setLocalizedTitleKey( string $key ): self {
+	public function set_localized_title_key( string $key ): self {
 		$this->localized_title_key = $key;
 		return $this;
 	}
 
-	public function getLocalizedTitleArgs(): ?array {
+	public function get_localized_title_args(): ?array {
 		return $this->localized_title_args;
 	}
 
-	public function setLocalizedTitleArgs( array $args ): self {
+	public function set_localized_title_args( array $args ): self {
 		$this->localized_title_args = $args;
 		return $this;
 	}
 
-	public function getLocalizedActionKey(): ?string {
+	public function get_localized_action_key(): ?string {
 		return $this->localized_action_key;
 	}
 
-	public function setLocalizedActionKey( string $key ): self {
+	public function set_localized_action_key( string $key ): self {
 		$this->localized_action_key = $key;
 		return $this;
 	}
 
-	public function getLocalizedMessageKey(): ?string {
+	public function get_localized_message_key(): ?string {
 		return $this->localized_message_key;
 	}
 
-	public function setLocalizedMessageKey( string $key ): self {
+	public function set_localized_message_key( string $key ): self {
 		$this->localized_message_key = $key;
 		return $this;
 	}
 
-	public function getLocalizedMessageArgs(): ?array {
+	public function get_localized_message_args(): ?array {
 		return $this->localized_message_args;
 	}
 
-	public function setLocalizedMessageArgs( array $args ): self {
+	public function set_localized_message_args( array $args ): self {
 		$this->localized_message_args = $args;
 		return $this;
 	}
 
-	public function getLaunchImage(): ?string {
+	public function get_launch_image(): ?string {
 		return $this->launch_image;
 	}
 
-	public function setLaunchImage( string $name ): self {
+	public function set_launch_image( string $name ): self {
 		$this->launch_image = $name;
 		return $this;
 	}
@@ -113,24 +113,25 @@ class APNSAlert implements JsonSerializable {
 	public function jsonSerialize() {
 
 		$data = [
-			'title' => $this->title,
-			'body' => $this->body,
-			'title-loc-key' => $this->localized_title_key,
+			'title'          => $this->title,
+			'body'           => $this->body,
+			'title-loc-key'  => $this->localized_title_key,
 			'title-loc-args' => $this->localized_title_args,
 			'action-loc-key' => $this->localized_action_key,
-			'loc-key' => $this->localized_message_key,
-			'loc-args' => $this->localized_message_args,
-			'launch-image' => $this->launch_image,
+			'loc-key'        => $this->localized_message_key,
+			'loc-args'       => $this->localized_message_args,
+			'launch-image'   => $this->launch_image,
 		];
 
 		$output = array_filter(
-			$data, function( $value ): bool {
+			$data,
+			function( $value ): bool {
 				return ! is_null( $value );
 			}
 		);
 
 		// If only the title is present, return it instead of an object
-		if ( count( $output ) === 1 && array_keys( $output )[0] === 'title' ) {
+		if ( 1 === count( $output ) && 'title' === array_keys( $output )[0] ) {
 			return $this->title;
 		}
 

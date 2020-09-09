@@ -23,15 +23,15 @@ class HTTPMessageParser {
 		}
 
 		$lines = explode( PHP_EOL, $text );
-		$line = trim( array_shift( $lines ) );
+		$line  = trim( array_shift( $lines ) );
 
 		if ( ! strstr( $line, 'HTTP' ) ) {
 			throw new InvalidArgumentException( 'Invalid Response: HTTP Header Missing in ' . $text );
 		}
 
 		list( $http_version, $status_code ) = explode( ' ', $line, 2 );
-		$this->http_version = $http_version;
-		$this->status_code = intval( $status_code );
+		$this->http_version                 = $http_version;
+		$this->status_code                  = intval( $status_code );
 
 		while ( true ) {
 			$line = trim( array_shift( $lines ) );
@@ -40,22 +40,22 @@ class HTTPMessageParser {
 				break;
 			}
 
-			list( $key, $value ) = explode( ':', $line, 2 );
+			list( $key, $value )   = explode( ':', $line, 2 );
 			$this->headers[ $key ] = trim( $value );
 		}
 
 		$this->body = trim( implode( PHP_EOL, $lines ) );
 	}
 
-	public function getHttpVersion(): string {
+	public function get_http_version(): string {
 		return $this->http_version;
 	}
 
-	public function getStatusCode(): int {
+	public function get_status_code(): int {
 		return $this->status_code;
 	}
 
-	public function getHeader( string $key ): ?string {
+	public function get_header( string $key ): ?string {
 		if ( ! isset( $this->headers[ $key ] ) ) {
 			return null;
 		}
@@ -63,7 +63,7 @@ class HTTPMessageParser {
 		return $this->headers[ $key ];
 	}
 
-	public function getBody(): string {
+	public function get_body(): string {
 		return $this->body;
 	}
 }

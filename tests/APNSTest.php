@@ -1,5 +1,8 @@
 <?php
 declare( strict_types = 1 );
+// phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
+// phpcs:disable WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
 use PHPUnit\Framework\TestCase;
 
 abstract class APNSTest extends TestCase {
@@ -14,7 +17,7 @@ abstract class APNSTest extends TestCase {
 	}
 
 	protected function random_string( $length = 32 ): string {
-		$hex = bin2hex( random_bytes( $length ) );
+		$hex    = bin2hex( random_bytes( $length ) );
 		$string = substr( $hex, 0, $length );
 		return $string;
 	}
@@ -54,7 +57,7 @@ abstract class APNSTest extends TestCase {
 			$metadata = $this->new_metadata();
 		}
 
-		return APNSRequest::fromPayload( $payload, $token, $metadata );
+		return APNSRequest::from_payload( $payload, $token, $metadata );
 	}
 
 	protected function new_request_from_token( string $token ): APNSRequest {
@@ -79,7 +82,7 @@ abstract class APNSTest extends TestCase {
 	}
 
 	protected function new_payload(): APNSPayload {
-		return APNSPayload::fromAlert( $this->new_alert() );
+		return APNSPayload::from_alert( $this->new_alert() );
 	}
 
 	protected function new_configuration(): APNSConfiguration {
@@ -123,7 +126,7 @@ abstract class APNSTest extends TestCase {
 
 	protected function to_stdclass( $object ): object {
 		if ( is_a( $object, APNSPayload::class ) ) {
-			return $this->from_json( $object->toJSON() );
+			return $this->from_json( $object->to_json() );
 		}
 
 		return json_decode( json_encode( $object ) );
@@ -153,7 +156,7 @@ TEXT;
 	}
 
 	protected function json_adding( string $string, string $key, $value ): string {
-		$object = json_decode( $string );
+		$object       = json_decode( $string );
 		$object->$key = $value;
 		return json_encode( $object );
 	}

@@ -10,16 +10,16 @@ class APNSClient {
 	private $configuration;
 
 	public function __construct( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ) {
-		$this->configuration = $configuration;
+		$this->configuration   = $configuration;
 		$this->network_service = $network_service ?? new APNSNetworkService();
 	}
 
-	public static function withConfiguration( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ): self {
+	public static function with_configuration( APNSConfiguration $configuration, ?APNSNetworkService $network_service = null ): self {
 		return new APNSClient( $configuration, $network_service );
 	}
 
-	public function setPortNumber( int $port ): self {
-		$this->network_service->setPort( $port );
+	public function set_port_number( int $port ): self {
+		$this->network_service->set_port( $port );
 		return $this;
 	}
 
@@ -28,30 +28,30 @@ class APNSClient {
 	 *
 	 * @return APNSResponse[]
 	 */
-	public function sendRequests( array $requests ): array {
+	public function send_requests( array $requests ): array {
 		foreach ( $requests as $request ) {
 			assert( get_class( $request ) === APNSRequest::class );
 
-			$url = $request->getUrlForConfiguration( $this->configuration );
-			$headers = $request->getHeadersForConfiguration( $this->configuration );
-			$this->network_service->enqueueRequest( $url, $this->convertRequestHeaders( $headers ), $request->getBody() );
+			$url     = $request->get_url_for_configuration( $this->configuration );
+			$headers = $request->get_headers_for_configuration( $this->configuration );
+			$this->network_service->enqueue_request( $url, $this->convert_request_headers( $headers ), $request->get_body() );
 		}
 
-		return $this->network_service->sendQueuedRequests();
+		return $this->network_service->send_queued_requests();
 	}
 
 	public function close(): self {
-		$this->network_service->closeConnection();
+		$this->network_service->close_connection();
 		return $this;
 	}
 
-	public function setDebug( bool $debug ): self {
-		$this->network_service->setDebug( $debug );
+	public function set_debug( bool $debug ): self {
+		$this->network_service->set_debug( $debug );
 		return $this;
 	}
 
-	public function setCertificateBundlePath( string $path ): self {
-		$this->network_service->setCertificateBundlePath( $path );
+	public function set_certificate_bundle_path( string $path ): self {
+		$this->network_service->set_certificate_bundle_path( $path );
 		return $this;
 	}
 
@@ -62,7 +62,7 @@ class APNSClient {
 	 *
 	 * @return string[]
 	 */
-	private function convertRequestHeaders( array $headers ): array {
+	private function convert_request_headers( array $headers ): array {
 		$_headers = [];
 		foreach ( $headers as $key => $value ) {
 			$_headers[] = $key . ': ' . $value;

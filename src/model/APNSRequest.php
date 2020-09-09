@@ -1,5 +1,6 @@
 <?php
 declare( strict_types = 1 );
+// phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
 class APNSRequest {
 
@@ -12,39 +13,39 @@ class APNSRequest {
 	// The device token
 	private $token;
 
-	public static function fromString( string $payload, string $token, APNSRequestMetadata $metadata ): self {
-		$payload = APNSPayload::fromString( $payload );
-		return new APNSRequest( $payload->toJSON(), $token, $metadata );
+	public static function from_string( string $payload, string $token, APNSRequestMetadata $metadata ): self {
+		$payload = APNSPayload::from_string( $payload );
+		return new APNSRequest( $payload->to_json(), $token, $metadata );
 	}
 
-	public static function fromPayload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata ): self {
-		return new APNSRequest( $payload->toJSON(), $token, $metadata );
+	public static function from_payload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata ): self {
+		return new APNSRequest( $payload->to_json(), $token, $metadata );
 	}
 
 	protected function __construct( string $payload, string $token, APNSRequestMetadata $metadata ) {
-		$this->body = $payload;
-		$this->token = $token;
+		$this->body     = $payload;
+		$this->token    = $token;
 		$this->metadata = $metadata;
 	}
 
-	public function getToken(): string {
+	public function get_token(): string {
 		return $this->token;
 	}
 
-	public function getMetadata(): APNSRequestMetadata {
+	public function get_metadata(): APNSRequestMetadata {
 		return $this->metadata;
 	}
 
-	public function getBody(): string {
+	public function get_body(): string {
 		return $this->body;
 	}
 
-	public function getUuid(): string {
-		return $this->metadata->getUuid();
+	public function get_uuid(): string {
+		return $this->metadata->get_uuid();
 	}
 
-	public function getUrlForConfiguration( APNSConfiguration $configuration ): string {
-		return $configuration->getEndpoint() . $this->token;
+	public function get_url_for_configuration( APNSConfiguration $configuration ): string {
+		return $configuration->get_endpoint() . $this->token;
 	}
 
 	/**
@@ -52,37 +53,37 @@ class APNSRequest {
 	 *
 	 * @psalm-return array<string, string>
 	 */
-	public function getHeadersForConfiguration( APNSConfiguration $configuration ): array {
+	public function get_headers_for_configuration( APNSConfiguration $configuration ): array {
 
 		$headers = [
 			// Typical HTTP Headers
-			'authorization' => 'bearer ' . $configuration->getProviderToken(),
-			'content-type' => 'application/json',
-			'content-length' => strval( strlen( $this->body ) ),
+			'authorization'   => 'bearer ' . $configuration->get_provider_token(),
+			'content-type'    => 'application/json',
+			'content-length'  => strval( strlen( $this->body ) ),
 
 			// Apple-specific Required Headers
-			'apns-expiration' => strval( $this->metadata->getExpirationTimestamp() ),
-			'apns-push-type' => $this->metadata->getPushType(),
-			'apns-topic' => $this->metadata->getTopic(),
+			'apns-expiration' => strval( $this->metadata->get_expiration_timestamp() ),
+			'apns-push-type'  => $this->metadata->get_push_type(),
+			'apns-topic'      => $this->metadata->get_topic(),
 		];
 
 		// A developer-provided user agent is optional, and if it's not set, the transport mechanism can manually specify this
-		if ( ! is_null( $configuration->getUserAgent() ) ) {
-			$headers['user-agent'] = $configuration->getUserAgent() ?? 'unknown';
+		if ( ! is_null( $configuration->get_user_agent() ) ) {
+			$headers['user-agent'] = $configuration->get_user_agent() ?? 'unknown';
 		}
 
 		// Only include priority if it has been specifically set by the developer
-		if ( $this->metadata->getPriority() !== 10 ) {
-			$headers['apns-priority'] = strval( $this->metadata->getPriority() );
+		if ( $this->metadata->get_priority() !== 10 ) {
+			$headers['apns-priority'] = strval( $this->metadata->get_priority() );
 		}
 
-		if ( ! is_null( $this->metadata->getUuid() ) ) {
-			$headers['apns-id'] = $this->metadata->getUuid();
+		if ( ! is_null( $this->metadata->get_uuid() ) ) {
+			$headers['apns-id'] = $this->metadata->get_uuid();
 		}
 
 		// Collapse identifier is optional – we won't set it unless it's present, because an empty value is a valid collapse identifer
 		// and this would group notifications together in a way we don't want
-		$collapse_identifier = $this->metadata->getCollapseIdentifier();
+		$collapse_identifier = $this->metadata->get_collapse_identifier();
 		if ( ! is_null( $collapse_identifier ) ) {
 			$headers['apns-collapse-id'] = $collapse_identifier;
 		}
@@ -90,17 +91,17 @@ class APNSRequest {
 		return $headers;
 	}
 
-	public function toJSON(): string {
+	public function to_json(): string {
 		return json_encode(
 			[
-				'payload' => $this->body,
-				'token' => $this->token,
-				'metadata' => $this->metadata->toJSON(),
+				'payload'  => $this->body,
+				'token'    => $this->token,
+				'metadata' => $this->metadata->to_json(),
 			]
 		);
 	}
 
-	public static function fromJSON( string $data ): self {
+	public static function from_json( string $data ): self {
 		$object = (object) json_decode( $data, false, 512, JSON_THROW_ON_ERROR );
 
 		if ( ! property_exists( $object, 'payload' ) || is_null( $object->payload ) || ! is_string( $object->payload ) ) {
@@ -115,6 +116,6 @@ class APNSRequest {
 			throw new InvalidArgumentException( 'Unable to unserialize object – `metadata` is invalid' );
 		}
 
-		return new APNSRequest( $object->payload, $object->token, APNSRequestMetadata::fromJSON( $object->metadata ) );
+		return new APNSRequest( $object->payload, $object->token, APNSRequestMetadata::from_json( $object->metadata ) );
 	}
 }

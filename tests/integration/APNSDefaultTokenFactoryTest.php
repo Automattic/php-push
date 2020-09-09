@@ -1,13 +1,15 @@
 <?php
 declare( strict_types = 1 );
+// phpcs:disable WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+
 class APNSDefaultTokenFactoryTest extends APNSTest {
 
 	public function testThatTokenContainsExpectedValues() {
 		$team_id = $this->random_string( 10 );
-		$key_id = $this->random_string( 10 );
+		$key_id  = $this->random_string( 10 );
 
 		$factory = new APNSDefaultTokenFactory();
-		$token = $factory->get_token( $team_id, $key_id, $this->get_test_resource( 'example-key' ) );
+		$token   = $factory->get_token( $team_id, $key_id, $this->get_test_resource( 'example-key' ) );
 
 		$token = $this->decodeJWT( $token );
 
@@ -37,9 +39,9 @@ class APNSDefaultTokenFactoryTest extends APNSTest {
 		$this->assertNotNull( $body );
 
 		return (object) [
-			'key_id' => $head->kid,
+			'key_id'  => $head->kid,
 			'team_id' => $body->iss,
-			'time' => $body->iat,
+			'time'    => $body->iat,
 		];
 	}
 }

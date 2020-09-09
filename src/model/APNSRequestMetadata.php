@@ -1,5 +1,6 @@
 <?php
 declare( strict_types = 1 );
+// phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
 class APNSRequestMetadata {
 
@@ -23,18 +24,18 @@ class APNSRequestMetadata {
 
 	public function __construct( string $topic, ?string $uuid = null ) {
 		$this->topic = $topic;
-		$this->uuid = $uuid ?? $this->generate_uuid();
+		$this->uuid  = $uuid ?? $this->generate_uuid();
 	}
 
-	public static function withTopic( string $topic ): self {
+	public static function with_topic( string $topic ): self {
 		return new APNSRequestMetadata( $topic );
 	}
 
-	public function getTopic(): string {
+	public function get_topic(): string {
 		return $this->topic;
 	}
 
-	public function setTopic( string $topic ): self {
+	public function set_topic( string $topic ): self {
 
 		if ( empty( trim( $topic ) ) ) {
 			throw new InvalidArgumentException( 'The topic ' . $topic . ' must not be empty' );
@@ -44,12 +45,12 @@ class APNSRequestMetadata {
 		return $this;
 	}
 
-	public function getPushType(): string {
+	public function get_push_type(): string {
 		return $this->push_type;
 	}
 
-	public function setPushType( string $type ): self {
-		if ( ! APNSPushType::isValid( $type ) ) {
+	public function set_push_type( string $type ): self {
+		if ( ! APNSPushType::is_valid( $type ) ) {
 			throw new InvalidArgumentException( 'Invalid Push Type: ' . $type );
 		}
 
@@ -64,7 +65,7 @@ class APNSRequestMetadata {
 	 *
 	 * @return int
 	 */
-	public function getExpirationTimestamp(): int {
+	public function get_expiration_timestamp(): int {
 		return $this->expiration_timestamp;
 	}
 
@@ -75,12 +76,12 @@ class APNSRequestMetadata {
 	 * If this value is nonzero, APNs stores the notification and tries to deliver it at least once, repeating the attempt as needed if it is unable to deliver the notification the first time. If the value is 0, APNs treats the notification as if it expires immediately and does not store the notification or attempt to redeliver it.
 	 * @return APNSRequestMetadata
 	 */
-	public function setExpirationTimestamp( int $timestamp ): self {
+	public function set_expiration_timestamp( int $timestamp ): self {
 		$this->expiration_timestamp = $timestamp;
 		return $this;
 	}
 
-	public function getPriority(): int {
+	public function get_priority(): int {
 		return $this->priority;
 	}
 
@@ -93,7 +94,7 @@ class APNSRequestMetadata {
 	 *
 	 * @return APNSRequestMetadata
 	 */
-	public function setNormalPriority(): self {
+	public function set_normal_priority(): self {
 		$this->priority = APNSPriority::IMMEDIATE;
 		return $this;
 	}
@@ -105,12 +106,12 @@ class APNSRequestMetadata {
 	 *
 	 * @return APNSRequestMetadata
 	 */
-	public function setLowPriority(): self {
+	public function set_low_priority(): self {
 		$this->priority = APNSPriority::THROTTLED;
 		return $this;
 	}
 
-	public function getCollapseIdentifier(): ?string {
+	public function get_collapse_identifier(): ?string {
 		return $this->collapse_identifier;
 	}
 
@@ -119,9 +120,10 @@ class APNSRequestMetadata {
 	 *
 	 * Multiple notifications with the same collapse identifier are displayed to the user as a single notification.
 	 * The length of this identifier must not exceed 64 bytes.
+	 *
 	 * @return self
 	 */
-	public function setCollapseIdentifier( string $identifier ): self {
+	public function set_collapse_identifier( string $identifier ): self {
 
 		if ( strlen( $identifier ) > 64 ) {
 			throw new InvalidArgumentException( 'The collapse identifier ' . $identifier . ' is greater than 64 byes in length' );
@@ -131,45 +133,45 @@ class APNSRequestMetadata {
 		return $this;
 	}
 
-	public function getUuid(): string {
+	public function get_uuid(): string {
 		return $this->uuid;
 	}
 
-	public function setUuid( string $uuid ): self {
+	public function set_uuid( string $uuid ): self {
 		$this->uuid = $uuid;
 		return $this;
 	}
 
-	// Copied from WordPress
+	// Adapted from WordPress
 	private function generate_uuid(): string {
 		return sprintf(
 			'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-			mt_rand( 0, 0xffff ),
-			mt_rand( 0, 0xffff ),
-			mt_rand( 0, 0xffff ),
-			mt_rand( 0, 0x0fff ) | 0x4000,
-			mt_rand( 0, 0x3fff ) | 0x8000,
-			mt_rand( 0, 0xffff ),
-			mt_rand( 0, 0xffff ),
-			mt_rand( 0, 0xffff )
+			random_int( 0, 0xffff ),
+			random_int( 0, 0xffff ),
+			random_int( 0, 0xffff ),
+			random_int( 0, 0x0fff ) | 0x4000,
+			random_int( 0, 0x3fff ) | 0x8000,
+			random_int( 0, 0xffff ),
+			random_int( 0, 0xffff ),
+			random_int( 0, 0xffff )
 		);
 	}
 
-	public function toJSON(): string {
+	public function to_json(): string {
 		$object = [
 			'topic' => $this->topic,
-			'uuid' => $this->uuid,
+			'uuid'  => $this->uuid,
 		];
 
-		if ( $this->push_type !== APNSPushType::ALERT ) {
+		if ( APNSPushType::ALERT !== $this->push_type ) {
 			$object['push_type'] = $this->push_type;
 		}
 
-		if ( $this->expiration_timestamp !== 0 ) {
+		if ( 0 !== $this->expiration_timestamp ) {
 			$object['expiration_timestamp'] = $this->expiration_timestamp;
 		}
 
-		if ( $this->priority !== APNSPriority::IMMEDIATE ) {
+		if ( APNSPriority::IMMEDIATE !== $this->priority ) {
 			$object['priority'] = $this->priority;
 		}
 
@@ -180,7 +182,7 @@ class APNSRequestMetadata {
 		return json_encode( $object );
 	}
 
-	public static function fromJSON( string $data ): self {
+	public static function from_json( string $data ): self {
 		$object = (object) json_decode( $data, false, 512, JSON_THROW_ON_ERROR );
 
 		if ( ! property_exists( $object, 'topic' ) || is_null( $object->topic ) || ! is_string( $object->topic ) ) {
@@ -194,27 +196,27 @@ class APNSRequestMetadata {
 		$metadata = new APNSRequestMetadata( $object->topic, $object->uuid );
 
 		if ( property_exists( $object, 'push_type' ) && ! is_null( $object->push_type ) && is_string( $object->push_type ) ) {
-			$metadata->setPushType( $object->push_type );
+			$metadata->set_push_type( $object->push_type );
 		}
 
 		if ( property_exists( $object, 'expiration_timestamp' ) && ! is_null( $object->expiration_timestamp ) && is_numeric( $object->expiration_timestamp ) ) {
-			$metadata->setExpirationTimestamp( intval( $object->expiration_timestamp ) );
+			$metadata->set_expiration_timestamp( intval( $object->expiration_timestamp ) );
 		}
 
 		if ( property_exists( $object, 'priority' ) && ! is_null( $object->priority ) && is_numeric( $object->priority ) ) {
-			if ( ! APNSPriority::isValid( intval( $object->priority ) ) ) {
+			if ( ! APNSPriority::is_valid( intval( $object->priority ) ) ) {
 				throw new InvalidArgumentException( 'Unable to unserialize object – `priority` is invalid' );
 			}
 
-			if ( $object->priority === APNSPriority::IMMEDIATE ) {
-				$metadata->setNormalPriority();
-			} elseif ( $object->priority === APNSPriority::THROTTLED ) {
-				$metadata->setLowPriority();
+			if ( APNSPriority::IMMEDIATE === $object->priority ) {
+				$metadata->set_normal_priority();
+			} elseif ( APNSPriority::THROTTLED === $object->priority ) {
+				$metadata->set_low_priority();
 			}
 		}
 
 		if ( property_exists( $object, 'collapse_identifier' ) && ! is_null( $object->collapse_identifier ) && is_string( $object->collapse_identifier ) ) {
-			$metadata->setCollapseIdentifier( $object->collapse_identifier );
+			$metadata->set_collapse_identifier( $object->collapse_identifier );
 		}
 
 		return $metadata;

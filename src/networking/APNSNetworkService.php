@@ -1,5 +1,19 @@
 <?php
 declare( strict_types = 1 );
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_init
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_setopt
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_add_handle
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_exec
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_info_read
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_remove_handle
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_getcontent
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_close
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_init
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_setopt
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_close
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_strerror
+// phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_getinfo
+// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 class APNSNetworkService {
 
@@ -50,17 +64,17 @@ class APNSNetworkService {
 		$this->curl_handle = $ch;
 	}
 
-	public function setPort( int $port ): self {
+	public function set_port( int $port ): self {
 		$this->port = $port;
 		return $this;
 	}
 
-	public function setDebug( bool $debug ): self {
+	public function set_debug( bool $debug ): self {
 		$this->debug = $debug;
 		return $this;
 	}
 
-	public function setCertificateBundlePath( string $path ): self {
+	public function set_certificate_bundle_path( string $path ): self {
 		if ( ! file_exists( $path ) ) {
 			throw new InvalidArgumentException( 'There is no certificate bundle at ' . $path );
 		}
@@ -68,7 +82,7 @@ class APNSNetworkService {
 		return $this;
 	}
 
-	public function enqueueRequest( string $url, array $headers, string $body ): void {
+	public function enqueue_request( string $url, array $headers, string $body ): void {
 		$ch = curl_init( $url );
 		curl_setopt( $ch, CURLOPT_HEADER, true );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -91,7 +105,7 @@ class APNSNetworkService {
 	 *
 	 * @psalm-return list<APNSResponse>
 	 */
-	public function sendQueuedRequests(): array {
+	public function send_queued_requests(): array {
 
 		$responses = [];
 
@@ -108,22 +122,22 @@ class APNSNetworkService {
 
 				$result = intval( $info['result'] );
 
-				if ( $result !== CURLE_OK ) {
+				if ( CURLE_OK !== $result ) {
 					error_log( 'Request failed: ' . $result );
 				}
 
 				if ( ! is_null( $info['handle'] ) ) {
 					/** @var resource */
-					$handle = $info['handle'];
+					$handle      = $info['handle'];
 					$responses[] = $this->process( $handle );
 
 					curl_multi_remove_handle( $this->curl_handle, $handle );
 					curl_close( $handle );
 				}
 			}
-		} while ( $running_operation_count > 0 && $status === CURLM_OK );
+		} while ( $running_operation_count > 0 && CURLM_OK === $status );
 
-		if ( $status !== CURLM_OK ) {
+		if ( CURLM_OK !== $status ) {
 			throw new Exception( 'Unable to continue sending – ' . ( curl_multi_strerror( $status ) ?? 'unknown error' ) );
 		}
 
@@ -135,19 +149,19 @@ class APNSNetworkService {
 	 */
 	private function process( $handle ): APNSResponse {
 		// Error Code and Details
-		$status_code = intval( curl_getinfo( $handle, CURLINFO_HTTP_CODE ) );
+		$status_code   = intval( curl_getinfo( $handle, CURLINFO_HTTP_CODE ) );
 		$response_text = curl_multi_getcontent( $handle );
 
 		// Interesting Request Metrics for stats
 		$transfer_time = intval( curl_getinfo( $handle, CURLINFO_TOTAL_TIME_T ) ); // as microseconds
-		$total_bytes = intval( curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD_T ) );
+		$total_bytes   = intval( curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD_T ) );
 
 		$metrics = new APNSResponseMetrics( $total_bytes, $transfer_time );
 
 		return new APNSResponse( $status_code, $response_text, $metrics );
 	}
 
-	public function closeConnection(): void {
+	public function close_connection(): void {
 		curl_multi_close( $this->curl_handle );
 	}
 }
