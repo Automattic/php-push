@@ -44,6 +44,39 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 		$service->close_connection();
 	}
 
+	public function testThatServerTimeoutIsRecoverable() {
+
+		$service = ( new APNSNetworkService() )
+			->set_certificate_bundle_path( dirname( __DIR__ ) . '/MockAPNSServer/test-cert.pem' )
+			->set_port( 8443 )
+			->set_timeout( 1 );
+
+		$service->enqueue_request( 'https://127.0.0.1/', [], '' );
+		// It's easier to test a remote server here rather than make node work how we want
+		$service->enqueue_request( 'https://httpbin.org/delay/10', [], '' );
+		$service->enqueue_request( 'https://127.0.0.1/', [], '' );
+
+		$responses = $service->send_queued_requests();
+
+		$success = [];
+		$failure = [];
+
+		foreach ( $responses as $response ) {
+			if ( $response->is_error() ) {
+				$this->assertTrue( $response->should_retry() );
+				$failure[] = $response;
+			} else {
+				$success[] = $response;
+			}
+		}
+
+		$this->assertCount( 3, $responses );
+		$this->assertCount( 2, $success );
+		$this->assertCount( 1, $failure );
+
+		$service->close_connection();
+	}
+
 	private function reset_mock_server(): bool {
 		$ch = curl_init();
 		curl_setopt( $ch, CURLOPT_URL, 'https://127.0.0.1/reset' );
