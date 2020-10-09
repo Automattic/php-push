@@ -26,6 +26,9 @@ class APNSNetworkService {
 	/** @var bool **/
 	private $debug = false;
 
+	/** @var int **/
+	private $timeout = 5;
+
 	/**
 	 * An optional path to the certificate bundle libcurl should use. By default, we'll use the system one, but on some systems it's necessary
 	 * to override this. One example is Debian, where Apple's Geotrust certificate isn't trusted. (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=962596)
@@ -74,6 +77,11 @@ class APNSNetworkService {
 		return $this;
 	}
 
+	public function set_timeout( int $timeout ): self {
+		$this->timeout = $timeout;
+		return $this;
+	}
+
 	public function set_certificate_bundle_path( string $path ): self {
 		if ( ! file_exists( $path ) ) {
 			throw new InvalidArgumentException( 'There is no certificate bundle at ' . $path );
@@ -92,6 +100,7 @@ class APNSNetworkService {
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $body );
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port );
+		curl_setopt( $ch, CURLOPT_TIMEOUT, $this->timeout );
 
 		if ( ! is_null( $this->certificate_bundle_path ) ) {
 			curl_setopt( $ch, CURLOPT_CAINFO, $this->certificate_bundle_path );

@@ -36,6 +36,7 @@
         "lint": "./vendor/bin/phpcs -s --ignore=tests/MockAPNSServer/node_modules/",
         "fix": "./vendor/bin/phpcbf --ignore=tests/MockAPNSServer/node_modules/",
         "test": "./vendor/bin/phpunit --coverage-clover 'coverage/coverage.xml' --coverage-html 'coverage'",
+        "e2e": "./vendor/bin/phpunit --coverage-clover 'coverage/coverage.xml' --coverage-html 'coverage' --group e2e",
         "psalm": "./vendor/bin/psalm"
     }
 }
