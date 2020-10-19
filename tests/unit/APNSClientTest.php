@@ -9,8 +9,8 @@ class APNSClientTest extends APNSTest {
 			->shouldReceive( 'enqueue_request' )
 			->once();
 		$fake_responses = [
-			new APNSResponse( 200, $this->new_apns_http_failure_response( 200 ), new APNSResponseMetrics( 1, 1 ) ),
-			new APNSResponse( 400, $this->new_apns_http_failure_response( 400 ), new APNSResponseMetrics( 1, 1 ) ),
+			new APNSResponse( 200, $this->new_apns_http_failure_response( 200 ), new APNSResponseMetrics( 1, 1 ), $this->new_userdata() ),
+			new APNSResponse( 400, $this->new_apns_http_failure_response( 400 ), new APNSResponseMetrics( 1, 1 ), $this->new_userdata() ),
 		];
 		$network_service_mock
 			->shouldReceive( 'send_queued_requests' )

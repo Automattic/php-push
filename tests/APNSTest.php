@@ -43,7 +43,7 @@ abstract class APNSTest extends TestCase {
 		return new APNSAlert( $this->random_string(), $this->random_string() );
 	}
 
-	protected function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null ): APNSRequest {
+	protected function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null, ?object $userdata = null ): APNSRequest {
 
 		if ( is_null( $payload ) ) {
 			$payload = $this->new_payload();
@@ -57,7 +57,11 @@ abstract class APNSTest extends TestCase {
 			$metadata = $this->new_metadata();
 		}
 
-		return APNSRequest::from_payload( $payload, $token, $metadata );
+		if ( is_null( $userdata ) ) {
+			$userdata = $this->new_userdata();
+		}
+
+		return APNSRequest::from_payload( $payload, $token, $metadata, $userdata );
 	}
 
 	protected function new_request_from_token( string $token ): APNSRequest {
@@ -122,6 +126,30 @@ abstract class APNSTest extends TestCase {
 
 	protected function new_credentials(): APNSCredentials {
 		return new APNSCredentials( $this->random_string( 10 ), $this->random_string( 10 ), '' );
+	}
+
+	protected function new_apns_response( int $status_code ): APNSResponse {
+		return new APNSResponse(
+			$status_code,
+			$this->new_apns_http_failure_response( $status_code ),
+			new APNSResponseMetrics(),
+			$this->new_userdata(),
+		);
+	}
+
+	protected function new_userdata( ?string $uuid = null, ?string $token = null ): object {
+		return (object) [
+			'apns_uuid'  => $uuid ?? $this->random_uuid(),
+			'apns_token' => $token ?? $this->random_uuid(),
+		];
+	}
+
+	protected function new_userdata_with_uuid( string $uuid ): object {
+		return $this->new_userdata( $uuid, null );
+	}
+
+	protected function new_userdata_with_token( string $token ) {
+		return $this->new_userdata( null, $token );
 	}
 
 	protected function to_stdclass( $object ): object {

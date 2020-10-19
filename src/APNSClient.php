@@ -34,7 +34,7 @@ class APNSClient {
 
 			$url     = $request->get_url_for_configuration( $this->configuration );
 			$headers = $request->get_headers_for_configuration( $this->configuration );
-			$this->network_service->enqueue_request( $url, $this->convert_request_headers( $headers ), $request->get_body() );
+			$this->network_service->enqueue_request( $url, $this->convert_request_headers( $headers ), $request->get_body(), $request->get_userdata() );
 		}
 
 		return $this->network_service->send_queued_requests();

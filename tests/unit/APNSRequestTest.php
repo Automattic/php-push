@@ -18,6 +18,23 @@ class APNSRequestTest extends APNSTest {
 		$this->assertEquals( $message, $this->decode( $request->get_body() )->aps->alert );
 	}
 
+	public function testThatUuidCannotBeOverwrittenWithCustomUserData() {
+		$valid_uuid = $this->random_uuid();
+		$metadata   = $this->new_metadata( 'topic', $valid_uuid );
+
+		$request = APNSRequest::from_string( '', '', $metadata, $this->new_userdata_with_uuid( $this->random_uuid() ) );
+
+		$this->assertEquals( $valid_uuid, $request->get_uuid() );
+	}
+
+	public function testThatTokenCannotBeOverwrittenWithCustomUserData() {
+		$valid_token = $this->random_uuid();
+
+		$request = APNSRequest::from_string( 'message', $valid_token, $this->new_metadata(), $this->new_userdata_with_token( $this->random_uuid() ) );
+
+		$this->assertEquals( $valid_token, $request->get_token() );
+	}
+
 	public function testThatGetTokenRetrievesToken() {
 		$message = $this->random_string();
 		$token   = $this->random_string();

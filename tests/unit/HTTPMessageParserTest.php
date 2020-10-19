@@ -26,4 +26,20 @@ class HTTPMessageParserTest extends APNSTest {
 		$data = $this->get_test_resource( 'missing-http-header-response' );
 		new HTTPMessageParser( $data );
 	}
+
+	public function testThatParserReturnsHttp2ForEmptyHttpResponse() {
+		$this->assertSame( '2.0', ( new HTTPMessageParser( '' ) )->get_http_version() );
+	}
+
+	public function testThatParserReturnsZeroStatusCodeForEmptyHttpResponse() {
+		$this->assertSame( 0, ( new HTTPMessageParser( '' ) )->get_status_code() );
+	}
+
+	public function testThatParserReturnsEmptyBodyForEmptyHttpResponse() {
+		$this->assertSame( '', ( new HTTPMessageParser( '' ) )->get_body() );
+	}
+
+	public function testThatParserReturnsNullAPNSIdHeaderForEmptyHttpResponse() {
+		$this->assertNull( ( new HTTPMessageParser( '' ) )->get_header( 'apns-id' ) );
+	}
 }

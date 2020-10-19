@@ -24,7 +24,7 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 			->set_port( 8443 );
 
 		for ( $i = 0; $i < $count; $i++ ) {
-			$service->enqueue_request( 'https://127.0.0.1/', [], '' );
+			$service->enqueue_request( 'https://127.0.0.1/', [], '', $this->new_userdata() );
 		}
 
 		$responses = $service->send_queued_requests();
@@ -33,7 +33,7 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 		$this->reset_mock_server();
 
 		for ( $i = 0; $i < $count; $i++ ) {
-			$service->enqueue_request( 'https://127.0.0.1/', [], '' );
+			$service->enqueue_request( 'https://127.0.0.1/', [], '', $this->new_userdata() );
 		}
 
 		$responses = $service->send_queued_requests();
@@ -51,10 +51,10 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 			->set_port( 8443 )
 			->set_timeout( 1 );
 
-		$service->enqueue_request( 'https://127.0.0.1/', [], '' );
+		$service->enqueue_request( 'https://127.0.0.1/', [], '', $this->new_userdata() );
 		// It's easier to test a remote server here rather than make node work how we want
-		$service->enqueue_request( 'https://httpbin.org/delay/10', [], '' );
-		$service->enqueue_request( 'https://127.0.0.1/', [], '' );
+		$service->enqueue_request( 'https://httpbin.org/delay/10', [], '', $this->new_userdata() );
+		$service->enqueue_request( 'https://127.0.0.1/', [], '', $this->new_userdata() );
 
 		$responses = $service->send_queued_requests();
 
@@ -73,6 +73,21 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 		$this->assertCount( 3, $responses );
 		$this->assertCount( 2, $success );
 		$this->assertCount( 1, $failure );
+
+		$service->close_connection();
+	}
+
+	public function testThatUserDataIsPassedThroughNetworkService() {
+
+		$userdata = $this->new_userdata();
+
+		$service = ( new APNSNetworkService() )->set_port( 8000 );
+		$service->enqueue_request( 'https://httpbin.org/status/200', [], '', $userdata );
+		$responses = $service->send_queued_requests();
+
+		$this->assertCount( 1, $responses );
+		$this->assertEquals( $userdata->apns_uuid, $responses[0]->get_uuid() );
+		$this->assertEquals( $userdata->apns_token, $responses[0]->get_token() );
 
 		$service->close_connection();
 	}
