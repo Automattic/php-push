@@ -30,7 +30,7 @@ class APNSRequest {
 	 * - `apns_token`: The provided token – this can be used to delete invalid tokens from your database
 	 * - `apns_uuid`: The request UUID – this can be used to increment a `retry` field or to delete a given request from a backing store
 	 *
-	 * @var object
+	 * @var array
 	 */
 	private $userdata;
 

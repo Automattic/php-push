@@ -86,8 +86,8 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 		$responses = $service->send_queued_requests();
 
 		$this->assertCount( 1, $responses );
-		$this->assertEquals( $userdata->apns_uuid, $responses[0]->get_uuid() );
-		$this->assertEquals( $userdata->apns_token, $responses[0]->get_token() );
+		$this->assertEquals( $userdata['apns_uuid'], $responses[0]->get_uuid() );
+		$this->assertEquals( $userdata['apns_token'], $responses[0]->get_token() );
 
 		$service->close_connection();
 	}

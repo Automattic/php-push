@@ -41,7 +41,7 @@ class APNSResponse {
 	/**
 	 * The $userdata object that was passed to the original APNSRequest
 	 *
-	 * @var object
+	 * @var array
 	 */
 	private $userdata;
 
