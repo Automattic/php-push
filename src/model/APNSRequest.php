@@ -34,26 +34,26 @@ class APNSRequest {
 	 */
 	private $userdata;
 
-	public static function from_string( string $payload, string $token, APNSRequestMetadata $metadata, ?object $userdata = null ): self {
+	public static function from_string( string $payload, string $token, APNSRequestMetadata $metadata, array $userdata = [] ): self {
 		$payload = APNSPayload::from_string( $payload );
 		return new APNSRequest( $payload->to_json(), $token, $metadata, $userdata );
 	}
 
-	public static function from_payload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata, ?object $userdata = null ): self {
+	public static function from_payload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata, array $userdata = [] ): self {
 		return new APNSRequest( $payload->to_json(), $token, $metadata, $userdata );
 	}
 
-	protected function __construct( string $payload, string $token, APNSRequestMetadata $metadata, ?object $userdata = null ) {
+	protected function __construct( string $payload, string $token, APNSRequestMetadata $metadata, array $userdata = [] ) {
 		$this->body     = $payload;
 		$this->token    = $token;
 		$this->metadata = $metadata;
-		$this->userdata = (object) array_merge(
-			(array) $userdata,
-			[
-				'apns_token' => $token,
-				'apns_uuid'  => $metadata->get_uuid(),
-			]
-		);
+
+		$default_userdata = [
+			'apns_token' => $token,
+			'apns_uuid'  => $metadata->get_uuid(),
+		];
+
+		$this->userdata = array_merge( $userdata, $default_userdata );
 	}
 
 	public function get_token(): string {
@@ -76,7 +76,7 @@ class APNSRequest {
 		return $configuration->get_endpoint() . $this->token;
 	}
 
-	public function get_userdata(): object {
+	public function get_userdata(): array {
 		return $this->userdata;
 	}
 

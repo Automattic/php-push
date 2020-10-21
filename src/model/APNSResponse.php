@@ -45,11 +45,11 @@ class APNSResponse {
 	 */
 	private $userdata;
 
-	public function __construct( int $status_code, string $response_text, APNSResponseMetrics $metrics, object $userdata ) {
+	public function __construct( int $status_code, string $response_text, APNSResponseMetrics $metrics, array $userdata = [] ) {
 		$this->status_code = $status_code;
 		$this->metrics     = $metrics;
-		$this->uuid        = strval( $userdata->apns_uuid );
-		$this->token       = strval( $userdata->apns_token );
+		$this->uuid        = strval( $userdata['apns_uuid'] );
+		$this->token       = strval( $userdata['apns_token'] );
 		$this->userdata    = $userdata;
 
 		if ( $this->is_error() ) {
@@ -76,6 +76,10 @@ class APNSResponse {
 
 	public function get_status_code(): int {
 		return $this->status_code;
+	}
+
+	public function get_userdata(): array {
+		return $this->userdata;
 	}
 
 	public function is_error(): bool {

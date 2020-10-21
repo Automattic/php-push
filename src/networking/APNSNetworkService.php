@@ -91,7 +91,7 @@ class APNSNetworkService {
 		return $this;
 	}
 
-	public function enqueue_request( string $url, array $headers, string $body, object $userdata ): void {
+	public function enqueue_request( string $url, array $headers, string $body, array $userdata ): void {
 		$ch = curl_init( $url );
 		curl_setopt( $ch, CURLOPT_HEADER, true );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -169,7 +169,7 @@ class APNSNetworkService {
 
 		$metrics  = new APNSResponseMetrics( $total_bytes, $transfer_time );
 		$raw_data = strval( curl_getinfo( $handle, CURLINFO_PRIVATE ) );
-		$userdata = (object) json_decode( $raw_data );
+		$userdata = (array) json_decode( $raw_data );
 
 		return new APNSResponse( $status_code, $response_text, $metrics, $userdata );
 	}

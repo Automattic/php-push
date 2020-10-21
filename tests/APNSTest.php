@@ -137,18 +137,18 @@ abstract class APNSTest extends TestCase {
 		);
 	}
 
-	protected function new_userdata( ?string $uuid = null, ?string $token = null ): object {
-		return (object) [
+	protected function new_userdata( ?string $uuid = null, ?string $token = null ): array {
+		return [
 			'apns_uuid'  => $uuid ?? $this->random_uuid(),
 			'apns_token' => $token ?? $this->random_uuid(),
 		];
 	}
 
-	protected function new_userdata_with_uuid( string $uuid ): object {
+	protected function new_userdata_with_uuid( string $uuid ): array {
 		return $this->new_userdata( $uuid, null );
 	}
 
-	protected function new_userdata_with_token( string $token ) {
+	protected function new_userdata_with_token( string $token ): array {
 		return $this->new_userdata( null, $token );
 	}
 
