@@ -4,28 +4,56 @@ declare( strict_types = 1 );
 
 class APNSRequest {
 
-	// A string representing the request payload
+	/**
+	 * A string representing the request payload
+	 *
+	 * @var string
+	 */
 	private $body;
 
-	// A copy of the request metadata
+	/**
+	 * A copy of the request metadata
+	 *
+	 * @var APNSRequestMetadata
+	 */
 	private $metadata;
 
-	// The device token
+	/**
+	 * A copy of the device token
+	 *
+	 * @var string
+	 */
 	private $token;
 
-	public static function from_string( string $payload, string $token, APNSRequestMetadata $metadata ): self {
+	/**
+	 * Data that should be passed back in `APNSResponse`. By default, it will always contain the following fields:
+	 * - `apns_token`: The provided token – this can be used to delete invalid tokens from your database
+	 * - `apns_uuid`: The request UUID – this can be used to increment a `retry` field or to delete a given request from a backing store
+	 *
+	 * @var array
+	 */
+	private $userdata;
+
+	public static function from_string( string $payload, string $token, APNSRequestMetadata $metadata, array $userdata = [] ): self {
 		$payload = APNSPayload::from_string( $payload );
-		return new APNSRequest( $payload->to_json(), $token, $metadata );
+		return new APNSRequest( $payload->to_json(), $token, $metadata, $userdata );
 	}
 
-	public static function from_payload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata ): self {
-		return new APNSRequest( $payload->to_json(), $token, $metadata );
+	public static function from_payload( APNSPayload $payload, string $token, APNSRequestMetadata $metadata, array $userdata = [] ): self {
+		return new APNSRequest( $payload->to_json(), $token, $metadata, $userdata );
 	}
 
-	protected function __construct( string $payload, string $token, APNSRequestMetadata $metadata ) {
+	protected function __construct( string $payload, string $token, APNSRequestMetadata $metadata, array $userdata = [] ) {
 		$this->body     = $payload;
 		$this->token    = $token;
 		$this->metadata = $metadata;
+
+		$default_userdata = [
+			'apns_token' => $token,
+			'apns_uuid'  => $metadata->get_uuid(),
+		];
+
+		$this->userdata = array_merge( $userdata, $default_userdata );
 	}
 
 	public function get_token(): string {
@@ -46,6 +74,10 @@ class APNSRequest {
 
 	public function get_url_for_configuration( APNSConfiguration $configuration ): string {
 		return $configuration->get_endpoint() . $this->token;
+	}
+
+	public function get_userdata(): array {
+		return $this->userdata;
 	}
 
 	/**

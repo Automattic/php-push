@@ -14,6 +14,7 @@ declare( strict_types = 1 );
 // phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_multi_strerror
 // phpcs:disable WordPress.WP.AlternativeFunctions.curl_curl_getinfo
 // phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
+// phpcs:disable WordPress.WP.AlternativeFunctions.json_encode_json_encode
 
 class APNSNetworkService {
 
@@ -90,7 +91,7 @@ class APNSNetworkService {
 		return $this;
 	}
 
-	public function enqueue_request( string $url, array $headers, string $body ): void {
+	public function enqueue_request( string $url, array $headers, string $body, array $userdata ): void {
 		$ch = curl_init( $url );
 		curl_setopt( $ch, CURLOPT_HEADER, true );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -101,6 +102,7 @@ class APNSNetworkService {
 		curl_setopt( $ch, CURLOPT_VERBOSE, $this->debug );
 		curl_setopt( $ch, CURLOPT_PORT, $this->port );
 		curl_setopt( $ch, CURLOPT_TIMEOUT, $this->timeout );
+		curl_setopt( $ch, CURLOPT_PRIVATE, json_encode( $userdata ) );
 
 		if ( ! is_null( $this->certificate_bundle_path ) ) {
 			curl_setopt( $ch, CURLOPT_CAINFO, $this->certificate_bundle_path );
@@ -165,9 +167,11 @@ class APNSNetworkService {
 		$transfer_time = intval( curl_getinfo( $handle, CURLINFO_TOTAL_TIME_T ) ); // as microseconds
 		$total_bytes   = intval( curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD_T ) );
 
-		$metrics = new APNSResponseMetrics( $total_bytes, $transfer_time );
+		$metrics  = new APNSResponseMetrics( $total_bytes, $transfer_time );
+		$raw_data = strval( curl_getinfo( $handle, CURLINFO_PRIVATE ) );
+		$userdata = (array) json_decode( $raw_data );
 
-		return new APNSResponse( $status_code, $response_text, $metrics );
+		return new APNSResponse( $status_code, $response_text, $metrics, $userdata );
 	}
 
 	public function close_connection(): void {
