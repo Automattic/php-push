@@ -43,7 +43,7 @@ abstract class APNSTest extends TestCase {
 		return new APNSAlert( $this->random_string(), $this->random_string() );
 	}
 
-	protected function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null, ?object $userdata = null ): APNSRequest {
+	protected function new_request( $payload = null, string $token = null, ?APNSRequestMetadata $metadata = null, array $userdata = [] ): APNSRequest {
 
 		if ( is_null( $payload ) ) {
 			$payload = $this->new_payload();
@@ -57,7 +57,7 @@ abstract class APNSTest extends TestCase {
 			$metadata = $this->new_metadata();
 		}
 
-		if ( is_null( $userdata ) ) {
+		if ( empty( $userdata ) ) {
 			$userdata = $this->new_userdata();
 		}
 
