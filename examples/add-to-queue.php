@@ -7,8 +7,6 @@ require_once __DIR__ . '/db-connect.php';
 $topic = (string) getenv( 'topic' );
 
 while ( true ) {
-	$notifications = [];
-
 	$token = bin2hex( random_bytes( 32 ) );
 	save_token( $token );
 

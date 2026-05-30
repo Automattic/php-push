@@ -40,8 +40,12 @@ class APNSNetworkService {
 
 	public function __construct() {
 		$ch = curl_multi_init();
-		curl_multi_setopt( $ch, CURLMOPT_PIPELINING, CURLPIPE_MULTIPLEX );
-		curl_multi_setopt( $ch, CURLMOPT_MAX_TOTAL_CONNECTIONS, 1 );
+		if ( false === curl_multi_setopt( $ch, CURLMOPT_PIPELINING, CURLPIPE_MULTIPLEX ) ) {
+			throw new RuntimeException( 'Unable to configure curl multiplexing.' );
+		}
+		if ( false === curl_multi_setopt( $ch, CURLMOPT_MAX_TOTAL_CONNECTIONS, 1 ) ) {
+			throw new RuntimeException( 'Unable to configure curl connection limit.' );
+		}
 		// TODO: Setting CURLOPT_PIPEWAIT results in the following error
 		//
 		// ```
@@ -167,8 +171,10 @@ class APNSNetworkService {
 		$transfer_time = intval( curl_getinfo( $handle, CURLINFO_TOTAL_TIME_T ) ); // as microseconds
 		$total_bytes   = intval( curl_getinfo( $handle, CURLINFO_SIZE_UPLOAD_T ) );
 
-		$metrics  = new APNSResponseMetrics( $total_bytes, $transfer_time );
-		$raw_data = strval( curl_getinfo( $handle, CURLINFO_PRIVATE ) );
+		$metrics = new APNSResponseMetrics( $total_bytes, $transfer_time );
+		/** @psalm-suppress MixedAssignment */
+		$raw_data = curl_getinfo( $handle, CURLINFO_PRIVATE );
+		$raw_data = is_scalar( $raw_data ) ? strval( $raw_data ) : '';
 		$userdata = (array) json_decode( $raw_data );
 
 		return new APNSResponse( $status_code, $response_text, $metrics, $userdata );

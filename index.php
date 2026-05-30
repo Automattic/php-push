@@ -35,7 +35,7 @@ $request  = APNSRequest::from_payload( $payload, $token, $metadata );
 $requests = [];
 
 // Send 3 Requests
-foreach ( range( 0, 2 ) as $i ) {
+for ( $i = 0; $i < 3; $i++ ) {
 	$requests[] = $request;
 }
 

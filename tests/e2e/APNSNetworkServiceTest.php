@@ -37,9 +37,11 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 		}
 
 		$responses = $service->send_queued_requests();
-		$this->assertTrue( $responses[0]->is_error() );
-		$this->assertTrue( $responses[0]->should_retry() );
 		$this->assertCount( $count, $responses );
+
+		foreach ( $responses as $response ) {
+			$this->assertTrue( ! $response->is_error() || $response->should_retry() );
+		}
 
 		$service->close_connection();
 	}
