@@ -48,8 +48,8 @@ class APNSResponse {
 	public function __construct( int $status_code, string $response_text, APNSResponseMetrics $metrics, array $userdata = [] ) {
 		$this->status_code = $status_code;
 		$this->metrics     = $metrics;
-		$this->uuid        = strval( $userdata['apns_uuid'] );
-		$this->token       = strval( $userdata['apns_token'] );
+		$this->uuid        = isset( $userdata['apns_uuid'] ) && is_scalar( $userdata['apns_uuid'] ) ? strval( $userdata['apns_uuid'] ) : '';
+		$this->token       = isset( $userdata['apns_token'] ) && is_scalar( $userdata['apns_token'] ) ? strval( $userdata['apns_token'] ) : '';
 		$this->userdata    = $userdata;
 
 		if ( $this->is_error() ) {

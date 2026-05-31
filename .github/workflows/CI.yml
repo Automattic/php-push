@@ -10,23 +10,27 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
+    - name: Setup PHP
+      uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc
+      with:
+        php-version: '7.3'
 
     - name: Validate composer.json and composer.lock
       run: composer validate
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
+      run: composer install --prefer-dist --no-progress
 
     - name: Lint
       run: composer lint
 
   Validate:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc
       with:
         php-version: '7.3'
         coverage: xdebug
@@ -35,39 +39,58 @@ jobs:
       run: composer validate
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
+      run: composer install --prefer-dist --no-progress
 
     - name: Validate
       run: composer psalm
 
   build-and-test:
     name: Build and Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc
       with:
         php-version: '7.3'
+        coverage: xdebug
+    - name: Setup Node
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      with:
+        node-version-file: tests/MockAPNSServer/.nvmrc
 
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
+      run: composer install --prefer-dist --no-progress
 
     - name: Set up Mock Server
       run: |
         node -v
-        cd tests/MockAPNSServer 
+        cd tests/MockAPNSServer
         yarn setup
         yarn install
         yarn serve &
         cd -
 
-    - name: Test and Upload Coverage
-      uses: paambaati/codeclimate-action@v2.6.0
+    - name: Download Code Climate reporter
+      run: |
+        curl -fsSL https://github.com/qltysh-archive/test-reporter/releases/download/v0.11.1/artifacts.tar.gz -o cc-test-reporter.tar.gz
+        echo "c9660fb18a1655d234dbf87a8c1b77cb70afd8fc7d4e53773c86d5bd496e15a2  cc-test-reporter.tar.gz" | sha256sum -c -
+        tar -xf cc-test-reporter.tar.gz
+        mv artifacts/bin/test-reporter-0.11.1-linux-amd64 ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+
+    - name: Test
+      run: composer test
+
+    - name: Upload coverage
+      continue-on-error: true
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-      with:
-        coverageCommand: composer test
-        debug: true
-        coverageLocations: |
-          ${{github.workspace}}/coverage/coverage.xml:clover
+        CI_BUILD_ID: ${{github.run_id}}
+        CI_BUILD_URL: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}
+        CI_NAME: github-actions
+        GIT_BRANCH: ${{github.head_ref || github.ref_name}}
+        GIT_COMMIT_SHA: ${{github.event.pull_request.head.sha || github.sha}}
+      run: |
+        ./cc-test-reporter format-coverage coverage/coverage.xml -t clover -o coverage/codeclimate.json --debug
+        ./cc-test-reporter upload-coverage -i coverage/codeclimate.json --debug

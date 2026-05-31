@@ -15,22 +15,24 @@
     "config": {
         "platform": {
             "php": "7.3"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
     "require": {
-        "firebase/php-jwt": "^5.2"
-
+        "firebase/php-jwt": "^6.0"
     },
     "require-dev": {
-        "illuminate/database": "^7.14",
+        "illuminate/database": "^7.30.6",
         "vlucas/phpdotenv": "^4.1",
-        "phpunit/phpunit": "^9.1",
-        "phpunit/php-code-coverage": "^8.0",
+        "phpunit/phpunit": "^9.6.34",
+        "phpunit/php-code-coverage": "^9.2.32",
         "mockery/mockery": "^1.4",
-        "automattic/phpcs-neutron-ruleset": "^3.2",
+        "automattic/phpcs-neutron-ruleset": "^3.4.0",
         "squizlabs/php_codesniffer": "^3.5",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
-        "vimeo/psalm": "^3.12"
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.1.2",
+        "vimeo/psalm": "^4.30"
     },
     "scripts": {
         "lint": "./vendor/bin/phpcs -s --ignore=tests/MockAPNSServer/node_modules/",
