@@ -83,6 +83,7 @@ jobs:
       run: composer test
 
     - name: Upload coverage
+      continue-on-error: true
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         CI_BUILD_ID: ${{github.run_id}}
