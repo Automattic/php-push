@@ -26,7 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
       with:
         php-version: '7.3'
         coverage: xdebug
@@ -46,7 +46,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup PHP
-      uses: shivammathur/setup-php@v2
+      uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
       with:
         php-version: '7.3'
 
@@ -63,7 +63,7 @@ jobs:
         cd -
 
     - name: Test and Upload Coverage
-      uses: paambaati/codeclimate-action@v2.6.0
+      uses: paambaati/codeclimate-action@60d1b18d039c7b06c721984a5c3d98b724baf991 # v2.6.0
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
       with:
