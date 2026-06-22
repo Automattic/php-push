@@ -8,9 +8,15 @@ on:
 
 jobs:
   Lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v2
+    - name: Setup PHP
+      uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+      with:
+        php-version: '7.3'
+        coverage: none
+        tools: 'composer:v1'
 
     - name: Validate composer.json and composer.lock
       run: composer validate
@@ -22,14 +28,15 @@ jobs:
       run: composer lint
 
   Validate:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v2
     - name: Setup PHP
       uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
       with:
         php-version: '7.3'
-        coverage: xdebug
+        coverage: none
+        tools: 'composer:v1'
 
     - name: Validate composer.json and composer.lock
       run: composer validate
@@ -42,13 +49,15 @@ jobs:
 
   build-and-test:
     name: Build and Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v2
     - name: Setup PHP
       uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
       with:
         php-version: '7.3'
+        coverage: xdebug
+        tools: 'composer:v1'
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
