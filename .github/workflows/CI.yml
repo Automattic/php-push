@@ -71,7 +71,7 @@ jobs:
         cd -
 
     - name: Test and Upload Coverage
-      uses: paambaati/codeclimate-action@60d1b18d039c7b06c721984a5c3d98b724baf991 # v2.6.0
+      uses: paambaati/codeclimate-action@f429536ee076d758a24705203199548125a28ca7 # v9.0.0
       env:
         CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
       with:
