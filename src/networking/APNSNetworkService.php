@@ -140,7 +140,7 @@ class APNSNetworkService {
 				if ( ! is_null( $info['handle'] ) ) {
 					/** @var resource */
 					$handle      = $info['handle'];
-					$responses[] = $this->process( $handle );
+					$responses[] = $this->process( $handle, $result );
 
 					curl_multi_remove_handle( $this->curl_handle, $handle );
 					curl_close( $handle );
@@ -158,10 +158,10 @@ class APNSNetworkService {
 	/**
 	 * @param resource $handle
 	 */
-	private function process( $handle ): APNSResponse {
+	private function process( $handle, int $result ): APNSResponse {
 		// Error Code and Details
-		$status_code   = intval( curl_getinfo( $handle, CURLINFO_HTTP_CODE ) );
-		$response_text = curl_multi_getcontent( $handle );
+		$status_code   = CURLE_OK === $result ? intval( curl_getinfo( $handle, CURLINFO_HTTP_CODE ) ) : 0;
+		$response_text = CURLE_OK === $result ? curl_multi_getcontent( $handle ) : '';
 
 		// Interesting Request Metrics for stats
 		$transfer_time = intval( curl_getinfo( $handle, CURLINFO_TOTAL_TIME_T ) ); // as microseconds
