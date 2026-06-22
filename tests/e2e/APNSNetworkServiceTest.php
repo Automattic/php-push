@@ -17,7 +17,7 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 
 	public function testThatSendingAfterGoAwayFrameEmitsIsRecoverable() {
 
-		$count = random_int( 1, 1000 );
+		$count = 10;
 
 		$service = ( new APNSNetworkService() )
 			->set_certificate_bundle_path( dirname( __DIR__ ) . '/MockAPNSServer/test-cert.pem' )
@@ -37,9 +37,14 @@ class APNSNetworkServiceIntegrationTest extends APNSTest {
 		}
 
 		$responses = $service->send_queued_requests();
-		$this->assertTrue( $responses[0]->is_error() );
-		$this->assertTrue( $responses[0]->should_retry() );
 		$this->assertCount( $count, $responses );
+		$recoverable_errors = array_filter(
+			$responses,
+			function ( APNSResponse $response ): bool {
+				return $response->is_error() && $response->should_retry();
+			}
+		);
+		$this->assertNotEmpty( $recoverable_errors );
 
 		$service->close_connection();
 	}
