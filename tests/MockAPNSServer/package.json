@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "uuid": "^8.3.0"
+    "uuid": "^14.0.0"
   },
   "scripts": {
   	"setup": "openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout test-key.pem -out test-cert.pem -subj '/CN=127.0.0.1'",
