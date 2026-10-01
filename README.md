@@ -1,5 +1,8 @@
 # php-push
 
+> [!WARNING]
+> This repository is archived and no longer maintained. The code now lives in WordPress.com, where it is maintained internally.
+
 ![CI](https://github.com/Automattic/php-push/workflows/CI/badge.svg)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/3231adb560db705c221a/test_coverage)](https://codeclimate.com/github/Automattic/php-push/test_coverage)
 
